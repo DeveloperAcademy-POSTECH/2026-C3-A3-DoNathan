@@ -11,18 +11,11 @@ import CoreImage.CIFilterBuiltins
 import Combine
 
 class CropViewModel: ObservableObject {
-    
-    // 크롭 박스 위치 (드래그로 이동)
-    @Published var cropOffset: CGSize = .zero
+    @Published var cropOffset: CGSize = .zero // 크롭 박스 위치 (드래그로 이동)
     @Published var croppedImage: UIImage?
-    
-    // ✅ 실제 이미지 표시 크기 저장
-    @Published var actualImageSize: CGSize = .zero
+    @Published var actualImageSize: CGSize = .zero // 실제 이미지 표시 크기 저장
     
     private let context = CIContext()
-    
-    // 크롭 박스 고정 크기 (화면 비율에 맞게 조정)
-    // 고정값 → 변수로 변경
     var cropBoxSize: CGSize = CGSize(width: 260, height: 260)  // onAppear에서 덮어씀
     
     // MARK: - 실제 크롭 실행
@@ -31,7 +24,7 @@ class CropViewModel: ObservableObject {
         
         let imageSize = ciImage.extent.size
         
-        // ✅ scaledToFit 기준 실제 이미지 표시 크기 계산
+        // scaledToFit 기준 실제 이미지 표시 크기 계산
         let imageAspect = imageSize.width / imageSize.height
         let displayAspect = displaySize.width / displaySize.height
         
@@ -48,7 +41,7 @@ class CropViewModel: ObservableObject {
             actualImageSize = CGSize(width: width, height: height)
         }
         
-        // ✅ 실제 이미지 표시 크기 기준으로 scale 계산
+        // 실제 이미지 표시 크기 기준으로 scale 계산
         let scaleX = imageSize.width / actualImageSize.width
         let scaleY = imageSize.height / actualImageSize.height
         
@@ -99,7 +92,7 @@ class CropViewModel: ObservableObject {
         return CGSize(width: boxSize, height: boxSize)
     }
     
-    // ✅ 실제 이미지 표시 크기 계산 함수
+    // 실제 이미지 표시 크기 계산 함수
     func calcActualImageSize(image: UIImage, displaySize: CGSize) -> CGSize {
         let imageAspect = image.size.width / image.size.height
         let displayAspect = displaySize.width / displaySize.height

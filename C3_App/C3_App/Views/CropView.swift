@@ -22,12 +22,9 @@ struct CropView: View {
     var body: some View {
         GeometryReader { geo in
             VStack(spacing: 0) {
-            
-                
                 // MARK: - 이미지 + 크롭 오버레이
-                // ZStack 들어가기 전에 박스 크기 계산
                 ZStack {
-                    // ✅ 미리보기일 때는 원본 숨김
+                    // 미리보기 시 원본 숨김
                     if !showPreview {
                         Image(uiImage: capturedImage)
                             .resizable()
@@ -72,9 +69,8 @@ struct CropView: View {
                                         lastOffset = viewModel.cropOffset
                                     }
                             )
-                            
                     } else {
-                        // ✅ 크롭 미리보기
+                        // 크롭 미리보기
                         if let cropped = viewModel.croppedImage {
                             Image(uiImage: cropped)
                                 .resizable()
@@ -83,7 +79,6 @@ struct CropView: View {
                         }
                     }
                 }
-                // ✅ onAppear는 ZStack modifier로 이동 (조건과 무관하게 한 번만 실행)
                 .onAppear {
                     let imageAreaSize = CGSize(
                         width: geo.size.width,
@@ -100,6 +95,7 @@ struct CropView: View {
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .background(Color(.systemGray5))
+                
                 // MARK: - 하단 버튼
                 HStack {
                     Button(action: {
@@ -139,7 +135,7 @@ struct CropView: View {
                         Button {
                             let displaySize = CGSize(
                                 width: geo.size.width,
-                                height: geo.size.height - 88   // ✅ 88로 통일 (기존 160 → 88)
+                                height: geo.size.height - 88
                             )
                             viewModel.cropImage(capturedImage, displaySize: displaySize) {
                                 showPreview = true

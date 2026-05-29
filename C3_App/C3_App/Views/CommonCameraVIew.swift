@@ -191,7 +191,16 @@ struct CommonCameraView<MissionOverlay: View>: View {
                         }
                     )
                 case .colorPicker:
-                    EmptyView()
+                    ColorPickerView(
+                        capturedImage: image,
+                        onConfirm: { _ in
+                            missionType = nil
+                        },
+                        onCancel: {
+                            capturedImage = nil
+                            missionType = nil
+                        }
+                    )
                 }
             }
         }
