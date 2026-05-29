@@ -10,6 +10,11 @@ import AVFoundation
 import Photos
 import Combine
 
+class Hello {
+    
+    
+}
+
 class CameraViewModel: ObservableObject {
     private let cameraService = CameraService()
     
