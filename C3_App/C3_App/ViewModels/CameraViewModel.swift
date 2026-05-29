@@ -21,7 +21,12 @@ class CameraViewModel: ObservableObject {
     @Published var alertMessage: String? = nil
     @Published var showFlashOverlay: Bool = false
     
-    @Published var capturedImage: UIImage? = nil   // ✅ 추가
+    @Published var capturedImage: UIImage? = nil
+    @Published var currentFrame: UIImage? = nil
+
+    @Published var brightness: Double = 0.0 {
+        didSet { cameraService.brightness = brightness }
+    }
     
     init() {
         setupBindings()
@@ -51,11 +56,10 @@ class CameraViewModel: ObservableObject {
                 self?.alertMessage = message
             }
         }
-        
-        // 서비스가 완성해 준 필터 먹은 이미지를 받아와서 뷰가 볼 수 있게 저장
-//        cameraService.onFrameProcessed = { [weak self] image in
-//            self?.currentFrame = image
-//        }
+
+        cameraService.onFrameProcessed = { [weak self] image in
+            self?.currentFrame = image
+        }
     }
     
     // 카메라 권한 체크
@@ -65,6 +69,7 @@ class CameraViewModel: ObservableObject {
     
     func startSession() { cameraService.startSession() }
     func stopSession() { cameraService.stopSession() }
+    func setZoom(_ factor: CGFloat) { cameraService.setZoom(factor) }
     
     // 사진 촬영
     func takePhoto() {
