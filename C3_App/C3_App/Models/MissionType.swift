@@ -6,6 +6,7 @@
 //
 
 enum MissionType: Identifiable {
+    case basic // 기본 카메라
     case brightness // 명도
     case saturation // 채도
     case crop // 크롭
@@ -13,6 +14,8 @@ enum MissionType: Identifiable {
     
     var id: String {
         switch self {
+        case .basic:
+            return "basic"
         case .brightness:
             return "brightness"
         case .saturation:

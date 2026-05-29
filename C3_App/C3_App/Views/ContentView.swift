@@ -16,6 +16,9 @@ struct ContentView: View {
         
         //CommonCameraView(missionType: $missionType)
         MissionRootView()
+//        CommonCameraView(viewModel: viewModel, missionType: $missionType) {
+//            EmptyView()
+//        }
 
     }
 }

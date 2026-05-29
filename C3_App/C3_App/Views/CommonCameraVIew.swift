@@ -7,14 +7,12 @@
 
 import SwiftUI
 import AVFoundation
-import Photos
+import Photos // PhotoKit
 
 struct CommonCameraView<MissionOverlay: View>: View {
     @ObservedObject var viewModel: CameraViewModel
-
     @State private var capturedImage: UIImage?
     @Binding var missionType: MissionType?
-
     @State private var zoomLevel: CGFloat = 1.0
     @State private var showGrid: Bool = false
 
@@ -52,56 +50,57 @@ struct CommonCameraView<MissionOverlay: View>: View {
             .background(Color.white)
 
             // MARK: - 카메라 프리뷰
-            ZStack(alignment: .bottom) {
-                Color.black
+            GeometryReader { geo in
+                ZStack(alignment: .bottom) {
+                    Color.black
 
-                if let session = viewModel.session {
-                    CameraPreview(session: session)
-                        .ignoresSafeArea(edges: [])
-                } else {
-                    ProgressView()
-                        .foregroundStyle(.white)
-                }
+                    if let session = viewModel.session {
+                        CameraPreview(session: session)
+                            .ignoresSafeArea(edges: [])
+                    } else {
+                        ProgressView()
+                            .foregroundStyle(.white)
+                    }
 
-                // 셔터 플래시 오버레이
-                if viewModel.showFlashOverlay {
-                    Color.white.opacity(0.7)
-                }
+                    // 셔터 플래시 오버레이
+                    if viewModel.showFlashOverlay {
+                        Color.white.opacity(0.7)
+                    }
 
-                // 그리드 오버레이
-                if showGrid {
-                    GridOverlayView()
-                }
+                    // 그리드 오버레이
+                    if showGrid {
+                        GridOverlayView()
+                    }
 
-                // 줌 버튼 (전면 카메라일 때 0.5x 숨김)
-                HStack(spacing: 6) {
-                    let zoomLevels: [CGFloat] = viewModel.isFrontCamera ? [1.0, 2.0] : [0.5, 1.0, 2.0]
-                    ForEach(zoomLevels, id: \.self) { zoom in
-                        let label = zoom == 0.5 ? "0.5x" : zoom == 1.0 ? "1x" : "2x"
-                        let isSelected = zoomLevel == zoom
+                    // 줌 버튼 (전면 카메라일 때 0.5x 숨김)
+                    HStack(spacing: 6) {
+                        let zoomLevels: [CGFloat] = viewModel.isFrontCamera ? [1.0, 2.0] : [0.5, 1.0, 2.0]
+                        ForEach(zoomLevels, id: \.self) { zoom in
+                            let label = zoom == 0.5 ? "0.5x" : zoom == 1.0 ? "1x" : "2x"
+                            let isSelected = zoomLevel == zoom
 
-                        Button {
-                            zoomLevel = zoom
-                            viewModel.setZoom(zoom)
-                        } label: {
-                            Text(label)
-                                .font(.system(size: 13, weight: .semibold))
-                                .foregroundColor(.white)
-                                .padding(.horizontal, 14)
-                                .padding(.vertical, 7)
-                                .background(
-                                    Capsule()
-                                        .fill(isSelected
-                                              ? Color.white.opacity(0.35)
-                                              : Color.black.opacity(0.4))
-                                )
+                            Button {
+                                zoomLevel = zoom
+                                viewModel.setZoom(zoom)
+                            } label: {
+                                Text(label)
+                                    .font(.system(size: 13, weight: .semibold))
+                                    .foregroundColor(.white)
+                                    .padding(.horizontal, 14)
+                                    .padding(.vertical, 7)
+                                    .background(
+                                        Capsule()
+                                            .fill(isSelected
+                                                  ? Color.white.opacity(0.35)
+                                                  : Color.black.opacity(0.4))
+                                    )
+                            }
                         }
                     }
+                    .padding(.bottom, 18)
                 }
-                .padding(.bottom, 18)
+                .frame(width: geo.size.width, height: geo.size.width * 4 / 3)
             }
-            .frame(width: UIScreen.main.bounds.width,
-                   height: UIScreen.main.bounds.width * 4 / 3)
 
             // MARK: - 미션 오버레이 슬롯
             missionOverlay()
@@ -159,13 +158,17 @@ struct CommonCameraView<MissionOverlay: View>: View {
         .onReceive(viewModel.$capturedImage) { image in
             guard let image else { return }
             capturedImage = image
-            missionType = .saturation
+            missionType = .crop
         }
         .fullScreenCover(item: $missionType) { mission in
             if let image = capturedImage {
                 switch mission {
-                case .brightness:
+                case .basic:
                     EmptyView()
+                    // 여기도 미션 판정 뷰로 연결하도록 수정 필요
+                case .brightness:
+                    BrightnessView()
+                    // 여기는 명도 카메라 뷰가 아닌 미션 판정 뷰로 연결하도록 수정 필요!!!
                 case .saturation:
                     SaturationView(
                         capturedImage: image,

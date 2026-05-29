@@ -10,6 +10,7 @@ import SwiftUI
 struct CenterColorCell: View {
     let color:  Color
     let height: CGFloat
+    
     var body: some View {
         RoundedRectangle(cornerRadius: 12).fill(color).frame(height: height)
     }

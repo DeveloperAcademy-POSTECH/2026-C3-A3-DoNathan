@@ -30,8 +30,6 @@ class CameraViewModel: ObservableObject {
     
     init() {
         setupBindings()
-        //cameraService.setupCaptureSession() // 추가사항
-        //cameraService.checkPermissionAndSetup()
     }
     
     private func setupBindings() {
@@ -46,7 +44,7 @@ class CameraViewModel: ObservableObject {
         cameraService.onPhotoCaptured = { [weak self] image in
             DispatchQueue.main.async {
                 self?.thumbnailImage = image // 썸네일 이미지용 빼놓고
-                self?.capturedImage = image       // ✅ 채도 부분에서 추가
+                self?.capturedImage = image
                 self?.saveToPhotoLibrary(image) // 앨범에 사진 저장
             }
         }
@@ -103,11 +101,7 @@ class CameraViewModel: ObservableObject {
                 PHAssetChangeRequest.creationRequestForAsset(from: image)
             })
         }
-    }
-    
-    
-        
-        
+    } 
 }
 
 //// Alert을 위한 간단한 구조체
