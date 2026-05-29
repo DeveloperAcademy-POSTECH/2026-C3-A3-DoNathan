@@ -26,7 +26,6 @@ struct SaturationView: View {
                         .resizable()
                         .scaledToFit()
                 } else {
-                    // 로딩 전 플레이스홀더
                     ProgressView()
                 }
             }

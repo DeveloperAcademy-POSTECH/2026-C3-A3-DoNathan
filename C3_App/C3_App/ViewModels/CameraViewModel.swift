@@ -20,13 +20,10 @@ class CameraViewModel: ObservableObject {
     @Published var isFrontCamera: Bool = false
     @Published var alertMessage: String? = nil
     @Published var showFlashOverlay: Bool = false
-    
-    @Published var capturedImage: UIImage? = nil   // ✅ 추가
+    @Published var capturedImage: UIImage? = nil
     
     init() {
         setupBindings()
-        //cameraService.setupCaptureSession() // 추가사항
-        //cameraService.checkPermissionAndSetup()
     }
     
     private func setupBindings() {
@@ -41,7 +38,7 @@ class CameraViewModel: ObservableObject {
         cameraService.onPhotoCaptured = { [weak self] image in
             DispatchQueue.main.async {
                 self?.thumbnailImage = image // 썸네일 이미지용 빼놓고
-                self?.capturedImage = image       // ✅ 채도 부분에서 추가
+                self?.capturedImage = image  
                 self?.saveToPhotoLibrary(image) // 앨범에 사진 저장
             }
         }
@@ -51,11 +48,6 @@ class CameraViewModel: ObservableObject {
                 self?.alertMessage = message
             }
         }
-        
-        // 서비스가 완성해 준 필터 먹은 이미지를 받아와서 뷰가 볼 수 있게 저장
-//        cameraService.onFrameProcessed = { [weak self] image in
-//            self?.currentFrame = image
-//        }
     }
     
     // 카메라 권한 체크
@@ -99,10 +91,6 @@ class CameraViewModel: ObservableObject {
             })
         }
     }
-    
-    
-        
-        
 }
 
 //// Alert을 위한 간단한 구조체

@@ -13,9 +13,9 @@ struct CommonCameraView: View {
     @StateObject var viewModel = CameraViewModel()
     //let overlayContent: () -> Content
     
-    // 미션별로 적용하기 위한 변수
     @State private var capturedImage: UIImage?
     @Binding var missionType: MissionType?
+    @State private var showEditView: Bool = false
 
     var body: some View {
         ZStack {
@@ -129,15 +129,15 @@ struct CommonCameraView: View {
         .onReceive(viewModel.$capturedImage) { image in
             guard let image else { return }
             capturedImage = image
-            missionType = .saturation // 여기에서 미션 타입 설정
+            showEditView = true // 촬영 완료 시 다음 미션 화면으로 cover
             
 //            if missionType == nil {
 //                print("missionType이 설정되지 않았습니다.")
 //            }
             
         }
-        .fullScreenCover(item: $missionType) { mission in
-            if let image = capturedImage {
+        .fullScreenCover(isPresented: $showEditView) {
+            if let image = capturedImage, let mission = missionType {
                 switch mission {
                 case .brightness:
                     EmptyView()
@@ -175,7 +175,23 @@ struct CommonCameraView: View {
                         }
                     )
                 case .colorPicker:
-                    EmptyView()
+                    ColorPickerView(
+                        capturedImage: image,
+                        onConfirm: { selectedColor in
+                            // 선택된 색상으로 미션 판별
+//                            let ratio = MissionEvaluator.detectColor(
+//                                in: image,
+//                                target: selectedColor,
+//                                tolerance: 0.3
+//                            )
+//                            print("색상 일치율: \(ratio)")
+                            missionType = nil
+                        },
+                        onCancel: {
+                            capturedImage = nil
+                            missionType = nil
+                        }
+                    )
                 }
             }
         }

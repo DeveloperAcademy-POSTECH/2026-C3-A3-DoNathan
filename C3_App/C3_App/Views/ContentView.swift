@@ -15,12 +15,11 @@ import AVFoundation
 
 struct ContentView: View {
     @StateObject private var viewModel = CameraViewModel()
-    @State private var missionType: MissionType? = nil
+    @State private var missionType: MissionType? = .colorPicker
     
     var body: some View {
-        CommonCameraView(missionType: $missionType)
-            
         
+        CommonCameraView(missionType: $missionType)
     }
 }
 

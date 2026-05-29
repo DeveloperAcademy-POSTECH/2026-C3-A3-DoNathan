@@ -22,7 +22,7 @@ class SaturationViewModel: ObservableObject {
 
     // MARK: - 초기 이미지 세팅
     func setImage(_ image: UIImage) {
-        // ✅ 수정: orientation 보정 후 CIImage 생성
+        // orientation 보정 후 CIImage 생성
             let orientedImage = image.fixedOrientation()
             originalCIImage = CIImage(image: orientedImage)
             previewCIImage = makeDownsampledCIImage(from: orientedImage, scale: 0.25)
@@ -89,7 +89,7 @@ class SaturationViewModel: ObservableObject {
 }
 
 extension UIImage {
-    /// CIImage 변환 전 orientation을 픽셀에 직접 반영
+    // CIImage 변환 전 orientation을 픽셀에 직접 반영
     func fixedOrientation() -> UIImage {
         // 이미 정방향이면 그대로 반환
         guard imageOrientation != .up else { return self }

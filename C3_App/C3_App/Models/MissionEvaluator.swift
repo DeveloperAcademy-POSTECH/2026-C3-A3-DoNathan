@@ -5,6 +5,12 @@
 //  Created by 최정원 on 5/28/26.
 //
 
+
+
+// 미션 성공/실패 판정 로직
+// 아직 연결 xxx
+// 이 코드도 우리의 기능과는 맞지 않을 겁니다 대대적 수정 필요
+
 import UIKit
 
 struct MissionEvaluator {
