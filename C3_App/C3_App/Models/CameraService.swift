@@ -22,7 +22,9 @@ class CameraService: NSObject, AVCapturePhotoCaptureDelegate, AVCaptureVideoData
     private let videoOutput = AVCaptureVideoDataOutput()
     private let frameQueue = DispatchQueue(label: "camera.frame.queue", qos: .userInteractive)
     private let frameContext = CIContext(options: [.useSoftwareRenderer: false])
-    var brightness: Double = 0.0
+    var brightness: Double = 0.0 {
+        didSet { applyExposureBias() }
+    }
     var onFrameProcessed: ((UIImage) -> Void)?
 
     // ViewModel로 이미지를 넘겨주기 위한 콜백 클로저
@@ -67,8 +69,11 @@ class CameraService: NSObject, AVCapturePhotoCaptureDelegate, AVCaptureVideoData
 
             // 실시간 프레임 출력 추가
             if session.canAddOutput(videoOutput) {
-                session.addOutput(videoOutput)
+                videoOutput.videoSettings = [
+                    kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32BGRA
+                ]
                 videoOutput.alwaysDiscardsLateVideoFrames = true
+                session.addOutput(videoOutput)
                 videoOutput.setSampleBufferDelegate(self, queue: frameQueue)
                 setVideoOrientation()
             }
@@ -136,6 +141,17 @@ class CameraService: NSObject, AVCapturePhotoCaptureDelegate, AVCaptureVideoData
         session.commitConfiguration()
 
         applyZoomFactor(targetZoomFactor)
+    }
+
+    private func applyExposureBias() {
+        guard let device = currentDevice else { return }
+        let bias = Float(brightness * 4)
+        let clamped = max(device.minExposureTargetBias, min(device.maxExposureTargetBias, bias))
+        DispatchQueue.global(qos: .userInteractive).async {
+            try? device.lockForConfiguration()
+            device.setExposureTargetBias(clamped, completionHandler: nil)
+            device.unlockForConfiguration()
+        }
     }
 
     private func applyZoomFactor(_ factor: CGFloat) {

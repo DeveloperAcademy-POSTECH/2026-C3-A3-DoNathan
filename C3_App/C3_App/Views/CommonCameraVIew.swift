@@ -9,7 +9,7 @@ import SwiftUI
 import AVFoundation
 import Photos
 
-struct CommonCameraView: View {
+struct CommonCameraView<MissionOverlay: View>: View {
     @ObservedObject var viewModel: CameraViewModel
 
     @State private var capturedImage: UIImage?
@@ -19,6 +19,7 @@ struct CommonCameraView: View {
     @State private var showGrid: Bool = false
 
     var onDismiss: (() -> Void)? = nil
+    @ViewBuilder var missionOverlay: () -> MissionOverlay
 
     var body: some View {
         VStack(spacing: 0) {
@@ -99,7 +100,14 @@ struct CommonCameraView: View {
                 }
                 .padding(.bottom, 18)
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .frame(width: UIScreen.main.bounds.width,
+                   height: UIScreen.main.bounds.width * 4 / 3)
+
+            // MARK: - 미션 오버레이 슬롯
+            missionOverlay()
+                .frame(maxWidth: .infinity)
+
+            Spacer()
 
             // MARK: - 하단 컨트롤
             HStack {
@@ -237,5 +245,7 @@ struct GridOverlayView: View {
 }
 
 #Preview {
-    CommonCameraView(viewModel: CameraViewModel(), missionType: .constant(.crop))
+    CommonCameraView(viewModel: CameraViewModel(), missionType: .constant(.crop)) {
+        EmptyView()
+    }
 }

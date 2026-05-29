@@ -13,7 +13,7 @@ struct ContentView: View {
     @State private var missionType: MissionType? = nil
 
     var body: some View {
-        CommonCameraView(viewModel: viewModel, missionType: $missionType)
+        BrightnessView()
     }
 }
 
