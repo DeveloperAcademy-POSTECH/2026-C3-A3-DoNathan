@@ -44,3 +44,7 @@ struct MissionRootView: View {
         }
     }
 }
+
+#Preview {
+    MissionRootView()
+}

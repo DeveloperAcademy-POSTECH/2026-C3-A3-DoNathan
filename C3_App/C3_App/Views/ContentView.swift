@@ -19,7 +19,8 @@ struct ContentView: View {
     
     var body: some View {
         
-        CommonCameraView(missionType: $missionType)
+        //CommonCameraView(missionType: $missionType)
+        MissionRootView()
     }
 }
 

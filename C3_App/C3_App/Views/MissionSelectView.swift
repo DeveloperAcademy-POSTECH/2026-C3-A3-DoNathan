@@ -37,14 +37,19 @@ struct MissionSelectView: View {
                                         cellHeight: cellH,
                                         onDelete: {
                                             vm.missions[mi].completedImage = nil
+                                        },
+                                        onTap: {   // ✅ 추가
+                                            withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
+                                                vm.selectedIndex = (vm.selectedIndex == mi) ? nil : mi
+                                            }
                                         }
                                     )
-                                    .onTapGesture {
-                                        guard !vm.missions[mi].isCompleted else { return }
-                                        withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
-                                            vm.selectedIndex = (vm.selectedIndex == mi) ? nil : mi
-                                        }
-                                    }
+//                                    .onTapGesture {
+//                                        guard !vm.missions[mi].isCompleted else { return }
+//                                        withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
+//                                            vm.selectedIndex = (vm.selectedIndex == mi) ? nil : mi
+//                                        }
+//                                    }
                                 }
                             }
                         }
@@ -133,3 +138,4 @@ struct MissionSelectView: View {
         return cellH * 3 + 4
     }
 }
+
