@@ -135,36 +135,35 @@ struct MissionSelectView: View {
             .fullScreenCover(item: $vm.activeDestination) { destination in
                 switch destination {
                 case .basic:
-                    CommonCameraView(viewModel: viewModel, missionType: $missionType) {
+                    CommonCameraView(viewModel: viewModel,
+                                     vm: vm,
+                                     destination: destination,
+                    ) {
                         EmptyView()
                     }
-//                CommonCameraView(
-//                            viewModel: viewModel,
-//                            missionType: .constant(.basic), onDismiss: {}, // 기존 미션 타입 구조에 맞게 세팅
-//                            onResult: { capturedImage in
-//                                // 📸 1. 사진 촬영이 성공하면 빙고판 뷰모델에 이미지를 전달하고 칸을 채웁니다.
-//                                vm.handleMissionResult(image: capturedImage)
-//                            }
-//                        ) {
-//                            // 🖼️ missionOverlay 자리 (원래 쓰시던 EmptyView 뷰 블록)
-//                            EmptyView()
-//                        }
-//                        .onDisappear {
-//                            // 닫기 버튼 등으로 화면이 꺼질 때 내비게이션 상태 청소
-//                            vm.activeDestination = nil
-//                        }
-                    
                 case .brightness:
                     BrightnessView()   // 명도 조절 전용 카메라 뷰 연결
-                    
                 case .saturation:
-                    Text("채도 조절 카메라 구현 구역") // 추후 만들 채도 뷰 연결
-                    
+                    CommonCameraView(viewModel: viewModel,
+                                     vm: vm,
+                                     destination: destination,
+                    ) {
+                        EmptyView()
+                    }
                 case .crop:
-                    Text("이미지 크롭 뷰 구현 구역")
-                    
+                    CommonCameraView(viewModel: viewModel,
+                                     vm: vm,
+                                     destination: destination,
+                    ) {
+                        EmptyView()
+                    }
                 case .colorPicker:
-                    Text("컬러피커 뷰 구현 구역")
+                    CommonCameraView(viewModel: viewModel,
+                                     vm: vm,
+                                     destination: destination,
+                    ) {
+                        EmptyView()
+                    }
                 }
             }
 }

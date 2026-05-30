@@ -11,10 +11,14 @@ import Photos // PhotoKit
 
 struct CommonCameraView<MissionOverlay: View>: View {
     @ObservedObject var viewModel: CameraViewModel
+    @ObservedObject var vm: MissionViewModel
     @State private var capturedImage: UIImage?
-    @Binding var missionType: MissionType?
     @State private var zoomLevel: CGFloat = 1.0
     @State private var showGrid: Bool = false
+    
+    @State private var showEditView: Bool = false
+    @State private var currentDestination: MissionType? = nil  // ✅ 추가
+    let destination: MissionType?
 
     var onDismiss: (() -> Void)? = nil
     @ViewBuilder var missionOverlay: () -> MissionOverlay
@@ -158,27 +162,31 @@ struct CommonCameraView<MissionOverlay: View>: View {
         .onReceive(viewModel.$capturedImage) { image in
             guard let image else { return }
             capturedImage = image
-            missionType = .crop
+            currentDestination = destination ?? vm.activeDestination    // ✅ vm.activeDestination 대신 직접 받은 값 사용
+            print("destination: \(destination)")
+            showEditView = true   // ✅ 별도 트리거
+            
         }
-        .fullScreenCover(item: $missionType) { mission in
+        .fullScreenCover(isPresented: $showEditView) {
             if let image = capturedImage {
-                switch mission {
+                switch currentDestination {
                 case .basic:
                     EmptyView()
                     // 여기도 미션 판정 뷰로 연결하도록 수정 필요
                 case .brightness:
-                    BrightnessView()
+                    EmptyView()
                     // 여기는 명도 카메라 뷰가 아닌 미션 판정 뷰로 연결하도록 수정 필요!!!
                 case .saturation:
                     SaturationView(
                         capturedImage: image,
                         onConfirm: { editedImage, _ in
                             saveEditedPhoto(editedImage)
-                            missionType = nil
+                            showEditView = false
                         },
                         onCancel: {
                             capturedImage = nil
-                            missionType = nil
+                            //missionType = nil
+                            showEditView = false
                         }
                     )
                 case .crop:
@@ -186,24 +194,26 @@ struct CommonCameraView<MissionOverlay: View>: View {
                         capturedImage: image,
                         onConfirm: { croppedImage in
                             saveEditedPhoto(croppedImage)
-                            missionType = nil
+                            showEditView = false
                         },
                         onCancel: {
                             capturedImage = nil
-                            missionType = nil
+                            showEditView = false
                         }
                     )
                 case .colorPicker:
                     ColorPickerView(
                         capturedImage: image,
                         onConfirm: { _ in
-                            missionType = nil
+                            showEditView = false
                         },
                         onCancel: {
                             capturedImage = nil
-                            missionType = nil
+                            showEditView = false
                         }
                     )
+                default:
+                    EmptyView()
                 }
             }
         }
@@ -257,7 +267,7 @@ struct GridOverlayView: View {
 }
 
 #Preview {
-    CommonCameraView(viewModel: CameraViewModel(), missionType: .constant(.crop)) {
+    CommonCameraView(viewModel: CameraViewModel(),vm: MissionViewModel(), destination: .basic) {
         EmptyView()
     }
 }

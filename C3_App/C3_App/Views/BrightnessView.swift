@@ -14,7 +14,7 @@ struct BrightnessView: View {
     var onDismiss: (() -> Void)? = nil
 
     var body: some View {
-        CommonCameraView(viewModel: viewModel, missionType: $missionType, onDismiss: onDismiss) {
+        CommonCameraView(viewModel: viewModel, vm: MissionViewModel(), destination: nil, onDismiss: onDismiss) {
             BrightnessSlider(brightness: $viewModel.brightness)
                 .padding(.horizontal, 24)
                 .padding(.top, 24)
