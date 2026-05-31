@@ -69,6 +69,11 @@ class CameraViewModel: ObservableObject {
     func stopSession() { cameraService.stopSession() }
     func setZoom(_ factor: CGFloat) { cameraService.setZoom(factor) }
     
+    // 카메라 재진입 시 데이터 리셋
+    func resetCapturedImage() {
+        capturedImage = nil
+    }
+    
     // 사진 촬영
     func takePhoto() {
         withAnimation(.easeInOut(duration: 0.1)) { showFlashOverlay = true }

@@ -5,6 +5,8 @@
 //  Created by 이윤진 on 5/29/26.
 //
 
+// 현재 사용하지 않음. 아마 사용하지 않을 예정
+
 import SwiftUI
 import AVFoundation
 

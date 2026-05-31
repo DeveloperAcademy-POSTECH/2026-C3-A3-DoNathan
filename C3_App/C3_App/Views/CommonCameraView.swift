@@ -153,6 +153,10 @@ struct CommonCameraView<MissionOverlay: View>: View {
         }
         .background(Color.white)
         .onAppear {
+            capturedImage = nil
+            showEditView = false
+            currentDestination = nil
+            viewModel.resetCapturedImage()
             viewModel.configureCamera()
             viewModel.startSession()
         }

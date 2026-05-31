@@ -31,6 +31,8 @@ class CameraService: NSObject, AVCapturePhotoCaptureDelegate, AVCaptureVideoData
     var onSessionInitialized: (() -> Void)?
 
     func checkPermissionAndSetup() {
+        if captureSession != nil { return }
+        
         switch AVCaptureDevice.authorizationStatus(for: .video) {
         case .authorized:
             setupCaptureSession()
