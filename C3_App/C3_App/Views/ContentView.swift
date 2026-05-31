@@ -13,13 +13,7 @@ struct ContentView: View {
     //@State private var missionType: MissionType? = nil
 
     var body: some View {
-        
-        //CommonCameraView(missionType: $missionType)
         MissionRootView()
-//        CommonCameraView(viewModel: viewModel, missionType: $missionType) {
-//            EmptyView()
-//        }
-
     }
 }
 

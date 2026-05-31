@@ -9,12 +9,13 @@ import SwiftUI
 
 struct BrightnessView: View {
     @StateObject private var viewModel = CameraViewModel()
+    @ObservedObject var vm: MissionViewModel
     @State private var missionType: MissionType? = nil
 
     var onDismiss: (() -> Void)? = nil
 
     var body: some View {
-        CommonCameraView(viewModel: viewModel, vm: MissionViewModel(), destination: nil, onDismiss: onDismiss) {
+        CommonCameraView(viewModel: viewModel, vm: vm, destination: nil,  onDismiss: { vm.activeDestination = nil }) {
             BrightnessSlider(brightness: $viewModel.brightness)
                 .padding(.horizontal, 24)
                 .padding(.top, 24)
@@ -43,5 +44,5 @@ struct BrightnessSlider: View {
 }
 
 #Preview {
-    BrightnessView()
+    BrightnessView(vm: MissionViewModel())
 }

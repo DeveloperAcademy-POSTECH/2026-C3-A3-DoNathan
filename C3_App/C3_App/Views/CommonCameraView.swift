@@ -162,10 +162,8 @@ struct CommonCameraView<MissionOverlay: View>: View {
         .onReceive(viewModel.$capturedImage) { image in
             guard let image else { return }
             capturedImage = image
-            currentDestination = destination ?? vm.activeDestination    // ✅ vm.activeDestination 대신 직접 받은 값 사용
-            print("destination: \(destination)")
-            showEditView = true   // ✅ 별도 트리거
-            
+            currentDestination = destination ?? vm.activeDestination
+            showEditView = true
         }
         .fullScreenCover(isPresented: $showEditView) {
             if let image = capturedImage {
@@ -185,7 +183,6 @@ struct CommonCameraView<MissionOverlay: View>: View {
                         },
                         onCancel: {
                             capturedImage = nil
-                            //missionType = nil
                             showEditView = false
                         }
                     )

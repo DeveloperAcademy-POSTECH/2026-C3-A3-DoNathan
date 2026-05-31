@@ -25,7 +25,7 @@ struct MissionSelectView: View {
 
                     GeometryReader { geo in
                         let cellW = (geo.size.width - 40 - 4) / 3
-                        let cellH = cellW * 4 / 3
+                        let cellH = cellW * 3 / 2 // 4/3
 
                         LazyVGrid(columns: columns, spacing: 2) {
                             ForEach(0..<9) { gridIndex in
@@ -108,28 +108,6 @@ struct MissionSelectView: View {
                     .padding(.bottom, 32)
                 }
                 .navigationBarHidden(true)
-
-                // 미션 성공 토스트. 아마도 뺄 부분
-//                VStack {
-//                    Spacer()
-//                    if vm.showSuccessToast {
-//                        HStack(spacing: 8) {
-//                            Image(systemName: "checkmark.circle.fill")
-//                                .foregroundColor(.white)
-//                            Text("미션 성공! 칸이 채워졌어요 🎉")
-//                                .font(.system(size: 14, weight: .semibold))
-//                                .foregroundColor(.white)
-//                        }
-//                        .padding(.horizontal, 20)
-//                        .padding(.vertical, 12)
-//                        .background(vm.mainColor)
-//                        .cornerRadius(24)
-//                        .shadow(color: vm.mainColor.opacity(0.4), radius: 8, y: 4)
-//                        .padding(.bottom, 100)
-//                        .transition(.move(edge: .bottom).combined(with: .opacity))
-//                    }
-//                }
-//                .animation(.spring(response: 0.4, dampingFraction: 0.75), value: vm.showSuccessToast)
             }
             // 🌟 변경 포인트 2: activeDestination의 상태를 감시하여 알맞은 카메라 뷰로 분기 연결!
             .fullScreenCover(item: $vm.activeDestination) { destination in
@@ -138,15 +116,17 @@ struct MissionSelectView: View {
                     CommonCameraView(viewModel: viewModel,
                                      vm: vm,
                                      destination: destination,
+                                     onDismiss: { vm.activeDestination = nil }
                     ) {
                         EmptyView()
                     }
                 case .brightness:
-                    BrightnessView()   // 명도 조절 전용 카메라 뷰 연결
+                    BrightnessView(vm: vm)   // 명도 조절 전용 카메라 뷰 연결
                 case .saturation:
                     CommonCameraView(viewModel: viewModel,
                                      vm: vm,
                                      destination: destination,
+                                     onDismiss: { vm.activeDestination = nil }
                     ) {
                         EmptyView()
                     }
@@ -154,6 +134,7 @@ struct MissionSelectView: View {
                     CommonCameraView(viewModel: viewModel,
                                      vm: vm,
                                      destination: destination,
+                                     onDismiss: { vm.activeDestination = nil }
                     ) {
                         EmptyView()
                     }
@@ -161,6 +142,7 @@ struct MissionSelectView: View {
                     CommonCameraView(viewModel: viewModel,
                                      vm: vm,
                                      destination: destination,
+                                     onDismiss: { vm.activeDestination = nil }
                     ) {
                         EmptyView()
                     }

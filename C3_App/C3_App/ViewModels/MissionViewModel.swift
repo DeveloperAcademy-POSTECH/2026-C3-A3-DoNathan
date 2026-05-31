@@ -22,7 +22,7 @@ class MissionViewModel: ObservableObject {
     @Published var showCompletion        = false
     @Published var showSuccessToast      = false
 
-    let mainColor: Color = Color(red: 0.92, green: 0.46, blue: 0.60)
+    let mainColor: Color = Color(red: 0.92, green: 0.46, blue: 0.60) // 색상 변경
 
     var completedCount: Int { missions.filter { $0.isCompleted }.count }
     var allCompleted:   Bool { missions.allSatisfy { $0.isCompleted } }
