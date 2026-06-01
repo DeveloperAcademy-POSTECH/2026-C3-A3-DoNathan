@@ -10,6 +10,7 @@ import SwiftUI
 struct ResultBanner: View {
     let text:  String
     let color: Color
+    
     var body: some View {
         Text(text)
             .font(.system(size: 16, weight: .bold))

@@ -13,6 +13,7 @@ struct MissionCell: View {
     let mainColor:  Color
     let cellHeight: CGFloat
     let onDelete:   () -> Void  // ← 삭제 콜백 추가
+    let onTap:      () -> Void  // 탭 콜백
 
     @State private var showDeleteButton = false
 
@@ -69,6 +70,8 @@ struct MissionCell: View {
                 withAnimation(.easeInOut(duration: 0.2)) {
                     showDeleteButton.toggle()
                 }
+            } else {
+                onTap()
             }
         }
     }
