@@ -7,16 +7,18 @@
 
 import SwiftUI
 import AVFoundation
-import Photos
+import Photos // PhotoKit
 
 struct CommonCameraView<MissionOverlay: View>: View {
     @ObservedObject var viewModel: CameraViewModel
-
+    @ObservedObject var vm: MissionViewModel
     @State private var capturedImage: UIImage?
-    @Binding var missionType: MissionType?
-
     @State private var zoomLevel: CGFloat = 1.0
     @State private var showGrid: Bool = false
+    
+    @State private var showEditView: Bool = false
+    @State private var currentDestination: MissionType? = nil  // ✅ 추가
+    let destination: MissionType?
 
     var onDismiss: (() -> Void)? = nil
     @ViewBuilder var missionOverlay: () -> MissionOverlay
@@ -52,56 +54,57 @@ struct CommonCameraView<MissionOverlay: View>: View {
             .background(Color.white)
 
             // MARK: - 카메라 프리뷰
-            ZStack(alignment: .bottom) {
-                Color.black
+            GeometryReader { geo in
+                ZStack(alignment: .bottom) {
+                    Color.black
 
-                if let session = viewModel.session {
-                    CameraPreview(session: session)
-                        .ignoresSafeArea(edges: [])
-                } else {
-                    ProgressView()
-                        .foregroundStyle(.white)
-                }
+                    if let session = viewModel.session {
+                        CameraPreview(session: session)
+                            .ignoresSafeArea(edges: [])
+                    } else {
+                        ProgressView()
+                            .foregroundStyle(.white)
+                    }
 
-                // 셔터 플래시 오버레이
-                if viewModel.showFlashOverlay {
-                    Color.white.opacity(0.7)
-                }
+                    // 셔터 플래시 오버레이
+                    if viewModel.showFlashOverlay {
+                        Color.white.opacity(0.7)
+                    }
 
-                // 그리드 오버레이
-                if showGrid {
-                    GridOverlayView()
-                }
+                    // 그리드 오버레이
+                    if showGrid {
+                        GridOverlayView()
+                    }
 
-                // 줌 버튼 (전면 카메라일 때 0.5x 숨김)
-                HStack(spacing: 6) {
-                    let zoomLevels: [CGFloat] = viewModel.isFrontCamera ? [1.0, 2.0] : [0.5, 1.0, 2.0]
-                    ForEach(zoomLevels, id: \.self) { zoom in
-                        let label = zoom == 0.5 ? "0.5x" : zoom == 1.0 ? "1x" : "2x"
-                        let isSelected = zoomLevel == zoom
+                    // 줌 버튼 (전면 카메라일 때 0.5x 숨김)
+                    HStack(spacing: 6) {
+                        let zoomLevels: [CGFloat] = viewModel.isFrontCamera ? [1.0, 2.0] : [0.5, 1.0, 2.0]
+                        ForEach(zoomLevels, id: \.self) { zoom in
+                            let label = zoom == 0.5 ? "0.5x" : zoom == 1.0 ? "1x" : "2x"
+                            let isSelected = zoomLevel == zoom
 
-                        Button {
-                            zoomLevel = zoom
-                            viewModel.setZoom(zoom)
-                        } label: {
-                            Text(label)
-                                .font(.system(size: 13, weight: .semibold))
-                                .foregroundColor(.white)
-                                .padding(.horizontal, 14)
-                                .padding(.vertical, 7)
-                                .background(
-                                    Capsule()
-                                        .fill(isSelected
-                                              ? Color.white.opacity(0.35)
-                                              : Color.black.opacity(0.4))
-                                )
+                            Button {
+                                zoomLevel = zoom
+                                viewModel.setZoom(zoom)
+                            } label: {
+                                Text(label)
+                                    .font(.system(size: 13, weight: .semibold))
+                                    .foregroundColor(.white)
+                                    .padding(.horizontal, 14)
+                                    .padding(.vertical, 7)
+                                    .background(
+                                        Capsule()
+                                            .fill(isSelected
+                                                  ? Color.white.opacity(0.35)
+                                                  : Color.black.opacity(0.4))
+                                    )
+                            }
                         }
                     }
+                    .padding(.bottom, 18)
                 }
-                .padding(.bottom, 18)
+                .frame(width: geo.size.width, height: geo.size.width * 4 / 3)
             }
-            .frame(width: UIScreen.main.bounds.width,
-                   height: UIScreen.main.bounds.width * 4 / 3)
 
             // MARK: - 미션 오버레이 슬롯
             missionOverlay()
@@ -150,6 +153,10 @@ struct CommonCameraView<MissionOverlay: View>: View {
         }
         .background(Color.white)
         .onAppear {
+            capturedImage = nil
+            showEditView = false
+            currentDestination = nil
+            viewModel.resetCapturedImage()
             viewModel.configureCamera()
             viewModel.startSession()
         }
@@ -159,23 +166,28 @@ struct CommonCameraView<MissionOverlay: View>: View {
         .onReceive(viewModel.$capturedImage) { image in
             guard let image else { return }
             capturedImage = image
-            missionType = .saturation
+            currentDestination = destination ?? vm.activeDestination
+            showEditView = true
         }
-        .fullScreenCover(item: $missionType) { mission in
+        .fullScreenCover(isPresented: $showEditView) {
             if let image = capturedImage {
-                switch mission {
+                switch currentDestination {
+                case .basic:
+                    EmptyView()
+                    // 여기도 미션 판정 뷰로 연결하도록 수정 필요
                 case .brightness:
                     EmptyView()
+                    // 여기는 명도 카메라 뷰가 아닌 미션 판정 뷰로 연결하도록 수정 필요!!!
                 case .saturation:
                     SaturationView(
                         capturedImage: image,
                         onConfirm: { editedImage, _ in
                             saveEditedPhoto(editedImage)
-                            missionType = nil
+                            showEditView = false
                         },
                         onCancel: {
                             capturedImage = nil
-                            missionType = nil
+                            showEditView = false
                         }
                     )
                 case .crop:
@@ -183,24 +195,26 @@ struct CommonCameraView<MissionOverlay: View>: View {
                         capturedImage: image,
                         onConfirm: { croppedImage in
                             saveEditedPhoto(croppedImage)
-                            missionType = nil
+                            showEditView = false
                         },
                         onCancel: {
                             capturedImage = nil
-                            missionType = nil
+                            showEditView = false
                         }
                     )
                 case .colorPicker:
                     ColorPickerView(
                         capturedImage: image,
                         onConfirm: { _ in
-                            missionType = nil
+                            showEditView = false
                         },
                         onCancel: {
                             capturedImage = nil
-                            missionType = nil
+                            showEditView = false
                         }
                     )
+                default:
+                    EmptyView()
                 }
             }
         }
@@ -254,7 +268,7 @@ struct GridOverlayView: View {
 }
 
 #Preview {
-    CommonCameraView(viewModel: CameraViewModel(), missionType: .constant(.crop)) {
+    CommonCameraView(viewModel: CameraViewModel(),vm: MissionViewModel(), destination: .basic) {
         EmptyView()
     }
 }

@@ -10,10 +10,10 @@ import AVFoundation
 
 struct ContentView: View {
     @StateObject private var viewModel = CameraViewModel()
-    @State private var missionType: MissionType? = nil
+    //@State private var missionType: MissionType? = nil
 
     var body: some View {
-        BrightnessView()
+        MissionRootView()
     }
 }
 
