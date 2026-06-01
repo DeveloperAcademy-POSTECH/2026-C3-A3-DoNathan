@@ -8,7 +8,16 @@
 import SwiftUI
 
 struct MissionRootView: View {
-    @StateObject var vm = MissionViewModel()
+    let missionColor: MissionColor
+    var onDismiss: (() -> Void)? = nil
+
+    @StateObject var vm: MissionViewModel
+
+    init(missionColor: MissionColor, onDismiss: (() -> Void)? = nil) {
+        self.missionColor = missionColor
+        self.onDismiss = onDismiss
+        _vm = StateObject(wrappedValue: MissionViewModel(missionColor: missionColor))
+    }
 
     var body: some View {
         ZStack {
@@ -46,5 +55,5 @@ struct MissionRootView: View {
 }
 
 #Preview {
-    MissionRootView()
+    MissionRootView(missionColor: MissionColor.all[0])
 }

@@ -13,7 +13,8 @@ struct ContentView: View {
     //@State private var missionType: MissionType? = nil
 
     var body: some View {
-        MissionRootView()
+        //MissionRootView(missionColor: MissionColor.all[0])
+        MainRootView()
     }
 }
 

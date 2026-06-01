@@ -17,7 +17,7 @@ struct CommonCameraView<MissionOverlay: View>: View {
     @State private var showGrid: Bool = false
     
     @State private var showEditView: Bool = false
-    @State private var currentDestination: MissionType? = nil  // ✅ 추가
+    @State private var currentDestination: MissionType? = nil
     let destination: MissionType?
 
     var onDismiss: (() -> Void)? = nil

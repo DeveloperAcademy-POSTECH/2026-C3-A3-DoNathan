@@ -78,7 +78,10 @@ struct MainRootView: View {
         }
         .ignoresSafeArea()
         .fullScreenCover(isPresented: $showMission) {
-            MissionRootView()
+            MissionRootView(
+                missionColor: selectedColor,
+                onDismiss: { showMission = false }
+            )
         }
     }
 }

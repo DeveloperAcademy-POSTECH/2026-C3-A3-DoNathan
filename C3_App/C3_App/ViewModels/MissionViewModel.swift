@@ -22,15 +22,16 @@ class MissionViewModel: ObservableObject {
     @Published var showCompletion        = false
     @Published var showSuccessToast      = false
 
-    let mainColor: Color = .customBlue
-    //let missionColor: MissionColor =
+    let missionColor: MissionColor
+    var mainColor: Color { missionColor.color }
+
+    init(missionColor: MissionColor = MissionColor.all[0]) {
+        self.missionColor = missionColor
+        load()
+    }
 
     var completedCount: Int { missions.filter { $0.isCompleted }.count }
     var allCompleted:   Bool { missions.allSatisfy { $0.isCompleted } }
-
-    init() {
-        load()
-    }
     
     var currentMissionDestination: MissionType? {
             guard let idx = selectedIndex else { return nil }
