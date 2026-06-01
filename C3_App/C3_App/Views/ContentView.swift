@@ -9,11 +9,9 @@ import SwiftUI
 import AVFoundation
 
 struct ContentView: View {
-    @StateObject private var viewModel = CameraViewModel()
-    //@State private var missionType: MissionType? = nil
-
+    //@StateObject private var viewModel = CameraViewModel()
+    
     var body: some View {
-        //MissionRootView(missionColor: MissionColor.all[0])
         MainRootView()
     }
 }

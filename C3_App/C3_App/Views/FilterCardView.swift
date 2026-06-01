@@ -38,7 +38,7 @@ struct FilterCardView: View {
                 Text(missionColor.name)
                     .font(Font.custom("Inria Serif", size: 32).weight(.bold))
                     .foregroundColor(.white)
-                    .padding(.horizontal, 60)
+                    .padding(.horizontal, 48)
                     .padding(.bottom, 40)
             }
             .onTapGesture {
