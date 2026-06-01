@@ -5,6 +5,7 @@
 //  Created by 이윤진 on 5/29/26.
 //
 
+//결과를 보여주는 배너 컴포넌트
 import SwiftUI
 
 struct ResultBanner: View {

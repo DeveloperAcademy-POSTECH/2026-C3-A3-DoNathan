@@ -17,11 +17,11 @@ struct MissionCompleteView: View {
     @State private var showSaveToast = false
 
     var cellHeight: CGFloat {
-        let screenW = UIApplication.shared.connectedScenes
+        let screenW = UIApplication.shared.connectedScenes // 화면 너비 가져오기
             .compactMap { $0 as? UIWindowScene }
             .first?.screen.bounds.width ?? 390
-        let w = (screenW - 32 - 6) / 3
-        return w * 4 / 3
+        let w = (screenW - 32 - 6) / 3  // (전체너비 - 패딩32 - 간격6) / 3
+        return w * 4 / 3  // 4:3 비율로 높이 계산
     }
 
     var body: some View {
@@ -46,7 +46,7 @@ struct MissionCompleteView: View {
                                     .animation(.spring(response: 0.5, dampingFraction: 0.7)
                                         .delay(Double(gi) * 0.07), value: appeared)
                             } else {
-                                Color(.systemGray5).frame(height: cellHeight)
+                                Color(.systemGray5).frame(height: cellHeight) // 미완료면 회색
                             }
                         }
                     }
@@ -116,12 +116,12 @@ struct MissionCompleteView: View {
                 switch status {
                 case .authorized, .limited:
                     UIImageWriteToSavedPhotosAlbum(img, nil, nil, nil)
-                    showSaveToast = true          // ← authorized 안에만 있음
+                    showSaveToast = true
                     DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                         showSaveToast = false
                     }
                 case .denied, .restricted:
-                    showPermissionAlert = true    // ← 거부하면 알럿만 뜸
+                    showPermissionAlert = true    // 권한 없으면 alert
                 default:
                     break
                 }
@@ -129,6 +129,7 @@ struct MissionCompleteView: View {
         }
     }
 
+    // iOS 기본 공유 시트
     func shareCollage() {
         guard let img = makeCollageImage() else { return }
         let av = UIActivityViewController(activityItems: [img], applicationActivities: nil)
@@ -137,7 +138,8 @@ struct MissionCompleteView: View {
             vc.present(av, animated: true)
         }
     }
-
+    
+    // 9개 사진을 하나의 콜라주 이미지로 합치기
     func makeCollageImage() -> UIImage? {
         let size: CGFloat = 1200
         let cw = size / 3

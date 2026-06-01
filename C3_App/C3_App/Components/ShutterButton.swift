@@ -1,10 +1,9 @@
 //
 //  ShutterButton.swift
 //  TestBingoSeparate
-//
 //  Created by 이윤진 on 5/29/26.
-//
 
+// 카메라 셔터 버튼 컴포넌트
 import SwiftUI
 
 struct ShutterButton: View {

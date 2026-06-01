@@ -1,17 +1,17 @@
 //
 //  SaveShareButton.swift
 //  TestBingoSeparate
-//
 //  Created by 이윤진 on 5/29/26.
-//
 
+// 저장/공유 버튼 컴포넌트
 import SwiftUI
 
 struct SaveShareButton: View {
     let icon: String
-    let label: String
-    let action: () -> Void
+    let label: String // 버튼 아래 텍스트
+    let action: () -> Void // 버튼 눌렸을 때 실행할 함수 (콜백)
     var body: some View {
+        // 버튼 탭하면 외부에서 받은 action 콜백 실행
         Button(action: action) {
             VStack(spacing: 6) {
                 ZStack {

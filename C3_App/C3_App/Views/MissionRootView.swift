@@ -3,8 +3,8 @@
 //  TestBingoSeparate
 //
 //  Created by 이윤진 on 5/29/26.
-//
 
+// 앱의 화면을 총괄하는 최상위 뷰(전체 조율) -> 어떤 화면 보여줄지 결정
 import SwiftUI
 
 struct MissionRootView: View {
@@ -30,7 +30,7 @@ struct MissionRootView: View {
         // 앱 시작 시 8/8 완료면 완료 화면으로 바로 이동 -> 고려 필요
         .onAppear {
                     if vm.allCompleted {
-                        vm.showCompletion = true
+                       vm.showCompletion = true
                     }
                 }
         .fullScreenCover(isPresented: $vm.showMissionCamera) {

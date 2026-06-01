@@ -8,25 +8,30 @@
 import SwiftUI
 
 struct MissionCameraView: View {
-    let mission:   Mission
+    let mission:   Mission  // 현재 수행할 미션
     let mainColor: Color
-    let onResult:  (UIImage?) -> Void
+    let onResult:  (UIImage?) -> Void   // 결과 사진 전달할 콜백
 
+    // 카메라 모델 생성 - @StateObject는 직접 만든 ObservableObject
     @StateObject private var camera = CameraModel()
 
-    @State private var judging       = false
-    @State private var resultState: ResultState = .idle
-    @State private var capturedImage: UIImage? = nil
+    @State private var judging = false // 판정 중 여부
+    @State private var resultState: ResultState = .idle // 현재 결과 상태
+    @State private var capturedImage: UIImage? = nil // 찍은 사진
 
+    
     enum ResultState { case idle, success, failure }
-
+    // idle: 대기중, success: 성공, failure: 실패
+    
+    //카메라 미리보기
     var body: some View {
         ZStack {
             MissionCameraPreview(session: camera.session)
-                .ignoresSafeArea()
+                .ignoresSafeArea() // 화면 전체를 카메라로 채움
 
             VStack {
                 HStack {
+                    //X 버튼 누르면 nil 전달하고 카메라 화면 닫음
                     Button { onResult(nil) } label: {
                         Image(systemName: "xmark")
                             .font(.system(size: 18, weight: .semibold))
@@ -116,6 +121,9 @@ struct MissionCameraView: View {
         }
     }
 
+    
+    
+    // 현재는 랜덤 판정으로 둠 -> 후에 실제 이미지 분석 로직으로 바꿔야 함!
     private func judgeMission(image: UIImage, mission: Mission) -> Bool {
         return Double.random(in: 0...1) < 0.8
     }
