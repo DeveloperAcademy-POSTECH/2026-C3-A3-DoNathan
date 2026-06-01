@@ -94,13 +94,11 @@ class MissionViewModel: ObservableObject {
     }
 
     func resetMissions() {
-        //missions = Self.defaultMissions
         UserDefaults.standard.removeObject(forKey: saveKey)
         generateRandomMissions()
     }
 
     // MARK: - 기본 미션 목록
-
     static let defaultMissions: [Mission] = [
         Mission(title: "기본 카메라", icon: "camera",                  missionDescription: "주변의 아무 사진이나 찍어보세요!"),
         Mission(title: "명도 조절",  icon: "sun.max",                  missionDescription: "밝은 빛이 있는 장면을 찍어보세요!"),

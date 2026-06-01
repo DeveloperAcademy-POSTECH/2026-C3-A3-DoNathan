@@ -13,7 +13,7 @@ struct MissionColor: Identifiable, Hashable {
     let color: Color
     let hexCode: String
     let imageName: String
-    let isUnlocked: Bool // 필터 언락 여부?
+    let isUnlocked: Bool
     
     init(name: String, assetName: String, hexCode: String, imageName: String, isUnlocked: Bool) {
             self.name = name

@@ -25,10 +25,10 @@ struct MainRootView: View {
 
                 // 하단 패널
                 VStack(spacing: 16) {
-                    ColorPaletteBar(
+                    FilterCarousel(
                         colors: MissionColor.all,
                         selectedColor: selectedColor,
-                        onSelect: { selectedColor = $0 }
+                        onSelect: { selectedColor = $0 }, height: 80
                     )
                     .padding(.horizontal, 20)
 
@@ -63,7 +63,7 @@ struct MainRootView: View {
                             .background(
                                 selectedColor.isUnlocked
                                 ? selectedColor.color
-                                : Color(.systemGray5)
+                                : Color(.white)
                             )
                             .cornerRadius(25)
                         }
@@ -73,7 +73,7 @@ struct MainRootView: View {
                     .padding(.bottom, 32)
                 }
                 .padding(.top, 16)
-                .background(Color(.systemGray6))
+                .background(Color(.white))
             }
         }
         .ignoresSafeArea()

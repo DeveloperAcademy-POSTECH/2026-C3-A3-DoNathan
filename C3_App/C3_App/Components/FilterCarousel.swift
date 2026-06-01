@@ -7,28 +7,41 @@
 
 import SwiftUI
 
-// 캐러셀로 수정 필요
-struct ColorPaletteBar: View {
+struct FilterCarousel: View {
     let colors: [MissionColor]
     let selectedColor: MissionColor?
     let onSelect: (MissionColor) -> Void
+    
+    let height: CGFloat
 
     var body: some View {
         HStack(spacing: 8) {
             ForEach(colors) { color in
-                VStack(spacing: 4) {
-                    RoundedRectangle(cornerRadius: 6)
-                        .fill(color.color)
-                        .frame(width: 44, height: 44)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 6)
-                                .stroke(selectedColor?.id == color.id ? Color.white : Color.clear, lineWidth: 2)
-                        )
-                    Text(color.name)
-                        .font(.system(size: 10))
-                        .foregroundColor(selectedColor?.id == color.id ? color.color : .secondary)
-                        .fontWeight(selectedColor?.id == color.id ? .bold : .regular)
+                let isSelected = selectedColor?.id == color.id
+                
+                ZStack {
+                    Rectangle()
+                        .fill(Color.white)
+                        .shadow(color: .black.opacity(0.12), radius: 6, x: 0, y: 3)
+
+                    VStack(spacing: 0) {
+                        Rectangle()
+                            .fill(color.color)
+                            .padding(.horizontal, 8)
+                            .padding(.top, 10)
+
+                        HStack {
+                            Text(color.name)
+                                .font(.system(size: height * 0.12, weight: .bold))
+                                .foregroundColor(color.color)
+                                .lineLimit(2)
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 8)
+                            Spacer()
+                        }
+                    }
                 }
+                .frame(height: height)
                 .onTapGesture { onSelect(color) }
             }
         }
