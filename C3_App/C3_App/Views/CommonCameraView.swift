@@ -217,6 +217,9 @@ struct CommonCameraView<MissionOverlay: View, CameraOverlay: View>: View {
         .fullScreenCover(isPresented: $showEditView) {
             if let image = capturedImage {
                 switch currentDestination {
+                case .filter:
+                    //showEditView = false
+                    EmptyView()
                 case .basic:
                     EmptyView()
                     // 여기도 미션 판정 뷰로 연결하도록 수정 필요
@@ -260,6 +263,23 @@ struct CommonCameraView<MissionOverlay: View, CameraOverlay: View>: View {
                     )
                 default:
                     EmptyView()
+                }
+            }
+        }
+        // 🌟 2. 캡처된 이미지를 감시하는 onChange 추가 (iOS 17+ 기준 문법)
+        // (만약 이전 버전이라면 .onChange(of: capturedImage) { newValue in ... } 사용)
+        .onChange(of: capturedImage) { _, newImage in
+            if newImage != nil {
+                // 렌즈가 스냅샷을 찍었을 때, 현재 모드가 '필터'라면 편집창을 열지 않고 바로 저장 처리
+                if currentDestination == .filter {
+                    if let image = newImage {
+                        saveEditedPhoto(image) // 바로 사진첩 저장 또는 메인 전송
+                    }
+                    capturedImage = nil // 상태 초기화
+                    showEditView = false // 확정 차단
+                } else {
+                    // 필터가 아닌 다른 커스텀 미션 모드일 때만 편집 모달을 활성화!
+                    showEditView = true
                 }
             }
         }
@@ -313,15 +333,6 @@ struct GridOverlayView: View {
 }
 
 #Preview {
-//    CommonCameraView(viewModel: CameraViewModel(), vm: MissionViewModel(), destination: .basic) {
-//        // 슬롯 확인용 - 검증 후 EmptyView()로 교체
-//        Color.red.opacity(0.3)
-//            .overlay {
-//                Text("126pt 슬롯")
-//                    .font(.caption)
-//                    .foregroundColor(.red)
-//            }
-//    }
      CommonCameraView(viewModel: CameraViewModel(),vm: MissionViewModel(), destination: .basic,
          cameraOverlay: {
             EmptyView()

@@ -21,6 +21,7 @@ struct MissionSelectView: View {
                     VStack(spacing: 6) {
                         HStack {
                             Button {
+                                onDismiss?()
                             } label: {
                                 Image(systemName: "chevron.left")
                                     .font(.system(size: 20, weight: .semibold))
@@ -137,6 +138,8 @@ struct MissionSelectView: View {
             // 🌟 변경 포인트 2: activeDestination의 상태를 감시하여 알맞은 카메라 뷰로 분기 연결!
             .fullScreenCover(item: $vm.activeDestination) { destination in
                 switch destination {
+                case .filter:
+                    EmptyView()
                 case .basic:
                     CommonCameraView(viewModel: viewModel,
                                      vm: vm,
