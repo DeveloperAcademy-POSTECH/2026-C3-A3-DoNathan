@@ -94,8 +94,6 @@ struct MissionSelectView: View {
                     Spacer()
 
                     Button {
-//                        guard vm.selectedIndex != nil else { return }
-//                        vm.showMissionCamera = true
                         if let destination = vm.currentMissionDestination {
                             vm.activeDestination = destination
                         }
@@ -132,6 +130,8 @@ struct MissionSelectView: View {
                                      destination: destination,
                                      overlayHeight: 100,
                                      onDismiss: { vm.activeDestination = nil }
+                                     onDismiss: { vm.activeDestination = nil },
+                                     cameraOverlay: { EmptyView() }
                     ) {
                         EmptyView()
                     }
@@ -143,6 +143,8 @@ struct MissionSelectView: View {
                                      destination: destination,
                                      overlayHeight: 100,
                                      onDismiss: { vm.activeDestination = nil }
+                                     onDismiss: { vm.activeDestination = nil },
+                                     cameraOverlay: { EmptyView() }
                     ) {
                         EmptyView()
                     }
@@ -152,6 +154,8 @@ struct MissionSelectView: View {
                                      destination: destination,
                                      overlayHeight: 100,
                                      onDismiss: { vm.activeDestination = nil }
+                                     onDismiss: { vm.activeDestination = nil },
+                                     cameraOverlay: { EmptyView() }
                     ) {
                         EmptyView()
                     }
@@ -161,12 +165,14 @@ struct MissionSelectView: View {
                                      destination: destination,
                                      overlayHeight: 100,
                                      onDismiss: { vm.activeDestination = nil }
+                                     onDismiss: { vm.activeDestination = nil },
+                                     cameraOverlay: { EmptyView() }
                     ) {
                         EmptyView()
                     }
                 }
             }
-}
+        }
     }
 
     func gridHeight() -> CGFloat {

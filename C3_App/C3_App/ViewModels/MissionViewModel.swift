@@ -9,27 +9,26 @@ import SwiftUI
 import Combine
 
 class MissionViewModel: ObservableObject {
-
-    private let saveKey = "savedMissions"
-
     @Published var missions: [Mission] = [] {
         didSet { save() }
     }
 
     @Published var selectedIndex: Int?   = nil
-    //@Published var showMissionCamera     = false
     @Published var activeDestination: MissionType? = nil
     @Published var showCompletion        = false
     @Published var showSuccessToast      = false
 
-    let mainColor: Color = Color(red: 0.92, green: 0.46, blue: 0.60) // 색상 변경
+    let missionColor: MissionColor
+    var mainColor: Color { missionColor.color }
+    lazy var saveKey: String = "savedMissions_\(missionColor.name)"
+
+    init(missionColor: MissionColor = MissionColor.all[0]) {
+        self.missionColor = missionColor
+        load()
+    }
 
     var completedCount: Int { missions.filter { $0.isCompleted }.count }
     var allCompleted:   Bool { missions.allSatisfy { $0.isCompleted } }
-
-    init() {
-        load()
-    }
     
     var currentMissionDestination: MissionType? {
             guard let idx = selectedIndex else { return nil }
@@ -58,7 +57,6 @@ class MissionViewModel: ObservableObject {
            let decoded = try? JSONDecoder().decode([Mission].self, from: data) {
             self.missions = decoded
         } else {
-            //missions = Self.defaultMissions.shuffled()
             generateRandomMissions()
         }
     }
@@ -67,7 +65,7 @@ class MissionViewModel: ObservableObject {
         var randomPool: [Mission] = []
         let activeMissions = Self.defaultMissions
         
-        // Step 1: 현재 주석 안 된 5가지 필수 미션을 '우선 한 번씩' 무조건 다 넣습니다.
+        // 일단 다섯 가지 미션을 하나씩 넣고
         for mission in activeMissions {
             randomPool.append(Mission(
                 title: mission.title,
@@ -76,7 +74,7 @@ class MissionViewModel: ObservableObject {
             ))
         }
         
-        // Step 2: 이제 5개는 꽉 찼으니, 남은 3칸(총 8칸이 될 때까지)만 랜덤으로 추가 수급합니다.
+        // 남은 3가지를 랜덤 수급!
         while randomPool.count < 8 {
             if let randomMission = activeMissions.randomElement() {
                 randomPool.append(Mission(
@@ -87,18 +85,16 @@ class MissionViewModel: ObservableObject {
             }
         }
         
-        // Step 3: 이대로 두면 앞의 5개 순서가 맨날 똑같으니, 전체 리스트를 완전 불규칙하게 섞어버립니다.
+        // 전체 리스트 랜덤하게 섞기
         self.missions = randomPool.shuffled()
     }
 
     func resetMissions() {
-        //missions = Self.defaultMissions
         UserDefaults.standard.removeObject(forKey: saveKey)
         generateRandomMissions()
     }
 
     // MARK: - 기본 미션 목록
-
     static let defaultMissions: [Mission] = [
         Mission(title: "기본 카메라", icon: "camera",                  missionDescription: "주변의 아무 사진이나 찍어보세요!"),
         Mission(title: "명도 조절",  icon: "sun.max",                  missionDescription: "밝은 빛이 있는 장면을 찍어보세요!"),
@@ -110,7 +106,6 @@ class MissionViewModel: ObservableObject {
 
     // MARK: - 미션 결과 처리
     func handleMissionResult(image: UIImage?) {
-        //showMissionCamera = false
         activeDestination = nil
 
         guard let image, let idx = selectedIndex else {

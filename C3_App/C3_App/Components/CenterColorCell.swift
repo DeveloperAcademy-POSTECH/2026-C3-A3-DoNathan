@@ -37,3 +37,7 @@ struct CenterColorCell: View {
         .frame(height: height)
     }
 }
+
+#Preview {
+    CenterColorCell(color: .customRed, height: 300)
+}

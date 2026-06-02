@@ -15,7 +15,7 @@ enum CameraMode {
     case filter   // 필터 카메라: X버튼 없음, 플래시 버튼 있음
 }
 
-struct CommonCameraView<MissionOverlay: View>: View {
+struct CommonCameraView<MissionOverlay: View, CameraOverlay: View>: View {
     @ObservedObject var viewModel: CameraViewModel
     @ObservedObject var vm: MissionViewModel
     @State private var capturedImage: UIImage?
@@ -29,7 +29,8 @@ struct CommonCameraView<MissionOverlay: View>: View {
     var overlayHeight: CGFloat = 107
 
     var onDismiss: (() -> Void)? = nil
-    @ViewBuilder var missionOverlay: () -> MissionOverlay
+    @ViewBuilder var cameraOverlay: () -> CameraOverlay // 카메라 위
+    @ViewBuilder var missionOverlay: () -> MissionOverlay // 카메라 아래
 
     var body: some View {
         VStack(spacing: 0) {
@@ -123,6 +124,8 @@ struct CommonCameraView<MissionOverlay: View>: View {
                         }
                     }
                     .padding(.bottom, 18)
+                    
+                    cameraOverlay()
                 }
                 .frame(width: geo.size.width, height: cameraHeight)
             }
@@ -310,4 +313,12 @@ struct GridOverlayView: View {
                     .foregroundColor(.red)
             }
     }
+//     CommonCameraView(viewModel: CameraViewModel(),vm: MissionViewModel(), destination: .basic,
+//         cameraOverlay: {
+//            EmptyView()
+//         },
+//         missionOverlay: {
+//             EmptyView()
+//         }
+//     )
 }
