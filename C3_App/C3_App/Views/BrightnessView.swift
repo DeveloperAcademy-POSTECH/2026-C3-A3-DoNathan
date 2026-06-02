@@ -2,7 +2,7 @@
 //  BrightnessView.swift
 //  C3_App
 //
-//  Created by 최정원 on 5/28/26.
+//  Created by Noah on 5/29/26.
 //
 
 import SwiftUI
@@ -24,6 +24,10 @@ struct BrightnessView: View {
     var onDismiss: (() -> Void)? = nil
 
     var body: some View {
+        CommonCameraView(viewModel: viewModel, vm: vm, destination: nil, overlayHeight: 100, onDismiss: { vm.activeDestination = nil }) {
+            BrightnessSlider(brightness: $viewModel.brightness)
+                .padding(.horizontal, 24)
+                .padding(.top, 24)
         CommonCameraView(viewModel: viewModel, vm: vm, destination: nil,  onDismiss: { vm.activeDestination = nil },
              cameraOverlay: {
                 // 실시간 명도 값 관한 정보를 띄워주는 부분 .... 조건 걸어서 처리 필요 + 일정 시간만 보이고 사라지도록
