@@ -88,13 +88,29 @@ struct CommonCameraView<MissionOverlay: View, CameraOverlay: View>: View {
                             .foregroundStyle(.white)
                     }
 
-                    // 필터 적용된 프레임 오버레이
-                    if let frame = viewModel.currentFrame {
+                    // 필터 적용된 프레임 오버레이 (필터 선택 시에만)
+                    if let frame = viewModel.currentFrame, viewModel.selectedFilter != .none {
                         Image(uiImage: frame)
                             .resizable()
                             .scaledToFill()
                             .frame(width: geo.size.width, height: cameraHeight)
                             .clipped()
+                    }
+
+                    // 정적 그레인 오버레이 (필터 모드 전용)
+                    if cameraMode == .filter && viewModel.selectedFilter != .none {
+                        Canvas { context, size in
+                            for _ in 0..<Int(size.width * size.height / 10) {
+                                let x = CGFloat.random(in: 0..<size.width)
+                                let y = CGFloat.random(in: 0..<size.height)
+                                let opacity = Double.random(in: 0.0...0.05) // 수치 조정 포인트
+                                context.fill(
+                                    Path(CGRect(x: x, y: y, width: 1.5, height: 1.5)),
+                                    with: .color(.white.opacity(opacity))
+                                )
+                            }
+                        }
+                        .allowsHitTesting(false)
                     }
 
                     // 셔터 플래시 오버레이

@@ -20,6 +20,8 @@ class CameraService: NSObject, AVCapturePhotoCaptureDelegate, AVCaptureVideoData
     private let videoOutput = AVCaptureVideoDataOutput()
     private let frameQueue = DispatchQueue(label: "camera.frame.queue", qos: .userInteractive)
     private let frameContext = CIContext(options: [.useSoftwareRenderer: false])
+    // PNG LUT 캐시 — 한 번만 로드
+    private lazy var redLUTFilter: CIFilter? = CameraService.loadHALDFilter(named: "redfilter")
     var brightness: Double = 0.0 {
         didSet { applyExposureBias() }
     }
@@ -225,13 +227,12 @@ extension CameraService {
         // 컬러 필터 적용 (Red / Blue)
         switch selectedFilter {
         case .red:
-            let matrix = CIFilter.colorMatrix()
-            matrix.inputImage = ciImage
-            matrix.rVector = CIVector(x: 1.3,  y: 0,    z: 0,    w: 0)
-            matrix.gVector = CIVector(x: 0,    y: 0.45, z: 0,    w: 0)
-            matrix.bVector = CIVector(x: 0,    y: 0,    z: 0.45, w: 0)
-            matrix.aVector = CIVector(x: 0,    y: 0,    z: 0,    w: 1)
-            ciImage = matrix.outputImage ?? ciImage
+            // LUT 적용
+            if let filter = redLUTFilter {
+                filter.setValue(ciImage, forKey: kCIInputImageKey)
+                ciImage = filter.outputImage ?? ciImage
+            }
+
 
         case .blue:
             let matrix = CIFilter.colorMatrix()
@@ -247,7 +248,8 @@ extension CameraService {
         }
 
         guard let cgImage = frameContext.createCGImage(ciImage, from: ciImage.extent) else { return }
-        let uiImage = UIImage(cgImage: cgImage)
+        let orientation: UIImage.Orientation = currentPosition == .front ? .leftMirrored : .right
+        let uiImage = UIImage(cgImage: cgImage, scale: 1.0, orientation: orientation)
 
         DispatchQueue.main.async { [weak self] in
             self?.onFrameProcessed?(uiImage)
@@ -271,5 +273,75 @@ extension CameraService {
         
         // 성공적으로 찍힌 이미지를 바깥(ViewModel)으로 전달
         onPhotoCaptured?(image)
+    }
+}
+
+// MARK: - PNG LUT 로딩
+extension CameraService {
+    static func loadHALDFilter(named name: String) -> CIFilter? {
+        guard let uiImage = UIImage(named: name),
+              let cgImage = uiImage.cgImage else { return nil }
+
+        let dimension  = 64
+        let colorSpace = CGColorSpaceCreateDeviceRGB()
+
+        guard let cubeData = buildCubeData(from: cgImage, dimension: dimension, colorSpace: colorSpace)
+        else { return nil }
+
+        let filter = CIFilter(name: "CIColorCubeWithColorSpace")
+        filter?.setValue(dimension,    forKey: "inputCubeDimension")
+        filter?.setValue(cubeData,     forKey: "inputCubeData")
+        filter?.setValue(colorSpace,   forKey: "inputColorSpace")
+        return filter
+    }
+
+    /// 타일 형태의 LUT 이미지를 CIColorCubeWithColorSpace용 큐브 데이터로 변환
+    private static func buildCubeData(from cgImage: CGImage, dimension: Int, colorSpace: CGColorSpace) -> Data? {
+        let width     = cgImage.width
+        let height    = cgImage.height
+        let rowNum    = width  / dimension
+        let colNum    = height / dimension
+        let dataSize  = dimension * dimension * dimension * 4
+
+        // 비트맵 버퍼 생성
+        let bitmapSize = width * height * 4
+        guard let buffer = malloc(bitmapSize) else { return nil }
+        defer { free(buffer) }
+
+        guard let ctx = CGContext(
+            data: buffer,
+            width: width, height: height,
+            bitsPerComponent: 8, bytesPerRow: width * 4,
+            space: colorSpace,
+            bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
+        ) else { return nil }
+        ctx.draw(cgImage, in: CGRect(x: 0, y: 0, width: width, height: height))
+
+        let bitmap = buffer.bindMemory(to: UInt8.self, capacity: bitmapSize)
+        var array  = [Float](repeating: 0, count: dataSize)
+        var offset = 0
+        var z      = 0
+
+        for _ in stride(from: 0, to: rowNum, by: 1) {
+            for y in stride(from: 0, to: dimension, by: 1) {
+                let savedZ = z
+                for _ in stride(from: 0, to: colNum, by: 1) {
+                    for x in stride(from: 0, to: dimension, by: 1) {
+                        let dataOffset = (z * dimension * dimension + y * dimension + x) * 4
+                        let px = bitmap.advanced(by: offset)
+                        array[dataOffset + 0] = Float(px.advanced(by: 0).pointee) / 255.0
+                        array[dataOffset + 1] = Float(px.advanced(by: 1).pointee) / 255.0
+                        array[dataOffset + 2] = Float(px.advanced(by: 2).pointee) / 255.0
+                        array[dataOffset + 3] = Float(px.advanced(by: 3).pointee) / 255.0
+                        offset += 4
+                    }
+                    z += 1
+                }
+                z = savedZ
+            }
+            z += colNum
+        }
+
+        return Data(bytes: array, count: dataSize * MemoryLayout<Float>.size)
     }
 }
