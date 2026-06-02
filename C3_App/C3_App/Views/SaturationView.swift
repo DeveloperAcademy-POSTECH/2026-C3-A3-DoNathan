@@ -6,18 +6,18 @@
 //
 
 import SwiftUI
+import UIKit
 
 struct SaturationView: View {
     @StateObject private var viewModel = SaturationViewModel()
 
     let capturedImage: UIImage
-    var onConfirm: (UIImage, Float) -> Void  // 이미지 + 채도값 함께 전달
+    var onConfirm: (UIImage, Float) -> Void
     var onCancel: () -> Void
 
     var body: some View {
         VStack(spacing: 0) {
-
-            // MARK: - 사진 미리보기
+            // 사진 미리보기
             ZStack {
                 Color(.systemGray5)
 
@@ -31,64 +31,73 @@ struct SaturationView: View {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-            // MARK: - 채도 슬라이더
+            // 채도 슬라이더
             HStack(spacing: 12) {
                 Image(systemName: "camera.filters")
-                    .foregroundColor(.gray)
+                    .foregroundStyle(.gray)
 
                 Slider(value: $viewModel.saturation, in: 0.0...2.0) { isEditing in
-                    if isEditing {
-                        // 드래그 중: 저해상도 빠른 렌더링
-                        viewModel.applyPreviewFilter()
-                    } else {
-                        // 드래그 종료: 원본 해상도 고품질 렌더링
-                        viewModel.applyHighResFilter()
-                    }
+                    if isEditing { viewModel.applyPreviewFilter() }
+                    else { viewModel.applyHighResFilter() }
                 }
                 .tint(.gray)
 
-                Image(systemName: "camera.filters.fill")
-                    .foregroundColor(.gray)
+                Image("camera.filters.fill") // 에셋이면 이름 바꾸는 것 권장: ic_filters_fill
+                    .resizable()
+                    .scaledToFit()
+//                    .renderingMode(.template)
+//                    .foregroundStyle(.gray)
+                    .frame(width: 20, height: 20)
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 16)
-            .background(Color(.systemGray5))
+            .background(Color.white)
+            
+            Spacer().frame(height: 88) // ✅ 원하는 만큼
 
-            // MARK: - 하단 버튼
+            // 하단 버튼 영역(높이 확보)
             HStack {
-                // 취소
-                Button(action: onCancel) {
-                    Image(systemName: "xmark.circle")
-                        .font(.system(size: 44))
-                        .foregroundColor(.primary)
-                }
-
                 Spacer()
 
-                // 편집완료
                 Button {
-                    // finalImage 없으면 previewImage라도 전달
                     let imageToSend = viewModel.finalImage ?? viewModel.previewImage
                     if let image = imageToSend {
                         onConfirm(image, viewModel.saturation)
                     }
                 } label: {
-                    HStack {
+                    HStack(spacing: 16) {
                         Text("편집완료")
+                            .font(.system(size: 17, weight: .semibold))
                         Image(systemName: "checkmark")
+                            .font(.system(size: 17, weight: .semibold))
                     }
-                    .padding(.horizontal, 24)
-                    .padding(.vertical, 14)
-                    .overlay(Capsule().stroke(Color.primary, lineWidth: 1.5))
+                    .padding(.vertical, 6)
+                    
                 }
-                .foregroundColor(.primary)
+                .buttonStyle(GlassButtonStyle())
             }
-            .padding(.horizontal, 24)
-            .padding(.vertical, 20)
+            .padding(.horizontal, 12)
+            .padding(.bottom, 44)   // ✅ 이 값 키우면 슬라이더가 더 위로
             .background(Color.white)
         }
-        .onAppear {
-            viewModel.setImage(capturedImage)
+        .safeAreaInset(edge: .top) {
+            HStack {
+                Button(action: onCancel) {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 18, weight: .semibold))
+                        .foregroundStyle(.primary)
+                        .frame(width: 36, height: 36)
+                        .background(Circle().fill(Color.white.opacity(0.9)))
+                        .shadow(radius: 6, y: 3)
+                }
+
+                Spacer()
+            }
+            .padding(.horizontal, 20)
+            .padding(.top, 10)
+            .padding(.bottom, 8)
+            .background(Color.white)
         }
+        .onAppear { viewModel.setImage(capturedImage) }
     }
 }

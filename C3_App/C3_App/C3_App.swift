@@ -11,7 +11,13 @@ import SwiftUI
 struct TestCameraApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+                SaturationView(capturedImage: UIImage()) { _, _ in
+                    
+                } onCancel: {
+                    
+                }
+            
+//            ContentView()
         }
     }
 }

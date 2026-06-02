@@ -23,7 +23,6 @@ struct CommonCameraView<MissionOverlay: View>: View {
 
     var body: some View {
         VStack(spacing: 0) {
-
             // MARK: - 상단 바
             HStack {
                 // 좌상단: 뒤로가기
