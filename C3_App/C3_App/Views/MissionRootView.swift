@@ -12,11 +12,12 @@ struct MissionRootView: View {
     var onDismiss: (() -> Void)?
 
     @StateObject var vm: MissionViewModel
+    @Environment(\.dismiss) private var dismiss
 
     init(missionColor: MissionColor, onDismiss: (() -> Void)? = nil) {
         self.missionColor = missionColor
         self.onDismiss = onDismiss
-        _vm = StateObject(wrappedValue: MissionViewModel(missionColor: missionColor))
+        self._vm = StateObject(wrappedValue: MissionViewModel(missionColor: missionColor))
     }
 
     var body: some View {
@@ -28,9 +29,7 @@ struct MissionRootView: View {
                         removal:   .move(edge: .leading ).combined(with: .opacity)
                     )) // 화면 전환 시 애니메이션 방향
             } else {
-                MissionSelectView(vm: vm,
-                                  onDismiss: { onDismiss?() }
-                )
+                MissionSelectView(vm: vm, onDismiss: onDismiss)
                     .transition(.asymmetric(
                         insertion: .move(edge: .leading ).combined(with: .opacity),
                         removal:   .move(edge: .trailing).combined(with: .opacity)

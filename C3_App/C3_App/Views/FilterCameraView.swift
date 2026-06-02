@@ -15,7 +15,7 @@ struct FilterCameraView: View {
     var body: some View {
         CommonCameraView(viewModel: viewModel,
                          vm: vm,
-                         destination: .basic,
+                         destination: .filter,
                          onDismiss: { onDismiss?() },
             cameraOverlay: {
                EmptyView()
