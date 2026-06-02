@@ -10,7 +10,7 @@ import SwiftUI
 struct CenterColorCell: View {
     let color:  Color
     let height: CGFloat
-    
+
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 4)

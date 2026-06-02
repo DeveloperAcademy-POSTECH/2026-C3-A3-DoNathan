@@ -18,25 +18,49 @@ struct MissionSelectView: View {
         NavigationView {
             ZStack {
                 VStack(spacing: 0) {
-                    Text("오늘 도전할 미션을 선택하세요!")
-                        .font(.headline).bold()
-                        .foregroundStyle(vm.mainColor)
-                        .padding(.top, 16)
-                        .padding(.bottom, 20)
+                    VStack(spacing: 6) {
+                        HStack {
+                            Button {
+                            } label: {
+                                Image(systemName: "chevron.left")
+                                    .font(.system(size: 20, weight: .semibold))
+                                    .foregroundColor(.black)
+                                    .padding(12)
+                                    .background(Circle().fill(Color.white.opacity(0.7)))
+                            }
+                            Spacer()
+                        }
+                        .padding(.horizontal, 20)
+
+                        Text("도전할 미션을 선택하세요!")
+                            .font(.system(size: 23, weight: .bold))
+                            .foregroundStyle(.black)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.horizontal, 23)
+
+                        Text("Media & Camera 기능을 활용해\n미션 컬러를 찾아 빙고를 완성하세요.")
+                            .font(.system(size: 15))
+                            .foregroundStyle(.gray)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .padding(.horizontal, 23)
+                            .padding(.bottom, 20)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.top, 16)
+                    .background(vm.mainColor.opacity(0.15))
 
                     GeometryReader { geo in
                         let cellW = (geo.size.width - 40 - 4) / 3
-                        let cellH = cellW * 3 / 2 // 4/3
+                        let cellH = cellW * 3 / 2
 
                         LazyVGrid(columns: columns, spacing: 2) {
                             ForEach(0..<9) { gridIndex in
                                 if gridIndex == 4 {
                                     CenterColorCell(color: vm.mainColor, height: cellH)
-                                    
                                     //데모를 위한 클릭!!! (이후삭제필요) 여기부터
                                         .onTapGesture { showFilterCamera = true }
                                     //데모를 위한 클릭!!! (이후삭제필요) 여기까지
-                                    
                                 } else {
                                     let mi = gridIndex < 4 ? gridIndex : gridIndex - 1
                                     MissionCell(
@@ -60,6 +84,7 @@ struct MissionSelectView: View {
                     }
                     .frame(height: gridHeight())
                     .padding(.horizontal, 20)
+                    .padding(.top, 12)
 
                     // 진행도 바
                     VStack(spacing: 8) {
@@ -69,7 +94,7 @@ struct MissionSelectView: View {
                                 .foregroundColor(.secondary)
                             Spacer()
                             Text("\(vm.completedCount)")
-                                .font(.system(size: 13, weight: .semibold))
+                                .font(.system(size: 20, weight: .semibold))
                                 .foregroundColor(vm.mainColor)
                             Text("/  8")
                                 .font(.system(size: 13, weight: .semibold))
@@ -111,12 +136,9 @@ struct MissionSelectView: View {
                     .padding(.horizontal, 20)
                     .padding(.bottom, 32)
                 }
-                
                 //데모를 위한 클릭!!! (이후삭제필요) 여기부터
                 .navigationBarHidden(true)
                 //데모를 위한 클릭!!! (이후삭제필요) 여기까지
-
-                
             }
             // 🌟 변경 포인트 2: activeDestination의 상태를 감시하여 알맞은 카메라 뷰로 분기 연결!
             .fullScreenCover(isPresented: $showFilterCamera) {
@@ -135,7 +157,7 @@ struct MissionSelectView: View {
                         EmptyView()
                     }
                 case .brightness:
-                    BrightnessView(vm: vm)   // 명도 조절 전용 카메라 뷰 연결
+                    BrightnessView(vm: vm)
                 case .saturation:
                     CommonCameraView(viewModel: viewModel,
                                      vm: vm,

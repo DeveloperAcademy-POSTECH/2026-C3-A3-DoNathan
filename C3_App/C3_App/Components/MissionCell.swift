@@ -12,8 +12,8 @@ struct MissionCell: View {
     let isSelected: Bool
     let mainColor:  Color
     let cellHeight: CGFloat
-    let onDelete:   () -> Void  // ← 삭제 콜백 추가
-    let onTap:      () -> Void  // 탭 콜백
+    let onDelete:   () -> Void
+    let onTap:      () -> Void
 
     @State private var showDeleteButton = false
 
@@ -82,4 +82,16 @@ struct MissionCell: View {
     private var borderColor: Color {
         mission.isCompleted ? mainColor.opacity(0.5) : (isSelected ? mainColor : Color.clear)
     }
+}
+
+#Preview {
+    MissionCell(
+        mission: Mission(title: "기본 카메라", icon: "camera", missionDescription: "테스트"),
+        isSelected: false,
+        mainColor: .pink,
+        cellHeight: 150,
+        onDelete: {},
+        onTap: {}
+    )
+    .frame(width: 120)
 }
