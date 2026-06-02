@@ -10,22 +10,13 @@ import SwiftUI
 struct FilterCameraView: View {
     @StateObject private var viewModel = CameraViewModel()
     @ObservedObject var vm: MissionViewModel
-
-    var onDismiss: (() -> Void)? = nil
+    var onDismiss: (() -> Void)?
 
     var body: some View {
-//        CommonCameraView(
-//            viewModel: viewModel,
-//            vm: vm,
-//            destination: nil,
-//            cameraMode: .filter,
-//            overlayHeight: 126,
-//            onDismiss: onDismiss
-//        ) {
-//            FilterCarouselView()
-//        }
-        
-        CommonCameraView(viewModel: CameraViewModel(),vm: MissionViewModel(), destination: .basic,
+        CommonCameraView(viewModel: viewModel,
+                         vm: vm,
+                         destination: .basic,
+                         onDismiss: { onDismiss?() },
             cameraOverlay: {
                EmptyView()
             },
