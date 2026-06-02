@@ -2,7 +2,7 @@
 //  BrightnessView.swift
 //  C3_App
 //
-//  Created by 최정원 on 5/28/26.
+//  Created by Noah on 5/29/26.
 //
 
 import SwiftUI

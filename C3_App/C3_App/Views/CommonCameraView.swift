@@ -2,12 +2,18 @@
 //  CommonCameraView.swift
 //  TestCamera
 //
-//  Created by 최정원 on 5/25/26.
+//  Created by Noah on 5/29/26.
 //
 
 import SwiftUI
 import AVFoundation
 import Photos // PhotoKit
+
+// MARK: - 카메라 모드
+enum CameraMode {
+    case mission  // 미션 카메라: X버튼 있음, 플래시 없음
+    case filter   // 필터 카메라: X버튼 없음, 플래시 버튼 있음
+}
 
 struct CommonCameraView<MissionOverlay: View>: View {
     @ObservedObject var viewModel: CameraViewModel
@@ -15,10 +21,11 @@ struct CommonCameraView<MissionOverlay: View>: View {
     @State private var capturedImage: UIImage?
     @State private var zoomLevel: CGFloat = 1.0
     @State private var showGrid: Bool = false
-    
+
     @State private var showEditView: Bool = false
-    @State private var currentDestination: MissionType? = nil  // ✅ 추가
+    @State private var currentDestination: MissionType? = nil
     let destination: MissionType?
+    var cameraMode: CameraMode = .mission
 
     var onDismiss: (() -> Void)? = nil
     @ViewBuilder var missionOverlay: () -> MissionOverlay
@@ -33,7 +40,7 @@ struct CommonCameraView<MissionOverlay: View>: View {
                     Image(systemName: "chevron.left")
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundColor(Color(hex: "888888"))
-                        .frame(width: 44, height: 44)
+                        .frame(width: 40, height: 40)
                 }
                 .glassEffect(.regular.interactive(), in: Circle())
 
@@ -45,15 +52,28 @@ struct CommonCameraView<MissionOverlay: View>: View {
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundColor(Color(hex: "888888"))
                         .foregroundColor(showGrid ? .yellow : .primary)
-                        .frame(width: 44, height: 44)
+                        .frame(width: 40, height: 40)
                 }
                 .glassEffect(.regular.interactive(), in: Circle())
+
+                // 우상단: 플래시 (필터 모드 전용)
+                if cameraMode == .filter {
+                    Button(action: { viewModel.toggleFlash() }) {
+                        Image(systemName: viewModel.flashMode == .off ? "bolt.slash" : "bolt.fill")
+                            .font(.system(size: 16, weight: .semibold))
+                            .foregroundColor(Color(hex: "888888"))
+                            .frame(width: 40, height: 40)
+                    }
+                    .glassEffect(.regular.interactive(), in: Circle())
+                }
             }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 12)
+            .padding(.horizontal, 16)
+            .padding(.top, 20)
+            .padding(.bottom, 20)
             .background(Color.white)
 
             // MARK: - 카메라 프리뷰
+            let cameraHeight = UIScreen.main.bounds.width * 4 / 3
             GeometryReader { geo in
                 ZStack(alignment: .bottom) {
                     Color.black
@@ -103,25 +123,28 @@ struct CommonCameraView<MissionOverlay: View>: View {
                     }
                     .padding(.bottom, 18)
                 }
-                .frame(width: geo.size.width, height: geo.size.width * 4 / 3)
+                .frame(width: geo.size.width, height: cameraHeight)
             }
+            .frame(height: cameraHeight)
 
-            // MARK: - 미션 오버레이 슬롯
+            // MARK: - 미션 오버레이 슬롯 (항상 126pt 확보)
             missionOverlay()
-                .frame(maxWidth: .infinity)
-
-            Spacer()
+                .frame(maxWidth: .infinity, minHeight: 107)
 
             // MARK: - 하단 컨트롤
-            HStack {
-                // 좌하단: X
-                Button(action: { onDismiss?() }) {
-                    Image(systemName: "xmark")
-                        .font(.system(size: 18, weight: .semibold))
-                        .foregroundColor(Color(hex: "888888"))
-                        .frame(width: 52, height: 52)
+            HStack(alignment: .center) {
+                // 좌하단: X (미션 모드 전용)
+                if cameraMode == .mission {
+                    Button(action: { onDismiss?() }) {
+                        Image(systemName: "xmark")
+                            .font(.system(size: 18, weight: .semibold))
+                            .foregroundColor(Color(hex: "888888"))
+                            .frame(width: 48, height: 48)
+                    }
+                    .glassEffect(.regular.interactive(), in: Circle())
+                } else {
+                    Color.clear.frame(width: 48, height: 48)
                 }
-                .glassEffect(.regular.interactive(), in: Circle())
 
                 Spacer()
 
@@ -130,7 +153,7 @@ struct CommonCameraView<MissionOverlay: View>: View {
                     Image("camera_btn")
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 76, height: 76)
+                        .frame(width: 68, height: 68)
                 }
 
                 Spacer()
@@ -143,15 +166,20 @@ struct CommonCameraView<MissionOverlay: View>: View {
                     Image(systemName: "arrow.trianglehead.2.clockwise.rotate.90")
                         .font(.system(size: 18, weight: .semibold))
                         .foregroundColor(Color(hex: "888888"))
-                        .frame(width: 52, height: 52)
+                        .frame(width: 48, height: 48)
                 }
                 .glassEffect(.regular.interactive(), in: Circle())
             }
             .padding(.horizontal, 32)
-            .padding(.vertical, 24)
-            .background(Color.white)
+            .padding(.top, 20)
+            .padding(.bottom, 20)
+            .background(
+                Color.white
+                    .ignoresSafeArea(edges: .bottom)
+            )
         }
         .background(Color.white)
+        .ignoresSafeArea(edges: .bottom)
         .onAppear {
             capturedImage = nil
             showEditView = false
@@ -268,7 +296,13 @@ struct GridOverlayView: View {
 }
 
 #Preview {
-    CommonCameraView(viewModel: CameraViewModel(),vm: MissionViewModel(), destination: .basic) {
-        EmptyView()
+    CommonCameraView(viewModel: CameraViewModel(), vm: MissionViewModel(), destination: .basic) {
+        // 슬롯 확인용 - 검증 후 EmptyView()로 교체
+        Color.red.opacity(0.3)
+            .overlay {
+                Text("126pt 슬롯")
+                    .font(.caption)
+                    .foregroundColor(.red)
+            }
     }
 }

@@ -221,6 +221,7 @@ extension CameraService {
             ciImage = filter.outputImage ?? ciImage
         }
 
+
         guard let cgImage = frameContext.createCGImage(ciImage, from: ciImage.extent) else { return }
         let uiImage = UIImage(cgImage: cgImage)
 

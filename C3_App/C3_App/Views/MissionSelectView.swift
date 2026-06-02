@@ -11,6 +11,7 @@ struct MissionSelectView: View {
     @ObservedObject var vm: MissionViewModel
     @StateObject private var viewModel = CameraViewModel()
     @State private var missionType: MissionType? = nil
+    @State private var showFilterCamera: Bool = false
     let columns = Array(repeating: GridItem(.flexible(), spacing: 2), count: 3)
 
     var body: some View {
@@ -31,6 +32,7 @@ struct MissionSelectView: View {
                             ForEach(0..<9) { gridIndex in
                                 if gridIndex == 4 {
                                     CenterColorCell(color: vm.mainColor, height: cellH)
+                                        .onTapGesture { showFilterCamera = true }
                                 } else {
                                     let mi = gridIndex < 4 ? gridIndex : gridIndex - 1
                                     MissionCell(
@@ -110,6 +112,9 @@ struct MissionSelectView: View {
                 .navigationBarHidden(true)
             }
             // 🌟 변경 포인트 2: activeDestination의 상태를 감시하여 알맞은 카메라 뷰로 분기 연결!
+            .fullScreenCover(isPresented: $showFilterCamera) {
+                FilterCameraView(vm: vm, onDismiss: { showFilterCamera = false })
+            }
             .fullScreenCover(item: $vm.activeDestination) { destination in
                 switch destination {
                 case .basic:
