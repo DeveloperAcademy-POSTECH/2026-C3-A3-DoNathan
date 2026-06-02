@@ -21,7 +21,7 @@ struct FilterCameraView: View {
                EmptyView()
             },
             missionOverlay: {
-                FilterCarouselView()
+                FilterCarouselView(selectedFilter: $viewModel.selectedFilter)
             }
         )
     }
