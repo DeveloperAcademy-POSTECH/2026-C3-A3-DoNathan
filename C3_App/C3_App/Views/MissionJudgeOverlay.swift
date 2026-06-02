@@ -30,11 +30,11 @@ struct MissionJudgeOverlay: View {
                 }
                 .padding(.horizontal, 32)
                 .padding(.vertical, 24)
-                .background(
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(Color.white.opacity(0.5), lineWidth: 1.5, style: StrokeStyle(dash: [6, 4]))
-                        .background(Color.black.opacity(0.3).cornerRadius(12))
-                )
+               // .background(
+               //     RoundedRectangle(cornerRadius: 12)
+               //         .stroke(Color.white.opacity(0.5), lineWidth: 1.5, style: StrokeStyle(dash: [6, 4]))
+               //         .background(Color.black.opacity(0.3).cornerRadius(12))
+               // )
             }
             .transition(.opacity)
             .animation(.easeInOut(duration: 0.2), value: isJudging)
