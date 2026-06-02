@@ -14,16 +14,16 @@ struct FilterCameraView: View {
     var onDismiss: (() -> Void)? = nil
 
     var body: some View {
-        CommonCameraView(
-            viewModel: viewModel,
-            vm: vm,
-            destination: nil,
-            cameraMode: .filter,
-            overlayHeight: 126,
-            onDismiss: onDismiss
-        ) {
-            FilterCarouselView()
-        }
+//        CommonCameraView(
+//            viewModel: viewModel,
+//            vm: vm,
+//            destination: nil,
+//            cameraMode: .filter,
+//            overlayHeight: 126,
+//            onDismiss: onDismiss
+//        ) {
+//            FilterCarouselView()
+//        }
     }
 }
 

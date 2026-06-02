@@ -129,7 +129,6 @@ struct MissionSelectView: View {
                                      vm: vm,
                                      destination: destination,
                                      overlayHeight: 100,
-                                     onDismiss: { vm.activeDestination = nil }
                                      onDismiss: { vm.activeDestination = nil },
                                      cameraOverlay: { EmptyView() }
                     ) {
@@ -142,7 +141,6 @@ struct MissionSelectView: View {
                                      vm: vm,
                                      destination: destination,
                                      overlayHeight: 100,
-                                     onDismiss: { vm.activeDestination = nil }
                                      onDismiss: { vm.activeDestination = nil },
                                      cameraOverlay: { EmptyView() }
                     ) {
@@ -153,7 +151,6 @@ struct MissionSelectView: View {
                                      vm: vm,
                                      destination: destination,
                                      overlayHeight: 100,
-                                     onDismiss: { vm.activeDestination = nil }
                                      onDismiss: { vm.activeDestination = nil },
                                      cameraOverlay: { EmptyView() }
                     ) {
@@ -164,7 +161,6 @@ struct MissionSelectView: View {
                                      vm: vm,
                                      destination: destination,
                                      overlayHeight: 100,
-                                     onDismiss: { vm.activeDestination = nil }
                                      onDismiss: { vm.activeDestination = nil },
                                      cameraOverlay: { EmptyView() }
                     ) {

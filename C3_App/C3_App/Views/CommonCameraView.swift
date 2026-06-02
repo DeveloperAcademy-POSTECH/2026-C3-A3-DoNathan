@@ -304,21 +304,21 @@ struct GridOverlayView: View {
 }
 
 #Preview {
-    CommonCameraView(viewModel: CameraViewModel(), vm: MissionViewModel(), destination: .basic) {
-        // 슬롯 확인용 - 검증 후 EmptyView()로 교체
-        Color.red.opacity(0.3)
-            .overlay {
-                Text("126pt 슬롯")
-                    .font(.caption)
-                    .foregroundColor(.red)
-            }
-    }
-//     CommonCameraView(viewModel: CameraViewModel(),vm: MissionViewModel(), destination: .basic,
-//         cameraOverlay: {
-//            EmptyView()
-//         },
-//         missionOverlay: {
-//             EmptyView()
-//         }
-//     )
+//    CommonCameraView(viewModel: CameraViewModel(), vm: MissionViewModel(), destination: .basic) {
+//        // 슬롯 확인용 - 검증 후 EmptyView()로 교체
+//        Color.red.opacity(0.3)
+//            .overlay {
+//                Text("126pt 슬롯")
+//                    .font(.caption)
+//                    .foregroundColor(.red)
+//            }
+//    }
+     CommonCameraView(viewModel: CameraViewModel(),vm: MissionViewModel(), destination: .basic,
+         cameraOverlay: {
+            EmptyView()
+         },
+         missionOverlay: {
+             EmptyView()
+         }
+     )
 }

@@ -20,46 +20,47 @@ struct BrightnessView: View {
     
     @State private var tipStatus: BrightnessTipStatus = .none
     @State private var tipTimerTask: Task<Void, Never>? = nil // 기존 타이머를 취소하기 위한 변수
-
+    
     var onDismiss: (() -> Void)? = nil
-
+    
     var body: some View {
-        CommonCameraView(viewModel: viewModel, vm: vm, destination: nil, overlayHeight: 100, onDismiss: { vm.activeDestination = nil }) {
+        //        CommonCameraView(viewModel: viewModel, vm: vm, destination: nil, overlayHeight: 100, onDismiss: { vm.activeDestination = nil }) {
+        //            BrightnessSlider(brightness: $viewModel.brightness)
+        //                .padding(.horizontal, 24)
+        //                .padding(.top, 24)
+        //        }
+        CommonCameraView(viewModel: viewModel, vm: vm, destination: nil,  onDismiss: { vm.activeDestination = nil },
+                         cameraOverlay: {
+            // 실시간 명도 값 관한 정보를 띄워주는 부분 .... 조건 걸어서 처리 필요 + 일정 시간만 보이고 사라지도록
+            VStack {
+                // tipStatus 상태에 따라 실시간으로 분기 처리
+                switch tipStatus {
+                case .tooBright:
+                    ResultBanner(text: "지금은 너무 밝아요 😓\n💡Tip : 명도를 조금만 더 내려보세요!", color: .gray)
+                        .transition(.scale.combined(with: .opacity))
+                        .padding(.top, 16)
+                    
+                case .tooDark:
+                    ResultBanner(text: "지금은 너무 어두워요 😓\n💡Tip : 명도를 조금만 더 올려보세요!", color: .gray)
+                        .transition(.scale.combined(with: .opacity))
+                        .padding(.top, 16)
+                    
+                case .none:
+                    EmptyView() // 정상 범위일 때는 아무것도 안 띄움
+                }
+                
+                Spacer()
+            }
+        },
+                         missionOverlay: {
+            // 카메라 아래 슬롯
             BrightnessSlider(brightness: $viewModel.brightness)
                 .padding(.horizontal, 24)
                 .padding(.top, 24)
-        CommonCameraView(viewModel: viewModel, vm: vm, destination: nil,  onDismiss: { vm.activeDestination = nil },
-             cameraOverlay: {
-                // 실시간 명도 값 관한 정보를 띄워주는 부분 .... 조건 걸어서 처리 필요 + 일정 시간만 보이고 사라지도록
-                VStack {
-                    // tipStatus 상태에 따라 실시간으로 분기 처리
-                    switch tipStatus {
-                    case .tooBright:
-                        ResultBanner(text: "지금은 너무 밝아요 😓\n💡Tip : 명도를 조금만 더 내려보세요!", color: .gray)
-                            .transition(.scale.combined(with: .opacity))
-                            .padding(.top, 16)
-                            
-                    case .tooDark:
-                        ResultBanner(text: "지금은 너무 어두워요 😓\n💡Tip : 명도를 조금만 더 올려보세요!", color: .gray)
-                            .transition(.scale.combined(with: .opacity))
-                            .padding(.top, 16)
-                            
-                    case .none:
-                        EmptyView() // 정상 범위일 때는 아무것도 안 띄움
-                    }
-                    
-                    Spacer()
+                .onChange(of: viewModel.brightness) {
+                    checkBrightnessAndShowTip(currentValue: viewModel.brightness)
                 }
-            },
-            missionOverlay: {
-                // 카메라 아래 슬롯
-                BrightnessSlider(brightness: $viewModel.brightness)
-                    .padding(.horizontal, 24)
-                    .padding(.top, 24)
-                    .onChange(of: viewModel.brightness) {
-                        checkBrightnessAndShowTip(currentValue: viewModel.brightness)
-                    }
-            }
+        }
         )
     }
     
@@ -107,6 +108,7 @@ struct BrightnessView: View {
         }
     }
 }
+
 
 // MARK: - 명도 슬라이더 컴포넌트
 struct BrightnessSlider: View {
