@@ -2,7 +2,7 @@
 //  FilterCameraView.swift
 //  C3_App
 //
-//  Created by 최정원 on 6/1/26.
+//  Created by Noah on 6/1/26.
 //
 
 import SwiftUI
@@ -18,7 +18,15 @@ struct FilterCameraView: View {
                          destination: .filter,
                          onDismiss: { onDismiss?() },
             cameraOverlay: {
-               EmptyView()
+                // 그레인 오버레이 (None이 아닌 필터 선택 시)
+                if viewModel.selectedFilter != .none {
+                    Image("grain_texture")
+                        .resizable()
+                        .scaledToFill()
+                        .opacity(0.3) // 수치 조정 포인트 (0.0 ~ 1.0)
+                        .blendMode(.overlay)
+                        .allowsHitTesting(false)
+                }
             },
             missionOverlay: {
                 FilterCarouselView(selectedFilter: $viewModel.selectedFilter)

@@ -248,8 +248,7 @@ extension CameraService {
         }
 
         guard let cgImage = frameContext.createCGImage(ciImage, from: ciImage.extent) else { return }
-        let orientation: UIImage.Orientation = currentPosition == .front ? .leftMirrored : .right
-        let uiImage = UIImage(cgImage: cgImage, scale: 1.0, orientation: orientation)
+        let uiImage = UIImage(cgImage: cgImage)
 
         DispatchQueue.main.async { [weak self] in
             self?.onFrameProcessed?(uiImage)
