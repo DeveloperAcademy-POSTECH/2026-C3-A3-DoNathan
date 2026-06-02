@@ -24,6 +24,15 @@ struct FilterCameraView: View {
 //        ) {
 //            FilterCarouselView()
 //        }
+        
+        CommonCameraView(viewModel: CameraViewModel(),vm: MissionViewModel(), destination: .basic,
+            cameraOverlay: {
+               EmptyView()
+            },
+            missionOverlay: {
+                FilterCarouselView()
+            }
+        )
     }
 }
 
