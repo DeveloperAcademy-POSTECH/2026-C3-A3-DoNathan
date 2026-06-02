@@ -21,11 +21,13 @@ class CameraService: NSObject, AVCapturePhotoCaptureDelegate, AVCaptureVideoData
     private let frameQueue = DispatchQueue(label: "camera.frame.queue", qos: .userInteractive)
     private let frameContext = CIContext(options: [.useSoftwareRenderer: false])
     // PNG LUT 캐시 — 한 번만 로드
-    private lazy var redLUTFilter: CIFilter? = CameraService.loadHALDFilter(named: "redfilter")
+    private lazy var redLUTFilter: CIFilter?  = CameraService.loadHALDFilter(named: "redfilter")
+    private lazy var blueLUTFilter: CIFilter? = CameraService.loadHALDFilter(named: "bluefilter")
     var brightness: Double = 0.0 {
         didSet { applyExposureBias() }
     }
     var selectedFilter: FilterOption = .none
+    var filterIntensity: Double = 1.0
     var onFrameProcessed: ((UIImage) -> Void)?
 
     // ViewModel로 이미지를 넘겨주기 위한 콜백 클로저
@@ -192,18 +194,8 @@ class CameraService: NSObject, AVCapturePhotoCaptureDelegate, AVCaptureVideoData
 // MARK: - 비디오 방향 설정
 extension CameraService {
     func setVideoOrientation() {
-        guard let connection = videoOutput.connection(with: .video) else { return }
-        if #available(iOS 17.0, *) {
-            connection.videoRotationAngle = 90
-        } else {
-            if connection.isVideoOrientationSupported {
-                connection.videoOrientation = .portrait
-            }
-        }
-        // 전면 카메라 좌우 반전
-        if connection.isVideoMirroringSupported {
-            connection.isVideoMirrored = (currentPosition == .front)
-        }
+        // 회전/미러링은 captureOutput에서 CIImage에 직접 적용
+        // CameraPreview(AVCaptureVideoPreviewLayer)는 자체 connection으로 자동 처리
     }
 }
 
@@ -213,6 +205,10 @@ extension CameraService {
         guard let imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else { return }
 
         var ciImage = CIImage(cvImageBuffer: imageBuffer)
+
+        // 회전 + 미러링 직접 적용 (후면: 90°CW, 전면: 90°CW + 좌우반전)
+        let orientation: CGImagePropertyOrientation = currentPosition == .front ? .leftMirrored : .right
+        ciImage = ciImage.oriented(orientation)
 
         // 명도 필터 적용
         if brightness != 0.0 {
@@ -235,16 +231,25 @@ extension CameraService {
 
 
         case .blue:
-            let matrix = CIFilter.colorMatrix()
-            matrix.inputImage = ciImage
-            matrix.rVector = CIVector(x: 0.45, y: 0,   z: 0,   w: 0)
-            matrix.gVector = CIVector(x: 0,    y: 0.7, z: 0,   w: 0)
-            matrix.bVector = CIVector(x: 0,    y: 0,   z: 1.3, w: 0)
-            matrix.aVector = CIVector(x: 0,    y: 0,   z: 0,   w: 1)
-            ciImage = matrix.outputImage ?? ciImage
+            if let filter = blueLUTFilter {
+                filter.setValue(ciImage, forKey: kCIInputImageKey)
+                ciImage = filter.outputImage ?? ciImage
+            }
 
         default:
             break
+        }
+
+        // 필터 강도 블렌딩 (intensity < 1.0일 때 원본과 합성)
+        if selectedFilter != .none && filterIntensity < 1.0 {
+            let original = CIImage(cvImageBuffer: imageBuffer)
+                .oriented(currentPosition == .front ? .leftMirrored : .right)
+            let adjusted = ciImage.applyingFilter("CIColorMatrix", parameters: [
+                "inputAVector": CIVector(x: 0, y: 0, z: 0, w: CGFloat(filterIntensity))
+            ])
+            ciImage = adjusted.applyingFilter("CISourceOverCompositing", parameters: [
+                kCIInputBackgroundImageKey: original
+            ])
         }
 
         guard let cgImage = frameContext.createCGImage(ciImage, from: ciImage.extent) else { return }
