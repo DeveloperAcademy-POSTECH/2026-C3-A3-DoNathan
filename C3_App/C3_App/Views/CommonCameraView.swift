@@ -26,6 +26,7 @@ struct CommonCameraView<MissionOverlay: View>: View {
     @State private var currentDestination: MissionType? = nil
     let destination: MissionType?
     var cameraMode: CameraMode = .mission
+    var overlayHeight: CGFloat = 107
 
     var onDismiss: (() -> Void)? = nil
     @ViewBuilder var missionOverlay: () -> MissionOverlay
@@ -128,8 +129,12 @@ struct CommonCameraView<MissionOverlay: View>: View {
             .frame(height: cameraHeight)
 
             // MARK: - 미션 오버레이 슬롯 (항상 126pt 확보)
-            missionOverlay()
-                .frame(maxWidth: .infinity, minHeight: 107)
+            ZStack {
+                Color.clear
+                missionOverlay()
+            }
+            .frame(height: overlayHeight)
+            .frame(maxWidth: .infinity)
 
             // MARK: - 하단 컨트롤
             HStack(alignment: .center) {
@@ -171,7 +176,7 @@ struct CommonCameraView<MissionOverlay: View>: View {
                 .glassEffect(.regular.interactive(), in: Circle())
             }
             .padding(.horizontal, 32)
-            .padding(.top, 20)
+        
             .padding(.bottom, 20)
             .background(
                 Color.white

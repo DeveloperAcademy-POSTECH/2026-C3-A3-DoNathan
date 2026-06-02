@@ -19,6 +19,7 @@ struct FilterCameraView: View {
             vm: vm,
             destination: nil,
             cameraMode: .filter,
+            overlayHeight: 126,
             onDismiss: onDismiss
         ) {
             FilterCarouselView()

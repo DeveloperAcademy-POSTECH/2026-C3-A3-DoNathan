@@ -32,7 +32,11 @@ struct MissionSelectView: View {
                             ForEach(0..<9) { gridIndex in
                                 if gridIndex == 4 {
                                     CenterColorCell(color: vm.mainColor, height: cellH)
+                                    
+                                    //데모를 위한 클릭!!! (이후삭제필요) 여기부터
                                         .onTapGesture { showFilterCamera = true }
+                                    //데모를 위한 클릭!!! (이후삭제필요) 여기까지
+                                    
                                 } else {
                                     let mi = gridIndex < 4 ? gridIndex : gridIndex - 1
                                     MissionCell(
@@ -109,7 +113,12 @@ struct MissionSelectView: View {
                     .padding(.horizontal, 20)
                     .padding(.bottom, 32)
                 }
+                
+                //데모를 위한 클릭!!! (이후삭제필요) 여기부터
                 .navigationBarHidden(true)
+                //데모를 위한 클릭!!! (이후삭제필요) 여기까지
+
+                
             }
             // 🌟 변경 포인트 2: activeDestination의 상태를 감시하여 알맞은 카메라 뷰로 분기 연결!
             .fullScreenCover(isPresented: $showFilterCamera) {
@@ -121,6 +130,7 @@ struct MissionSelectView: View {
                     CommonCameraView(viewModel: viewModel,
                                      vm: vm,
                                      destination: destination,
+                                     overlayHeight: 100,
                                      onDismiss: { vm.activeDestination = nil }
                     ) {
                         EmptyView()
@@ -131,6 +141,7 @@ struct MissionSelectView: View {
                     CommonCameraView(viewModel: viewModel,
                                      vm: vm,
                                      destination: destination,
+                                     overlayHeight: 100,
                                      onDismiss: { vm.activeDestination = nil }
                     ) {
                         EmptyView()
@@ -139,6 +150,7 @@ struct MissionSelectView: View {
                     CommonCameraView(viewModel: viewModel,
                                      vm: vm,
                                      destination: destination,
+                                     overlayHeight: 100,
                                      onDismiss: { vm.activeDestination = nil }
                     ) {
                         EmptyView()
@@ -147,6 +159,7 @@ struct MissionSelectView: View {
                     CommonCameraView(viewModel: viewModel,
                                      vm: vm,
                                      destination: destination,
+                                     overlayHeight: 100,
                                      onDismiss: { vm.activeDestination = nil }
                     ) {
                         EmptyView()
