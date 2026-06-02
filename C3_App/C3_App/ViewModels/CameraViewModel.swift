@@ -27,6 +27,10 @@ class CameraViewModel: ObservableObject {
     @Published var brightness: Double = 0.0 {
         didSet { cameraService.brightness = brightness }
     }
+
+    @Published var selectedFilter: FilterOption = .none {
+        didSet { cameraService.selectedFilter = selectedFilter }
+    }
     
     init() {
         setupBindings()

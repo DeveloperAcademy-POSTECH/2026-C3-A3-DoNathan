@@ -23,6 +23,7 @@ class CameraService: NSObject, AVCapturePhotoCaptureDelegate, AVCaptureVideoData
     var brightness: Double = 0.0 {
         didSet { applyExposureBias() }
     }
+    var selectedFilter: FilterOption = .none
     var onFrameProcessed: ((UIImage) -> Void)?
 
     // ViewModel로 이미지를 넘겨주기 위한 콜백 클로저
@@ -221,6 +222,29 @@ extension CameraService {
             ciImage = filter.outputImage ?? ciImage
         }
 
+        // 컬러 필터 적용 (Red / Blue)
+        switch selectedFilter {
+        case .red:
+            let matrix = CIFilter.colorMatrix()
+            matrix.inputImage = ciImage
+            matrix.rVector = CIVector(x: 1.3,  y: 0,    z: 0,    w: 0)
+            matrix.gVector = CIVector(x: 0,    y: 0.45, z: 0,    w: 0)
+            matrix.bVector = CIVector(x: 0,    y: 0,    z: 0.45, w: 0)
+            matrix.aVector = CIVector(x: 0,    y: 0,    z: 0,    w: 1)
+            ciImage = matrix.outputImage ?? ciImage
+
+        case .blue:
+            let matrix = CIFilter.colorMatrix()
+            matrix.inputImage = ciImage
+            matrix.rVector = CIVector(x: 0.45, y: 0,   z: 0,   w: 0)
+            matrix.gVector = CIVector(x: 0,    y: 0.7, z: 0,   w: 0)
+            matrix.bVector = CIVector(x: 0,    y: 0,   z: 1.3, w: 0)
+            matrix.aVector = CIVector(x: 0,    y: 0,   z: 0,   w: 1)
+            ciImage = matrix.outputImage ?? ciImage
+
+        default:
+            break
+        }
 
         guard let cgImage = frameContext.createCGImage(ciImage, from: ciImage.extent) else { return }
         let uiImage = UIImage(cgImage: cgImage)
