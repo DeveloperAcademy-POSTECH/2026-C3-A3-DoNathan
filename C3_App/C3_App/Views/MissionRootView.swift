@@ -9,7 +9,7 @@ import SwiftUI
 
 struct MissionRootView: View {
     let missionColor: MissionColor
-    var onDismiss: (() -> Void)? = nil
+    var onDismiss: (() -> Void)?
 
     @StateObject var vm: MissionViewModel
 
@@ -28,7 +28,9 @@ struct MissionRootView: View {
                         removal:   .move(edge: .leading ).combined(with: .opacity)
                     )) // 화면 전환 시 애니메이션 방향
             } else {
-                MissionSelectView(vm: vm)
+                MissionSelectView(vm: vm,
+                                  onDismiss: { onDismiss?() }
+                )
                     .transition(.asymmetric(
                         insertion: .move(edge: .leading ).combined(with: .opacity),
                         removal:   .move(edge: .trailing).combined(with: .opacity)
