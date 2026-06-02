@@ -8,9 +8,11 @@
 import SwiftUI
 
 struct MainRootView: View {
+    @ObservedObject var vm: MissionViewModel
     @StateObject private var progress = MissionProgress.shared
     @State private var selectedColor: MissionColor = MissionColor.all[0]
     @State private var showMission: Bool = false
+    @State private var showFilterCamera: Bool = false
 
     var body: some View {
         GeometryReader { geo in
@@ -48,10 +50,25 @@ struct MainRootView: View {
                         .frame(width: 90, height: 92)
                         .padding(.top, 0)
 
+
+//                    HStack(spacing: 12) {
+//                        Button {
+//                            guard selectedColor.isUnlocked else { return }
+//                            showFilterCamera = true
+//                        } label: {
+//                            Image(systemName: "camera")
+//                                .font(.system(size: 20))
+//                                .foregroundColor(.secondary)
+//                                .frame(width: 50, height: 50)
+//                                .background(Color(.systemGray6))
+//                                .clipShape(Circle())
+//                        }
+
                     Text(selectedColor.name)
                         .font(.system(size: 14, weight: .bold))
                         .foregroundColor(selectedColor.color)
                         .padding(.top, 4)
+
 
                     Text(selectedColor.hexCode)
                         .font(.system(size: 9, weight: .medium))
@@ -85,14 +102,26 @@ struct MainRootView: View {
                 // MARK: - 하단 버튼
                 HStack(spacing: 39) {
                     // 뒤로가기 버튼
+//                    Button {
+//                    } label: {
+//                        Image(systemName: "chevron.left")
+//                            .font(.system(size: 16, weight: .medium))
+//                            .foregroundColor(Color(hex: "919191"))
+//                            .frame(width: 48, height: 48)
+//                    }
+//                    .glassEffect(.regular.interactive(), in: Circle())
+                    
                     Button {
+                        guard selectedColor.isUnlocked else { return }
+                        showFilterCamera = true
                     } label: {
-                        Image(systemName: "chevron.left")
-                            .font(.system(size: 16, weight: .medium))
-                            .foregroundColor(Color(hex: "919191"))
-                            .frame(width: 48, height: 48)
+                        Image(systemName: "camera")
+                            .font(.system(size: 20))
+                            .foregroundColor(.secondary)
+                            .frame(width: 50, height: 50)
+                            .background(Color(.systemGray6))
+                            .clipShape(Circle())
                     }
-                    .glassEffect(.regular.interactive(), in: Circle())
 
                     // 미션 시작 버튼
                     Button {
@@ -123,6 +152,12 @@ struct MainRootView: View {
             }
         }
         .ignoresSafeArea()
+        .fullScreenCover(isPresented: $showFilterCamera) {
+            FilterCameraView(
+                vm: vm,
+                onDismiss: { showFilterCamera = false }
+            )
+        }
         .fullScreenCover(isPresented: $showMission) {
             MissionRootView(
                 missionColor: selectedColor,
@@ -133,5 +168,5 @@ struct MainRootView: View {
 }
 
 #Preview {
-    MainRootView()
+    MainRootView(vm: MissionViewModel())
 }
