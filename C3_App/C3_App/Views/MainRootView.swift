@@ -8,9 +8,11 @@
 import SwiftUI
 
 struct MainRootView: View {
+    @ObservedObject var vm: MissionViewModel
     @StateObject private var progress = MissionProgress.shared
     @State private var selectedColor: MissionColor = MissionColor.all[0]
     @State private var showMission: Bool = false
+    @State private var showFilterCamera: Bool = false
 
     var body: some View {
         GeometryReader { geo in
@@ -34,6 +36,8 @@ struct MainRootView: View {
 
                     HStack(spacing: 12) {
                         Button {
+                            guard selectedColor.isUnlocked else { return }
+                            showFilterCamera = true
                         } label: {
                             Image(systemName: "camera")
                                 .font(.system(size: 20))
@@ -77,6 +81,12 @@ struct MainRootView: View {
             }
         }
         .ignoresSafeArea()
+        .fullScreenCover(isPresented: $showFilterCamera) {
+            FilterCameraView(
+                vm: vm,
+                onDismiss: { showFilterCamera = false }
+            )
+        }
         .fullScreenCover(isPresented: $showMission) {
             MissionRootView(
                 missionColor: selectedColor,
@@ -87,5 +97,5 @@ struct MainRootView: View {
 }
 
 #Preview {
-    MainRootView()
+    MainRootView(vm: MissionViewModel())
 }
