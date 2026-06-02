@@ -9,7 +9,7 @@ import SwiftUI
 import AVFoundation
 import Photos // PhotoKit
 
-struct CommonCameraView<MissionOverlay: View>: View {
+struct CommonCameraView<MissionOverlay: View, CameraOverlay: View>: View {
     @ObservedObject var viewModel: CameraViewModel
     @ObservedObject var vm: MissionViewModel
     @State private var capturedImage: UIImage?
@@ -17,11 +17,12 @@ struct CommonCameraView<MissionOverlay: View>: View {
     @State private var showGrid: Bool = false
     
     @State private var showEditView: Bool = false
-    @State private var currentDestination: MissionType? = nil  // ✅ 추가
+    @State private var currentDestination: MissionType? = nil
     let destination: MissionType?
 
     var onDismiss: (() -> Void)? = nil
-    @ViewBuilder var missionOverlay: () -> MissionOverlay
+    @ViewBuilder var cameraOverlay: () -> CameraOverlay // 카메라 위
+    @ViewBuilder var missionOverlay: () -> MissionOverlay // 카메라 아래
 
     var body: some View {
         VStack(spacing: 0) {
@@ -102,6 +103,8 @@ struct CommonCameraView<MissionOverlay: View>: View {
                         }
                     }
                     .padding(.bottom, 18)
+                    
+                    cameraOverlay()
                 }
                 .frame(width: geo.size.width, height: geo.size.width * 4 / 3)
             }
@@ -268,7 +271,12 @@ struct GridOverlayView: View {
 }
 
 #Preview {
-    CommonCameraView(viewModel: CameraViewModel(),vm: MissionViewModel(), destination: .basic) {
-        EmptyView()
-    }
+    CommonCameraView(viewModel: CameraViewModel(),vm: MissionViewModel(), destination: .basic,
+        cameraOverlay: {
+           EmptyView()
+        },
+        missionOverlay: {
+            EmptyView()
+        }
+    )
 }

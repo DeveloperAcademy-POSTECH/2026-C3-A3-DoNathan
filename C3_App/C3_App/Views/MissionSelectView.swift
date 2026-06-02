@@ -10,7 +10,6 @@ import SwiftUI
 struct MissionSelectView: View {
     @ObservedObject var vm: MissionViewModel
     @StateObject private var viewModel = CameraViewModel()
-    @State private var missionType: MissionType? = nil
     let columns = Array(repeating: GridItem(.flexible(), spacing: 2), count: 3)
 
     var body: some View {
@@ -88,8 +87,6 @@ struct MissionSelectView: View {
                     Spacer()
 
                     Button {
-//                        guard vm.selectedIndex != nil else { return }
-//                        vm.showMissionCamera = true
                         if let destination = vm.currentMissionDestination {
                             vm.activeDestination = destination
                         }
@@ -109,14 +106,14 @@ struct MissionSelectView: View {
                 }
                 .navigationBarHidden(true)
             }
-            // 🌟 변경 포인트 2: activeDestination의 상태를 감시하여 알맞은 카메라 뷰로 분기 연결!
             .fullScreenCover(item: $vm.activeDestination) { destination in
                 switch destination {
                 case .basic:
                     CommonCameraView(viewModel: viewModel,
                                      vm: vm,
                                      destination: destination,
-                                     onDismiss: { vm.activeDestination = nil }
+                                     onDismiss: { vm.activeDestination = nil },
+                                     cameraOverlay: { EmptyView() }
                     ) {
                         EmptyView()
                     }
@@ -126,7 +123,8 @@ struct MissionSelectView: View {
                     CommonCameraView(viewModel: viewModel,
                                      vm: vm,
                                      destination: destination,
-                                     onDismiss: { vm.activeDestination = nil }
+                                     onDismiss: { vm.activeDestination = nil },
+                                     cameraOverlay: { EmptyView() }
                     ) {
                         EmptyView()
                     }
@@ -134,7 +132,8 @@ struct MissionSelectView: View {
                     CommonCameraView(viewModel: viewModel,
                                      vm: vm,
                                      destination: destination,
-                                     onDismiss: { vm.activeDestination = nil }
+                                     onDismiss: { vm.activeDestination = nil },
+                                     cameraOverlay: { EmptyView() }
                     ) {
                         EmptyView()
                     }
@@ -142,13 +141,14 @@ struct MissionSelectView: View {
                     CommonCameraView(viewModel: viewModel,
                                      vm: vm,
                                      destination: destination,
-                                     onDismiss: { vm.activeDestination = nil }
+                                     onDismiss: { vm.activeDestination = nil },
+                                     cameraOverlay: { EmptyView() }
                     ) {
                         EmptyView()
                     }
                 }
             }
-}
+        }
     }
 
     func gridHeight() -> CGFloat {
