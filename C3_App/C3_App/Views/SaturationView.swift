@@ -85,11 +85,12 @@ struct SaturationView: View {
                 Button(action: onCancel) {
                     Image(systemName: "xmark")
                         .font(.system(size: 18, weight: .semibold))
-                        .foregroundStyle(.primary)
+                        .foregroundStyle(.gray)
                         .frame(width: 36, height: 36)
-                        .background(Circle().fill(Color.white.opacity(0.9)))
-                        .shadow(radius: 6, y: 3)
+//                        .background(Circle().fill(Color.white.opacity(0.9)))
+//                        .shadow(radius: 6, y: 3)
                 }
+                .buttonStyle(GlassButtonStyle())
 
                 Spacer()
             }
