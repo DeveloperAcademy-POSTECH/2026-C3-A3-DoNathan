@@ -88,6 +88,15 @@ struct CommonCameraView<MissionOverlay: View, CameraOverlay: View>: View {
                             .foregroundStyle(.white)
                     }
 
+                    // 필터 적용된 프레임 오버레이
+                    if let frame = viewModel.currentFrame {
+                        Image(uiImage: frame)
+                            .resizable()
+                            .scaledToFill()
+                            .frame(width: geo.size.width, height: cameraHeight)
+                            .clipped()
+                    }
+
                     // 셔터 플래시 오버레이
                     if viewModel.showFlashOverlay {
                         Color.white.opacity(0.7)

@@ -225,46 +225,13 @@ extension CameraService {
         // 컬러 필터 적용 (Red / Blue)
         switch selectedFilter {
         case .red:
-            // 1. 밝기(-15) / 대비(+55) / 채도(+20)
-            let colorControls = CIFilter.colorControls()
-            colorControls.inputImage = ciImage
-            colorControls.brightness = -0.06  // -15 / 100 * 0.4
-            colorControls.contrast   = 1.55   // 1.0 + 55/100
-            colorControls.saturation = 1.2    // 1.0 + 20/100
-            ciImage = colorControls.outputImage ?? ciImage
-
-            // 2. 하이라이트(-10) / 그림자(+30)
-            let highlightShadow = CIFilter.highlightShadowAdjust()
-            highlightShadow.inputImage     = ciImage
-            highlightShadow.highlightAmount = 0.9  // 1.0 - 10/100
-            highlightShadow.shadowAmount    = 0.3  // 30/100
-            ciImage = highlightShadow.outputImage ?? ciImage
-
-            // 3. 온도(+35 → 따뜻하게)
-            let tempTint = CIFilter.temperatureAndTint()
-            tempTint.inputImage     = ciImage
-            tempTint.neutral        = CIVector(x: 6500, y: 0)
-            tempTint.targetNeutral  = CIVector(x: 6150, y: 0) // 낮을수록 따뜻함
-            ciImage = tempTint.outputImage ?? ciImage
-
-            // 4. 그레인(+50)
-            if let grainRaw = CIFilter(name: "CIRandomGenerator")?.outputImage {
-                let grainCropped = grainRaw.cropped(to: ciImage.extent)
-                let grainMatrix = CIFilter.colorMatrix()
-                grainMatrix.inputImage  = grainCropped
-                let intensity: CGFloat  = 0.05 // 50/100 스케일 다운
-                grainMatrix.rVector     = CIVector(x: intensity, y: 0, z: 0, w: 0)
-                grainMatrix.gVector     = CIVector(x: 0, y: intensity, z: 0, w: 0)
-                grainMatrix.bVector     = CIVector(x: 0, y: 0, z: intensity, w: 0)
-                grainMatrix.aVector     = CIVector(x: 0, y: 0, z: 0, w: 0)
-                grainMatrix.biasVector  = CIVector(x: 0, y: 0, z: 0, w: 1)
-                if let grain = grainMatrix.outputImage,
-                   let blend = CIFilter(name: "CISoftLightBlendMode") {
-                    blend.setValue(grain, forKey: kCIInputImageKey)
-                    blend.setValue(ciImage, forKey: kCIInputBackgroundImageKey)
-                    ciImage = blend.outputImage ?? ciImage
-                }
-            }
+            let matrix = CIFilter.colorMatrix()
+            matrix.inputImage = ciImage
+            matrix.rVector = CIVector(x: 1.3,  y: 0,    z: 0,    w: 0)
+            matrix.gVector = CIVector(x: 0,    y: 0.45, z: 0,    w: 0)
+            matrix.bVector = CIVector(x: 0,    y: 0,    z: 0.45, w: 0)
+            matrix.aVector = CIVector(x: 0,    y: 0,    z: 0,    w: 1)
+            ciImage = matrix.outputImage ?? ciImage
 
         case .blue:
             let matrix = CIFilter.colorMatrix()
