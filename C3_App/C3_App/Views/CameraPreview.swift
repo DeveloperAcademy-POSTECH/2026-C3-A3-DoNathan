@@ -17,7 +17,7 @@ struct CameraPreview: UIViewRepresentable {
         view.backgroundColor = .black
         
         // 프리뷰 레이어 생성 및 세션 연결
-        let previewLayer = AVCaptureVideoPreviewLayer(session: session) // a.k.a. 실시간 상영 스크린
+        let previewLayer = AVCaptureVideoPreviewLayer(session: session) // a.k.a. 실시간 상영 스크린 ★★★ 여기서 실시간 화면 넘겨주고 있음
         previewLayer.videoGravity = .resizeAspectFill
         
         // 중요: 뷰의 레이어 서브레이어로 추가
