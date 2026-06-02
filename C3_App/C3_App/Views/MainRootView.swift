@@ -60,7 +60,7 @@ struct MainRootView: View {
                 }
                 .frame(width: 103, height: 136)
                 .background(Color(hex: "FDFCF9"))
-                .position(x: 258 + 103 / 2, y: 75 + 136 / 2)
+                .position(x: 278 + 103 / 2, y: 75 + 126 / 2)
 
                 // MARK: - 컬러 이름 (대형 서체)
                 Text(selectedColor.name)
