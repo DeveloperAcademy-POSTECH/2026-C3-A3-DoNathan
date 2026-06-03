@@ -86,7 +86,7 @@ struct SaturationView: View {
                     Image(systemName: "xmark")
                         .font(.system(size: 18, weight: .semibold))
                         .foregroundStyle(.gray)
-                        .frame(width: 36, height: 36)
+                        .frame(width: 40, height: 40)
 //                        .background(Circle().fill(Color.white.opacity(0.9)))
 //                        .shadow(radius: 6, y: 3)
                 }
