@@ -89,7 +89,7 @@ struct CropView: View {
                                         viewModel.cropOffset = CGSize(
                                             width: min(max(newWidth, -maxX), maxX),
                                             height: min(max(newHeight, -maxY), maxY)
-                                       )
+                                        )
                                     }
                                     .onEnded { _ in
                                         lastOffset = viewModel.cropOffset

@@ -19,17 +19,17 @@ struct SaturationView: View {
         VStack(spacing: 0) {
             // 사진 미리보기
             ZStack {
-                Color(.systemGray5)
-
                 if let image = viewModel.previewImage {
                     Image(uiImage: image)
                         .resizable()
-                        .scaledToFill()
+                        .scaledToFit()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
                     ProgressView()
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(Color(.systemGray5))
 
             // 채도 슬라이더
             HStack(spacing: 12) {
@@ -42,18 +42,16 @@ struct SaturationView: View {
                 }
                 .tint(.gray)
 
-                Image("camera.filters.fill") // 에셋이면 이름 바꾸는 것 권장: ic_filters_fill
+                Image("camera.filters.fill")
                     .resizable()
                     .scaledToFit()
-//                    .renderingMode(.template)
-//                    .foregroundStyle(.gray)
                     .frame(width: 20, height: 20)
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 16)
             .background(Color.white)
-            
-            Spacer().frame(height: 88) // ✅ 원하는 만큼
+
+            Spacer().frame(height: 88)
 
             // 하단 버튼 영역(높이 확보)
             HStack {
@@ -65,40 +63,52 @@ struct SaturationView: View {
                         onConfirm(image, viewModel.saturation)
                     }
                 } label: {
-                    HStack(spacing: 16) {
-                        Text("편집완료")
-                            .font(.system(size: 17, weight: .semibold))
+                    HStack {
                         Image(systemName: "checkmark")
-                            .font(.system(size: 17, weight: .semibold))
+                            .font(.system(size: 16, weight: .semibold))
+                        Text("편집완료")
+                            .font(.system(size: 19, weight: .semibold))
                     }
-                    .padding(.vertical, 6)
-                    
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 14)
+                    .background(Color(hex: "0076FF").opacity(0.65), in: Capsule())
                 }
-                .buttonStyle(GlassButtonStyle())
+                .glassEffect(.regular, in: Capsule())
             }
-            .padding(.horizontal, 12)
-            .padding(.bottom, 44)   // ✅ 이 값 키우면 슬라이더가 더 위로
+            .padding(.horizontal, 18)
+            .padding(.bottom, 8)
             .background(Color.white)
         }
         .safeAreaInset(edge: .top) {
             HStack {
                 Button(action: onCancel) {
-                    Image(systemName: "xmark")
-                        .font(.system(size: 18, weight: .semibold))
-                        .foregroundStyle(.gray)
-                        .frame(width: 36, height: 36)
-//                        .background(Circle().fill(Color.white.opacity(0.9)))
-//                        .shadow(radius: 6, y: 3)
+                    ZStack {
+                        Circle()
+                            .fill(.clear)
+                        Image(systemName: "xmark")
+                            .font(.system(size: 19, weight: .semibold))
+                            .foregroundColor(Color(hex: "888888"))
+                    }
+                    .frame(width: 40, height: 40)
+                    .contentShape(Circle())
                 }
-                .buttonStyle(GlassButtonStyle())
+                .glassEffect(.regular, in: Circle())
 
                 Spacer()
             }
-            .padding(.horizontal, 20)
-            .padding(.top, 10)
-            .padding(.bottom, 8)
+            .padding(.horizontal, 16)
+            .padding(.top, 28)
+            .padding(.bottom, 20)
             .background(Color.white)
         }
         .onAppear { viewModel.setImage(capturedImage) }
     }
+}
+#Preview {
+    SaturationView(
+        capturedImage: UIImage(systemName: "photo") ?? UIImage(),
+        onConfirm: { _, _ in },
+        onCancel: {}
+    )
 }
