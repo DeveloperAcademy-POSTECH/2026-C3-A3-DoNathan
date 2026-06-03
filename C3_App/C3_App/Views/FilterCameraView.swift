@@ -1,0 +1,32 @@
+//
+//  FilterCameraView.swift
+//  C3_App
+//
+//  Created by 최정원 on 6/1/26.
+//
+
+import SwiftUI
+
+struct FilterCameraView: View {
+    @StateObject private var viewModel = CameraViewModel()
+    @ObservedObject var vm: MissionViewModel
+    var onDismiss: (() -> Void)?
+
+    var body: some View {
+        CommonCameraView(viewModel: viewModel,
+                         vm: vm,
+                         destination: .filter,
+                         onDismiss: { onDismiss?() },
+            cameraOverlay: {
+               EmptyView()
+            },
+            missionOverlay: {
+                FilterCarouselView(selectedFilter: $viewModel.selectedFilter)
+            }
+        )
+    }
+}
+
+#Preview {
+    FilterCameraView(vm: MissionViewModel())
+}

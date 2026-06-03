@@ -9,20 +9,51 @@ import SwiftUI
 
 struct MissionSelectView: View {
     @ObservedObject var vm: MissionViewModel
+    @StateObject private var viewModel = CameraViewModel()
+    @State private var missionType: MissionType? = nil
+    var onDismiss: (() -> Void)?
     let columns = Array(repeating: GridItem(.flexible(), spacing: 2), count: 3)
 
     var body: some View {
         NavigationView {
             ZStack {
                 VStack(spacing: 0) {
-                    Text("오늘 도전할 미션을 선택하세요!")
-                        .font(.system(size: 16, weight: .medium))
-                        .padding(.top, 16)
-                        .padding(.bottom, 20)
+                    VStack(spacing: 6) {
+                        HStack {
+                            Button {
+                                onDismiss?()
+                            } label: {
+                                Image(systemName: "chevron.left")
+                                    .font(.system(size: 20, weight: .semibold))
+                                    .foregroundColor(.black)
+                                    .padding(12)
+                                    .background(Circle().fill(Color.white.opacity(0.7)))
+                            }
+                            Spacer()
+                        }
+                        .padding(.horizontal, 20)
+
+                        Text("도전할 미션을 선택하세요!")
+                            .font(.system(size: 23, weight: .bold))
+                            .foregroundStyle(.black)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.horizontal, 23)
+
+                        Text("Media & Camera 기능을 활용해\n미션 컬러를 찾아 빙고를 완성하세요.")
+                            .font(.system(size: 15))
+                            .foregroundStyle(.gray)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .fixedSize(horizontal: false, vertical: true)
+                            .padding(.horizontal, 23)
+                            .padding(.bottom, 20)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.top, 16)
+                    .background(vm.mainColor.opacity(0.15))
 
                     GeometryReader { geo in
                         let cellW = (geo.size.width - 40 - 4) / 3
-                        let cellH = cellW * 4 / 3
+                        let cellH = cellW * 3 / 2
 
                         LazyVGrid(columns: columns, spacing: 2) {
                             ForEach(0..<9) { gridIndex in
@@ -37,14 +68,13 @@ struct MissionSelectView: View {
                                         cellHeight: cellH,
                                         onDelete: {
                                             vm.missions[mi].completedImage = nil
+                                        },
+                                        onTap: {
+                                            withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
+                                                vm.selectedIndex = (vm.selectedIndex == mi) ? nil : mi
+                                            }
                                         }
                                     )
-                                    .onTapGesture {
-                                        guard !vm.missions[mi].isCompleted else { return }
-                                        withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
-                                            vm.selectedIndex = (vm.selectedIndex == mi) ? nil : mi
-                                        }
-                                    }
                                 }
                             }
                         }
@@ -52,16 +82,21 @@ struct MissionSelectView: View {
                     }
                     .frame(height: gridHeight())
                     .padding(.horizontal, 20)
+                    .padding(.top, 12)
 
+                    // 진행도 바
                     VStack(spacing: 8) {
                         HStack {
                             Text("진행도")
                                 .font(.system(size: 13))
                                 .foregroundColor(.secondary)
                             Spacer()
-                            Text("\(vm.completedCount)/8")
-                                .font(.system(size: 13, weight: .semibold))
+                            Text("\(vm.completedCount)")
+                                .font(.system(size: 20, weight: .semibold))
                                 .foregroundColor(vm.mainColor)
+                            Text("/  8")
+                                .font(.system(size: 13, weight: .semibold))
+                                .foregroundColor(.secondary)
                         }
                         GeometryReader { geo in
                             ZStack(alignment: .leading) {
@@ -82,8 +117,9 @@ struct MissionSelectView: View {
                     Spacer()
 
                     Button {
-                        guard vm.selectedIndex != nil else { return }
-                        vm.showMissionCamera = true
+                        if let destination = vm.currentMissionDestination {
+                            vm.activeDestination = destination
+                        }
                     } label: {
                         Text("미션 시작하기")
                             .font(.system(size: 16, weight: .semibold))
@@ -98,28 +134,55 @@ struct MissionSelectView: View {
                     .padding(.horizontal, 20)
                     .padding(.bottom, 32)
                 }
-                .navigationBarHidden(true)
-
-                VStack {
-                    Spacer()
-                    if vm.showSuccessToast {
-                        HStack(spacing: 8) {
-                            Image(systemName: "checkmark.circle.fill")
-                                .foregroundColor(.white)
-                            Text("미션 성공! 칸이 채워졌어요 🎉")
-                                .font(.system(size: 14, weight: .semibold))
-                                .foregroundColor(.white)
-                        }
-                        .padding(.horizontal, 20)
-                        .padding(.vertical, 12)
-                        .background(vm.mainColor)
-                        .cornerRadius(24)
-                        .shadow(color: vm.mainColor.opacity(0.4), radius: 8, y: 4)
-                        .padding(.bottom, 100)
-                        .transition(.move(edge: .bottom).combined(with: .opacity))
+            }
+            // 🌟 변경 포인트 2: activeDestination의 상태를 감시하여 알맞은 카메라 뷰로 분기 연결!
+            .fullScreenCover(item: $vm.activeDestination) { destination in
+                switch destination {
+                case .filter:
+                    EmptyView()
+                case .basic:
+                    CommonCameraView(viewModel: viewModel,
+                                     vm: vm,
+                                     destination: destination,
+                                     overlayHeight: 100,
+                                     onDismiss: { vm.activeDestination = nil },
+                                     cameraOverlay: { EmptyView() }
+                    ) {
+                        EmptyView()
+                    }
+                case .brightness:
+                    BrightnessView(vm: vm)
+                case .saturation:
+                    CommonCameraView(viewModel: viewModel,
+                                     vm: vm,
+                                     destination: destination,
+                                     overlayHeight: 100,
+                                     onDismiss: { vm.activeDestination = nil },
+                                     cameraOverlay: { EmptyView() }
+                    ) {
+                        EmptyView()
+                    }
+                case .crop:
+                    CommonCameraView(viewModel: viewModel,
+                                     vm: vm,
+                                     destination: destination,
+                                     overlayHeight: 100,
+                                     onDismiss: { vm.activeDestination = nil },
+                                     cameraOverlay: { EmptyView() }
+                    ) {
+                        EmptyView()
+                    }
+                case .colorPicker:
+                    CommonCameraView(viewModel: viewModel,
+                                     vm: vm,
+                                     destination: destination,
+                                     overlayHeight: 100,
+                                     onDismiss: { vm.activeDestination = nil },
+                                     cameraOverlay: { EmptyView() }
+                    ) {
+                        EmptyView()
                     }
                 }
-                .animation(.spring(response: 0.4, dampingFraction: 0.75), value: vm.showSuccessToast)
             }
         }
     }
@@ -132,4 +195,8 @@ struct MissionSelectView: View {
         let cellH = cellW * 4 / 3
         return cellH * 3 + 4
     }
+}
+
+#Preview {
+    MissionSelectView(vm: .init())
 }

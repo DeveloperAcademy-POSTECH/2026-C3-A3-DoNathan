@@ -10,6 +10,7 @@ import SwiftUI
 struct ShutterButton: View {
     let mainColor: Color
     let action:    () -> Void
+    
     var body: some View {
         Button(action: action) {
             ZStack {

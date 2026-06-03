@@ -9,14 +9,13 @@ import SwiftUI
 import AVFoundation
 
 struct ContentView: View {
-    @StateObject private var viewModel = CameraViewModel()
-    @State private var missionType: MissionType? = nil
-
+    @ObservedObject var vm: MissionViewModel
+    
     var body: some View {
-        BrightnessView()
+        MainRootView(vm: vm)
     }
 }
 
 #Preview {
-    ContentView()
+    ContentView(vm: MissionViewModel())
 }

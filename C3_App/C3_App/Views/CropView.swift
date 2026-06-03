@@ -100,17 +100,22 @@ struct CropView: View {
                 HStack {
                     Button(action: {
                         if showPreview {
-                            // 미리보기 → 다시 크롭으로
                             showPreview = false
                         } else {
                             onCancel()
                         }
                     }) {
-                        Image(systemName: "xmark.circle")
-                            .font(.system(size: 44))
-                            .foregroundColor(.primary)
+                        ZStack {
+                            Circle()
+                                .fill(.clear)
+                            Image(systemName: "xmark")
+                                .font(.system(size: 19, weight: .semibold))
+                                .foregroundColor(Color(hex: "888888"))
+                        }
+                        .frame(width: 40, height: 40)
+                        .contentShape(Circle())
                     }
-                    
+                    .glassEffect(.regular, in: Circle())
                     Spacer()
                     
                     if showPreview {
@@ -141,10 +146,15 @@ struct CropView: View {
                                 showPreview = true
                             }
                         } label: {
-                            Image(systemName: "checkmark.circle")
-                                .font(.system(size: 44))
-                                .foregroundColor(.primary)
+                            HStack(spacing: 8) {
+                                Image(systemName: "checkmark")
+                                    .font(.system(size: 16, weight: .semibold))
+                            }
+                            .foregroundStyle(.primary)
+                            .padding(.horizontal, 20)
+                            .frame(height: 44)
                         }
+                        .glassEffect(.regular, in: Capsule())
                     }
                 }
                 .padding(.horizontal, 24)
@@ -187,4 +197,11 @@ struct CropMaskView: View {
         }
         .ignoresSafeArea()
     }
+}
+#Preview {
+    CropView(
+        capturedImage: UIImage(systemName: "photo") ?? UIImage(),
+        onConfirm: { _ in },
+        onCancel: { }
+    )
 }
