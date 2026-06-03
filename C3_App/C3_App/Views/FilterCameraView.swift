@@ -19,7 +19,7 @@ struct FilterCameraView: View {
                          overlayHeight: 126,
                          onDismiss: { onDismiss?() },
             cameraOverlay: {
-                // 그레인 오버레이 (None이 아닌 필터 선택 시)
+                // 그레인 오버레이 (None을 제외한 필터 선택 시)
                 if viewModel.selectedFilter != .none {
                     Image("grain_texture")
                         .resizable()
