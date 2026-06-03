@@ -31,6 +31,10 @@ class CameraViewModel: ObservableObject {
     @Published var selectedFilter: FilterOption = .none {
         didSet { cameraService.selectedFilter = selectedFilter }
     }
+
+    @Published var filterIntensity: Double = 1.0 {
+        didSet { cameraService.filterIntensity = filterIntensity }
+    }
     
     init() {
         setupBindings()
