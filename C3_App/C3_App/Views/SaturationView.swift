@@ -1,8 +1,8 @@
 //
-//  SaturationView.swift
-//  TestCamera
+//  SaturationView.swift
+//  TestCamera
 //
-//  Created by 최정원 on 5/28/26.
+//  Created by 최정원 on 5/28/26.
 //
 
 import SwiftUI
@@ -10,12 +10,14 @@ import UIKit
 
 struct SaturationView: View {
     @StateObject private var viewModel = SaturationViewModel()
-
+    @State private var isJudging: Bool = false
+    
     let capturedImage: UIImage
     var onConfirm: (UIImage, Float) -> Void
     var onCancel: () -> Void
-
+    
     var body: some View {
+        
         VStack(spacing: 0) {
             // 사진 미리보기
             ZStack {
@@ -24,7 +26,7 @@ struct SaturationView: View {
                 if let image = viewModel.previewImage {
                     Image(uiImage: image)
                         .resizable()
-                        .scaledToFill()
+                        .scaledToFit()
                 } else {
                     ProgressView()
                 }
@@ -42,16 +44,18 @@ struct SaturationView: View {
                 }
                 .tint(.gray)
                 
-                Image("camera.filter.fill")
+                Image("camera.filters.fill") // 에셋이면 이름 바꾸는 것 권장: ic_filters_fill
                     .resizable()
                     .scaledToFit()
+                //                    .renderingMode(.template)
+                //                    .foregroundStyle(.gray)
                     .frame(width: 20, height: 20)
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 16)
             .background(Color.white)
             
-            Spacer().frame(height: 88)
+            Spacer().frame(height: 88) // ✅ 원하는 만큼
             
             // 하단 버튼 영역(높이 확보)
             HStack {
@@ -70,11 +74,12 @@ struct SaturationView: View {
                             .font(.system(size: 17, weight: .semibold))
                     }
                     .padding(.vertical, 6)
+                    
                 }
                 .buttonStyle(GlassButtonStyle())
             }
             .padding(.horizontal, 12)
-            .padding(.bottom, 44)
+            .padding(.bottom, 44)   // ✅ 이 값 키우면 슬라이더가 더 위로
             .background(Color.white)
         }
         .safeAreaInset(edge: .top) {
@@ -83,7 +88,9 @@ struct SaturationView: View {
                     Image(systemName: "xmark")
                         .font(.system(size: 18, weight: .semibold))
                         .foregroundStyle(.gray)
-                        .frame(width: 36, height: 36)
+                        .frame(width: 40, height: 40)
+                    //                        .background(Circle().fill(Color.white.opacity(0.9)))
+                    //                        .shadow(radius: 6, y: 3)
                 }
                 .buttonStyle(GlassButtonStyle())
                 
@@ -93,7 +100,98 @@ struct SaturationView: View {
             .padding(.top, 10)
             .padding(.bottom, 8)
             .background(Color.white)
+            
+            ZStack {
+                VStack(spacing: 0) {
+                    
+                    // MARK: - 사진 미리보기
+                    ZStack {
+                        Color(.systemGray5)
+                        
+                        if let image = viewModel.previewImage {
+                            Image(uiImage: image)
+                                .resizable()
+                                .scaledToFit()
+                        } else {
+                            ProgressView()
+                        }
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    
+                    // MARK: - 채도 슬라이더
+                    HStack(spacing: 12) {
+                        Image(systemName: "camera.filters")
+                            .foregroundColor(.gray)
+                        
+                        Slider(value: $viewModel.saturation, in: 0.0...2.0) { isEditing in
+                            if isEditing {
+                                // 드래그 중: 저해상도 빠른 렌더링
+                                viewModel.applyPreviewFilter()
+                            } else {
+                                // 드래그 종료: 원본 해상도 고품질 렌더링
+                                viewModel.applyHighResFilter()
+                            }
+                        }
+                        .tint(.gray)
+                        
+                        Image(systemName: "camera.filters.fill")
+                            .foregroundColor(.gray)
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 16)
+                    .background(Color(.systemGray5))
+                    
+                    // MARK: - 하단 버튼
+                    HStack {
+                        // 취소
+                        Button(action: onCancel) {
+                            Image(systemName: "xmark.circle")
+                                .font(.system(size: 44))
+                                .foregroundColor(.primary)
+                        }
+                        
+                        Spacer()
+                        
+                        // 편집완료
+                        Button {
+                            // finalImage 없으면 previewImage라도 전달
+                            let imageToSend = viewModel.finalImage ?? viewModel.previewImage
+                            if let image = imageToSend {
+                                isJudging = true
+                                //onConfirm(image, viewModel.saturation)
+                                //judgeAndConfirm(image: image)
+                            }
+                        } label: {
+                            HStack {
+                                Text("편집완료")
+                                Image(systemName: "checkmark")
+                            }
+                            .padding(.horizontal, 24)
+                            .padding(.vertical, 14)
+                            .overlay(Capsule().stroke(Color.primary, lineWidth: 1.5))
+                        }
+                        .foregroundColor(.primary)
+                    }
+                    .padding(.horizontal, 24)
+                    .padding(.vertical, 20)
+                    .background(Color.white)
+                }
+                .onAppear {
+                    viewModel.setImage(capturedImage)
+                }
+                
+                MissionJudgeOverlay(isJudging: isJudging)
+                
+            }
+            .onAppear { viewModel.setImage(capturedImage) }
         }
-        .onAppear { viewModel.setImage(capturedImage) }
+        
+        //    private func judgeAndConfirm(image: UIImage) {
+        //            // 판정 로직 (예: 1.5초 후 완료)
+        //            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+        //                isJudging = false
+        //                onConfirm(image, viewModel.saturation)
+        //            }
+        //        }
     }
 }
