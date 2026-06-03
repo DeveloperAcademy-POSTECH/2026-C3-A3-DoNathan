@@ -13,6 +13,7 @@ struct ColorPickerView: View {
     @StateObject private var viewModel = ColorPickerViewModel()
     
     let capturedImage: UIImage
+    let missionColor: Color
     var onConfirm: (UIColor) -> Void
     var onCancel: () -> Void
     
@@ -35,30 +36,49 @@ struct ColorPickerView: View {
                             GeometryReader { imageGeo in
                                 Color.clear.onAppear {
                                     // 이미지 실제 표시 frame 저장
-                                    imageFrame = imageGeo.frame(in: .local)
-                                    // 피커 초기 위치를 이미지 중앙으로
+//                                    imageFrame = imageGeo.frame(in: .local)
+//                                    // 피커 초기 위치를 이미지 중앙으로
+                                    imageFrame = imageGeo.frame(in: .named("imageArea"))
                                     pickerPosition = CGPoint(
-                                        x: geo.size.width / 2,
-                                        y: (geo.size.height - 88) / 2
+                                        x: imageFrame.midX,   // 이미지 실제 중앙으로
+                                        y: imageFrame.midY
                                     )
                                 }
                             }
                         )
+
+                    CenterColorCell(color: missionColor, height: 145)
+                        .frame(width: 112)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
+                        .padding(.top, 40)
+                        .padding(.trailing, 36)
+                        .allowsHitTesting(false)
+                    
+                    Button(action: onCancel) {
+                        Image(systemName: "xmark")
+                            .font(.system(size: 20, weight: .medium))
+                            .foregroundColor(Color(hex: "777777"))
+                            .frame(width: 40, height: 40)
+                    }
+                    .buttonStyle(GlassButtonStyle())
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                    .padding(.top, 16)
+                    .padding(.leading, 16)
                     
                     // 피커 아이콘 (비활성 상태일 때만 표시)
                     if !isPickerActive {
-                        Image(systemName: "eyedropper")
-                            .font(.system(size: 20))
-                            .foregroundColor(.white)
-                            .padding(10)
-                            .background(Color.black.opacity(0.6))
-                            .clipShape(Circle())
-                            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
-                            .padding(16)
-                            .onTapGesture {
-                                isPickerActive = true
-                                showResult = false
-                            }
+                        Button {
+                            isPickerActive = true
+                            showResult = false
+                        } label: {
+                            Image(systemName: "eyedropper")
+                                .font(.system(size: 20, weight: .semibold))
+                                .foregroundColor(Color(hex: "777777"))
+                                .frame(width: 48, height: 48)
+                        }
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
+                        .padding(16)
+                        .buttonStyle(GlassButtonStyle())
                     }
                     
                     // 피커 활성화 상태일 때 루페 표시 + 드래그
@@ -85,7 +105,8 @@ struct ColorPickerView: View {
                             )
                     }
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+//                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .frame(width: geo.size.width, height: geo.size.height * 0.76)
                 .background(Color(.systemGray6))
                 
                 // MARK: - 결과 패널
@@ -127,29 +148,37 @@ struct ColorPickerView: View {
                 
                 // MARK: - 하단 버튼
                 HStack {
-                    Button(action: onCancel) {
-                        Image(systemName: "xmark.circle")
-                            .font(.system(size: 44))
-                            .foregroundColor(.primary)
-                    }
                     
                     Spacer()
                     
                     Button {
                         onConfirm(viewModel.selectedUIColor)
                     } label: {
-                        HStack {
-                            Text("편집완료")
+                        HStack(spacing: 10) {
                             Image(systemName: "checkmark")
+                            Text("편집완료")
                         }
-                        .padding(.horizontal, 24)
-                        .padding(.vertical, 14)
-                        .overlay(Capsule().stroke(Color.primary, lineWidth: 1.5))
-                    }
-                    .foregroundColor(.primary)
+                                .font(.system(size: 20, weight: .bold))
+                                .padding(.horizontal, 20)
+                                .frame(height: 48)
+                        }
+                    .buttonStyle(GlassButtonStyle())
+                    .foregroundColor(Color(hex: "777777"))
                     .disabled(viewModel.selectedUIColor == .clear)
                     .opacity(viewModel.selectedUIColor == .clear ? 0.4 : 1.0)
                 }
+//                        HStack {
+//                            Text("편집완료")
+//                            Image(systemName: "checkmark")
+//                        }
+//                        .padding(.horizontal, 24)
+//                        .padding(.vertical, 14)
+//                        .overlay(Capsule().stroke(Color.primary, lineWidth: 1.5))
+//                    }
+//                    .foregroundColor(.primary)
+//                    .disabled(viewModel.selectedUIColor == .clear)
+//                    .opacity(viewModel.selectedUIColor == .clear ? 0.4 : 1.0)
+//                }
                 .padding(.horizontal, 24)
                 .padding(.vertical, 20)
                 .background(Color.white)
@@ -157,8 +186,6 @@ struct ColorPickerView: View {
         }
     }
 }
-
-
 
 // MARK: - 피커 루페 (돋보기 원형 UI)
 struct PickerLoupe: View {
@@ -186,6 +213,7 @@ struct PickerLoupe: View {
 #Preview {
     ColorPickerView(
         capturedImage: UIImage(systemName: "photo") ?? UIImage(),
+        missionColor: .customRed,
         onConfirm: { _ in },
         onCancel: { }
     )
