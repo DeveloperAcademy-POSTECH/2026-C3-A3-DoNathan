@@ -9,6 +9,7 @@ import SwiftUI
 
 struct CropView: View {
     @StateObject private var viewModel = CropViewModel()
+    @StateObject private var judgeVM = JudgeViewModel()
     
     let capturedImage: UIImage
     var missionColor: Color = .red
@@ -134,7 +135,10 @@ struct CropView: View {
                         // 편집완료 버튼
                         Button {
                             if let cropped = viewModel.croppedImage {
-                                onConfirm(cropped)
+                                judgeVM.start(
+                                    onPassed: { onConfirm(cropped) },
+                                    onFailed: { }
+                                )
                             }
                         } label: {
                             HStack {
@@ -177,6 +181,11 @@ struct CropView: View {
                 .padding(.bottom, 8)
                 .background(Color.white)
             }
+        }
+        .overlay {
+            MissionJudgeOverlay(isShowing: judgeVM.isJudging)
+            MissionSuccessOverlay(isShowing: judgeVM.showSuccess)
+            MissionFailOverlay(isShowing: judgeVM.showFail)
         }
     }
 }
