@@ -11,6 +11,7 @@ import Combine
 
 struct ColorPickerView: View {
     @StateObject private var viewModel = ColorPickerViewModel()
+    @StateObject private var judgeVM = JudgeViewModel()
     
     let capturedImage: UIImage
     let missionColor: Color
@@ -36,8 +37,8 @@ struct ColorPickerView: View {
                             GeometryReader { imageGeo in
                                 Color.clear.onAppear {
                                     // 이미지 실제 표시 frame 저장
-//                                    imageFrame = imageGeo.frame(in: .local)
-//                                    // 피커 초기 위치를 이미지 중앙으로
+                                    //                                    imageFrame = imageGeo.frame(in: .local)
+                                    //                                    // 피커 초기 위치를 이미지 중앙으로
                                     imageFrame = imageGeo.frame(in: .named("imageArea"))
                                     pickerPosition = CGPoint(
                                         x: imageFrame.midX,   // 이미지 실제 중앙으로
@@ -46,7 +47,7 @@ struct ColorPickerView: View {
                                 }
                             }
                         )
-
+                    
                     CenterColorCell(color: missionColor, height: 145)
                         .frame(width: 112)
                         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
@@ -105,7 +106,7 @@ struct ColorPickerView: View {
                             )
                     }
                 }
-//                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                //                .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .frame(width: geo.size.width, height: geo.size.height * 0.76)
                 .background(Color(.systemGray6))
                 
@@ -148,41 +149,36 @@ struct ColorPickerView: View {
                 
                 // MARK: - 하단 버튼
                 HStack {
-                    
                     Spacer()
                     
                     Button {
-                        onConfirm(viewModel.selectedUIColor)
+                        judgeVM.start(
+                            onPassed: { onConfirm(viewModel.selectedUIColor) },  // 선택된 색상 전달
+                            onFailed: { }
+                        )
                     } label: {
                         HStack(spacing: 10) {
                             Image(systemName: "checkmark")
                             Text("편집완료")
                         }
-                                .font(.system(size: 20, weight: .bold))
-                                .padding(.horizontal, 20)
-                                .frame(height: 48)
-                        }
+                        .font(.system(size: 20, weight: .bold))
+                        .padding(.horizontal, 20)
+                        .frame(height: 48)
+                    }
                     .buttonStyle(GlassButtonStyle())
                     .foregroundColor(Color(hex: "777777"))
                     .disabled(viewModel.selectedUIColor == .clear)
                     .opacity(viewModel.selectedUIColor == .clear ? 0.4 : 1.0)
                 }
-//                        HStack {
-//                            Text("편집완료")
-//                            Image(systemName: "checkmark")
-//                        }
-//                        .padding(.horizontal, 24)
-//                        .padding(.vertical, 14)
-//                        .overlay(Capsule().stroke(Color.primary, lineWidth: 1.5))
-//                    }
-//                    .foregroundColor(.primary)
-//                    .disabled(viewModel.selectedUIColor == .clear)
-//                    .opacity(viewModel.selectedUIColor == .clear ? 0.4 : 1.0)
-//                }
                 .padding(.horizontal, 24)
                 .padding(.vertical, 20)
                 .background(Color.white)
             }
+        }
+        .overlay {
+            MissionJudgeOverlay(isShowing: judgeVM.isJudging)
+            MissionSuccessOverlay(isShowing: judgeVM.showSuccess)
+            MissionFailOverlay(isShowing: judgeVM.showFail)
         }
     }
 }

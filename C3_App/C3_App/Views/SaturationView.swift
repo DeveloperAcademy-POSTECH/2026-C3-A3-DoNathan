@@ -10,105 +10,120 @@ import UIKit
 
 struct SaturationView: View {
     @StateObject private var viewModel = SaturationViewModel()
+    @StateObject private var judgeVM = JudgeViewModel()
 
     let capturedImage: UIImage
     var onConfirm: (UIImage, Float) -> Void
     var onCancel: () -> Void
 
     var body: some View {
-        VStack(spacing: 0) {
-            // 사진 미리보기
-            ZStack {
-                if let image = viewModel.previewImage {
-                    Image(uiImage: image)
+        ZStack(alignment: .center) {
+            VStack(spacing: 0) {
+                // 사진 미리보기
+                ZStack {
+                    Color(.systemGray5)
+                    
+                    if let image = viewModel.previewImage {
+                        Image(uiImage: image)
+                            .resizable()
+                            .scaledToFill()
+                    } else {
+                        ProgressView()
+                    }
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                
+                // 채도 슬라이더
+                HStack(spacing: 12) {
+                    Image(systemName: "camera.filters")
+                        .foregroundStyle(.gray)
+                    
+                    Slider(value: $viewModel.saturation, in: 0.0...2.0) { isEditing in
+                        if isEditing { viewModel.applyPreviewFilter() }
+                        else { viewModel.applyHighResFilter() }
+                    }
+                    .tint(.gray)
+                    
+                    Image("camera.filters.fill")
                         .resizable()
                         .scaledToFit()
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                } else {
-                    ProgressView()
+                        .frame(width: 20, height: 20)
                 }
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(Color(.systemGray5))
-
-            // 채도 슬라이더
-            HStack(spacing: 12) {
-                Image(systemName: "camera.filters")
-                    .foregroundStyle(.gray)
-
-                Slider(value: $viewModel.saturation, in: 0.0...2.0) { isEditing in
-                    if isEditing { viewModel.applyPreviewFilter() }
-                    else { viewModel.applyHighResFilter() }
-                }
-                .tint(.gray)
-
-                Image("camera.filters.fill")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 20, height: 20)
-            }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 16)
-            .background(Color.white)
-
-            Spacer().frame(height: 88)
-
-            // 하단 버튼 영역(높이 확보)
-            HStack {
-                Spacer()
-
-                Button {
-                    let imageToSend = viewModel.finalImage ?? viewModel.previewImage
-                    if let image = imageToSend {
-                        onConfirm(image, viewModel.saturation)
+                .padding(.horizontal, 20)
+                .padding(.vertical, 16)
+                .background(Color.white)
+                
+                //Spacer().frame(height: 88)
+                
+                // 하단 버튼 영역(높이 확보)
+                HStack {
+                    Spacer()
+                    
+                    Button {
+                        let imageToSend = viewModel.finalImage ?? viewModel.previewImage
+                        if let image = imageToSend {
+                            judgeVM.start(
+                                onPassed: { onConfirm(image, viewModel.saturation) },
+                                onFailed: { }
+                            )
+                        }
+                    } label: {
+                        HStack(spacing: 16) {
+                            Text("편집완료")
+                                .font(.system(size: 17, weight: .semibold))
+                            Image(systemName: "checkmark")
+                                .font(.system(size: 17, weight: .semibold))
+                        }
+                        .padding(.vertical, 6)
+                        
                     }
-                } label: {
-                    HStack {
-                        Image(systemName: "checkmark")
-                            .font(.system(size: 16, weight: .semibold))
-                        Text("편집완료")
-                            .font(.system(size: 19, weight: .semibold))
-                    }
-                    .foregroundColor(.white)
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 14)
-                    .background(Color(hex: "0076FF").opacity(0.65), in: Capsule())
+                    .buttonStyle(GlassButtonStyle())
+                    .disabled(judgeVM.isDisabled)
                 }
-                .glassEffect(.regular, in: Capsule())
+                .padding(.horizontal, 12)
+                .padding(.bottom, 44)
+                .background(Color.white)
             }
-            .padding(.horizontal, 18)
-            .padding(.bottom, 8)
-            .background(Color.white)
-        }
-        .safeAreaInset(edge: .top) {
-            HStack {
-                Button(action: onCancel) {
-                    ZStack {
-                        Circle()
-                            .fill(.clear)
+            .safeAreaInset(edge: .top) {
+                HStack {
+                    Button(action: onCancel) {
                         Image(systemName: "xmark")
-                            .font(.system(size: 19, weight: .semibold))
-                            .foregroundColor(Color(hex: "888888"))
+                            .font(.system(size: 18, weight: .semibold))
+                            .foregroundStyle(.gray)
+                            .frame(width: 36, height: 36)
                     }
-                    .frame(width: 40, height: 40)
-                    .contentShape(Circle())
+                    .buttonStyle(GlassButtonStyle())
+                    
+                    Spacer()
                 }
-                .glassEffect(.regular, in: Circle())
-
-                Spacer()
+                .padding(.horizontal, 20)
+                .padding(.top, 10)
+                .padding(.bottom, 8)
+                .background(Color.white)
             }
-            .padding(.horizontal, 16)
-            .padding(.top, 28)
-            .padding(.bottom, 20)
-            .background(Color.white)
+            .onAppear { viewModel.setImage(capturedImage) }
+            
+            // 오버레이
+            MissionJudgeOverlay(isShowing: judgeVM.isJudging)
+            MissionSuccessOverlay(isShowing: judgeVM.showSuccess)
+            MissionFailOverlay(isShowing: judgeVM.showFail)
         }
-        .onAppear { viewModel.setImage(capturedImage) }
     }
 }
+
 #Preview {
-    SaturationView(
-        capturedImage: UIImage(systemName: "photo") ?? UIImage(),
-        onConfirm: { _, _ in },
-        onCancel: {}
+    // SF Symbols의 카메라 아이콘을 기반으로 임시 UIImage 생성
+    let config = UIImage.SymbolConfiguration(pointSize: 300, weight: .ultraLight)
+    let systemImage = UIImage(systemName: "camera.shutter.button", withConfiguration: config)
+    let fallbackImage = systemImage ?? UIImage()
+    
+    return SaturationView(
+        capturedImage: fallbackImage,
+        onConfirm: { filteredImage, saturationValue in
+            print("📸 [Preview] 편집 완료 - 채도 수치: \(saturationValue)")
+        },
+        onCancel: {
+            print("❌ [Preview] 취소 버튼 탭")
+        }
     )
 }

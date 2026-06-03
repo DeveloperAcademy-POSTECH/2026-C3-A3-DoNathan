@@ -225,7 +225,6 @@ struct CommonCameraView<MissionOverlay: View, CameraOverlay: View>: View {
             if let image = capturedImage {
                 switch currentDestination {
                 case .filter:
-                    //showEditView = false
                     EmptyView()
                 case .basic:
                     EmptyView()
@@ -238,6 +237,7 @@ struct CommonCameraView<MissionOverlay: View, CameraOverlay: View>: View {
                         capturedImage: image,
                         onConfirm: { editedImage, _ in
                             saveEditedPhoto(editedImage)
+                            vm.handleMissionResult(image: editedImage)
                             showEditView = false
                         },
                         onCancel: {
@@ -250,6 +250,7 @@ struct CommonCameraView<MissionOverlay: View, CameraOverlay: View>: View {
                         capturedImage: image,
                         onConfirm: { croppedImage in
                             saveEditedPhoto(croppedImage)
+                            vm.handleMissionResult(image: croppedImage)
                             showEditView = false
                         },
                         onCancel: {
@@ -261,7 +262,8 @@ struct CommonCameraView<MissionOverlay: View, CameraOverlay: View>: View {
                     ColorPickerView(
                         capturedImage: image,
                         missionColor: vm.mainColor,
-                        onConfirm: { _ in
+                        onConfirm: { selectedColor in
+                            vm.handleMissionResult(image: image)
                             showEditView = false
                         },
                         onCancel: {
