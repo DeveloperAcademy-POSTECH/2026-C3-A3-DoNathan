@@ -2,39 +2,27 @@
 //  CommonCameraView.swift
 //  TestCamera
 //
-//  Created by Noah on 5/29/26.
+//  Created by 최정원 on 5/25/26.
 //
 
 import SwiftUI
 import AVFoundation
-import Photos // PhotoKit
+import Photos
 
-// MARK: - 카메라 모드
-enum CameraMode {
-    case mission  // 미션 카메라: X버튼 있음, 플래시 없음
-    case filter   // 필터 카메라: X버튼 없음, 플래시 버튼 있음
-}
-
-struct CommonCameraView<MissionOverlay: View, CameraOverlay: View>: View {
+struct CommonCameraView<MissionOverlay: View>: View {
     @ObservedObject var viewModel: CameraViewModel
-    @ObservedObject var vm: MissionViewModel
+
     @State private var capturedImage: UIImage?
+    @Binding var missionType: MissionType?
+
     @State private var zoomLevel: CGFloat = 1.0
     @State private var showGrid: Bool = false
 
-    @State private var showEditView: Bool = false
-    @State private var currentDestination: MissionType? = nil
-    let destination: MissionType?
-    var cameraMode: CameraMode = .mission
-    var overlayHeight: CGFloat = 107
-
     var onDismiss: (() -> Void)? = nil
-    @ViewBuilder var cameraOverlay: () -> CameraOverlay // 카메라 위
-    @ViewBuilder var missionOverlay: () -> MissionOverlay // 카메라 아래
+    @ViewBuilder var missionOverlay: () -> MissionOverlay
 
     var body: some View {
         VStack(spacing: 0) {
-
             // MARK: - 상단 바
             HStack {
                 // 좌상단: 뒤로가기
@@ -42,7 +30,7 @@ struct CommonCameraView<MissionOverlay: View, CameraOverlay: View>: View {
                     Image(systemName: "chevron.left")
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundColor(Color(hex: "888888"))
-                        .frame(width: 40, height: 40)
+                        .frame(width: 44, height: 44)
                 }
                 .glassEffect(.regular.interactive(), in: Circle())
 
@@ -54,61 +42,68 @@ struct CommonCameraView<MissionOverlay: View, CameraOverlay: View>: View {
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundColor(Color(hex: "888888"))
                         .foregroundColor(showGrid ? .yellow : .primary)
-                        .frame(width: 40, height: 40)
+                        .frame(width: 44, height: 44)
                 }
                 .glassEffect(.regular.interactive(), in: Circle())
-
-                // 우상단: 플래시 (필터 모드 전용)
-                if cameraMode == .filter {
-                    Button(action: { viewModel.toggleFlash() }) {
-                        Image(systemName: viewModel.flashMode == .off ? "bolt.slash" : "bolt.fill")
-                            .font(.system(size: 16, weight: .semibold))
-                            .foregroundColor(Color(hex: "888888"))
-                            .frame(width: 40, height: 40)
-                    }
-                    .glassEffect(.regular.interactive(), in: Circle())
-                }
             }
-            .padding(.horizontal, 16)
-            .padding(.top, 20)
-            .padding(.bottom, 20)
+            .padding(.horizontal, 20)
+            .padding(.vertical, 12)
             .background(Color.white)
 
             // MARK: - 카메라 프리뷰
-            let cameraHeight = UIScreen.main.bounds.width * 4 / 3
-            GeometryReader { geo in
-                ZStack(alignment: .bottom) {
-                    Color.black
+            ZStack(alignment: .bottom) {
+                Color.black
 
-                    if let session = viewModel.session {
-                        CameraPreview(session: session)
-                            .ignoresSafeArea(edges: [])
-                    } else {
-                        ProgressView()
-                            .foregroundStyle(.white)
-                    }
+                if let session = viewModel.session {
+                    CameraPreview(session: session)
+                        .ignoresSafeArea(edges: [])
+                } else {
+                    ProgressView()
+                        .foregroundStyle(.white)
+                }
 
-                    // 필터 적용된 프레임 오버레이 (필터 선택 시에만)
-                    if let frame = viewModel.currentFrame, viewModel.selectedFilter != .none {
-                        Image(uiImage: frame)
-                            .resizable()
-                            .scaledToFill()
-                            .frame(width: geo.size.width, height: cameraHeight)
-                            .clipped()
-                    }
+                // 셔터 플래시 오버레이
+                if viewModel.showFlashOverlay {
+                    Color.white.opacity(0.7)
+                }
 
+                // 필터 적용된 프레임 오버레이 (필터 선택 시에만)
+                if let frame = viewModel.currentFrame, viewModel.selectedFilter != .none {
+                    Image(uiImage: frame)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: geo.size.width, height: cameraHeight)
+                        .clipped()
+                }
+              
+                // 그리드 오버레이
+                if showGrid {
+                    GridOverlayView()
+                }
 
-                    // 셔터 플래시 오버레이
-                    if viewModel.showFlashOverlay {
-                        Color.white.opacity(0.7)
-                    }
+                // 줌 버튼 (전면 카메라일 때 0.5x 숨김)
+//                 HStack(spacing: 6) {
+//                     let zoomLevels: [CGFloat] = viewModel.isFrontCamera ? [1.0, 2.0] : [0.5, 1.0, 2.0]
+//                     ForEach(zoomLevels, id: \.self) { zoom in
+//                         let label = zoom == 0.5 ? "0.5x" : zoom == 1.0 ? "1x" : "2x"
+//                         let isSelected = zoomLevel == zoom
 
-                    // 그리드 오버레이
-                    if showGrid {
-                        GridOverlayView()
-                    }
-
-                    cameraOverlay()
+//                         Button {
+//                             zoomLevel = zoom
+//                             viewModel.setZoom(zoom)
+//                         } label: {
+//                             Text(label)
+//                                 .font(.system(size: 13, weight: .semibold))
+//                                 .foregroundColor(.white)
+//                                 .padding(.horizontal, 14)
+//                                 .padding(.vertical, 7)
+//                                 .background(
+//                                     Capsule()
+//                                         .fill(isSelected
+//                                               ? Color.white.opacity(0.35)
+//                                               : Color.black.opacity(0.4))
+//                                 )
+//                     cameraOverlay()
 
                     // 줌 버튼 + 슬라이더 (cameraOverlay 위에 렌더링)
                     VStack(spacing: 8) {
@@ -143,35 +138,28 @@ struct CommonCameraView<MissionOverlay: View, CameraOverlay: View>: View {
                             .frame(height: 40)
                             .padding(.horizontal, 20)
                     }
-                    .padding(.bottom, 18)
-                    .animation(.easeInOut(duration: 0.2), value: viewModel.selectedFilter)
                 }
-                .frame(width: geo.size.width, height: cameraHeight)
+                .padding(.bottom, 18)
             }
-            .frame(height: cameraHeight)
+            .frame(width: UIScreen.main.bounds.width,
+                   height: UIScreen.main.bounds.width * 4 / 3)
 
-            // MARK: - 미션 오버레이 슬롯 (항상 126pt 확보)
-            ZStack {
-                Color.clear
-                missionOverlay()
-            }
-            .frame(height: overlayHeight)
-            .frame(maxWidth: .infinity)
+            // MARK: - 미션 오버레이 슬롯
+            missionOverlay()
+                .frame(maxWidth: .infinity)
+
+            Spacer()
 
             // MARK: - 하단 컨트롤
-            HStack(alignment: .center) {
-                // 좌하단: X (미션 모드 전용)
-                if cameraMode == .mission {
-                    Button(action: { onDismiss?() }) {
-                        Image(systemName: "xmark")
-                            .font(.system(size: 18, weight: .semibold))
-                            .foregroundColor(Color(hex: "888888"))
-                            .frame(width: 48, height: 48)
-                    }
-                    .glassEffect(.regular.interactive(), in: Circle())
-                } else {
-                    Color.clear.frame(width: 48, height: 48)
+            HStack {
+                // 좌하단: X
+                Button(action: { onDismiss?() }) {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 18, weight: .semibold))
+                        .foregroundColor(Color(hex: "888888"))
+                        .frame(width: 52, height: 52)
                 }
+                .glassEffect(.regular.interactive(), in: Circle())
 
                 Spacer()
 
@@ -180,7 +168,7 @@ struct CommonCameraView<MissionOverlay: View, CameraOverlay: View>: View {
                     Image("camera_btn")
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 68, height: 68)
+                        .frame(width: 76, height: 76)
                 }
 
                 Spacer()
@@ -193,25 +181,16 @@ struct CommonCameraView<MissionOverlay: View, CameraOverlay: View>: View {
                     Image(systemName: "arrow.trianglehead.2.clockwise.rotate.90")
                         .font(.system(size: 18, weight: .semibold))
                         .foregroundColor(Color(hex: "888888"))
-                        .frame(width: 48, height: 48)
+                        .frame(width: 52, height: 52)
                 }
                 .glassEffect(.regular.interactive(), in: Circle())
             }
             .padding(.horizontal, 32)
-        
-            .padding(.bottom, 20)
-            .background(
-                Color.white
-                    .ignoresSafeArea(edges: .bottom)
-            )
+            .padding(.vertical, 24)
+            .background(Color.white)
         }
         .background(Color.white)
-        .ignoresSafeArea(edges: .bottom)
         .onAppear {
-            capturedImage = nil
-            showEditView = false
-            currentDestination = nil
-            viewModel.resetCapturedImage()
             viewModel.configureCamera()
             viewModel.startSession()
         }
@@ -221,31 +200,23 @@ struct CommonCameraView<MissionOverlay: View, CameraOverlay: View>: View {
         .onReceive(viewModel.$capturedImage) { image in
             guard let image else { return }
             capturedImage = image
-            currentDestination = destination ?? vm.activeDestination
-            showEditView = true
+            missionType = .saturation
         }
-        .fullScreenCover(isPresented: $showEditView) {
+        .fullScreenCover(item: $missionType) { mission in
             if let image = capturedImage {
-                switch currentDestination {
-                case .filter:
-                    //showEditView = false
-                    EmptyView()
-                case .basic:
-                    EmptyView()
-                    // 여기도 미션 판정 뷰로 연결하도록 수정 필요
+                switch mission {
                 case .brightness:
                     EmptyView()
-                    // 여기는 명도 카메라 뷰가 아닌 미션 판정 뷰로 연결하도록 수정 필요!!!
                 case .saturation:
                     SaturationView(
                         capturedImage: image,
                         onConfirm: { editedImage, _ in
                             saveEditedPhoto(editedImage)
-                            showEditView = false
+                            missionType = nil
                         },
                         onCancel: {
                             capturedImage = nil
-                            showEditView = false
+                            missionType = nil
                         }
                     )
                 case .crop:
@@ -253,43 +224,24 @@ struct CommonCameraView<MissionOverlay: View, CameraOverlay: View>: View {
                         capturedImage: image,
                         onConfirm: { croppedImage in
                             saveEditedPhoto(croppedImage)
-                            showEditView = false
+                            missionType = nil
                         },
                         onCancel: {
                             capturedImage = nil
-                            showEditView = false
+                            missionType = nil
                         }
                     )
                 case .colorPicker:
                     ColorPickerView(
                         capturedImage: image,
                         onConfirm: { _ in
-                            showEditView = false
+                            missionType = nil
                         },
                         onCancel: {
                             capturedImage = nil
-                            showEditView = false
+                            missionType = nil
                         }
                     )
-                default:
-                    EmptyView()
-                }
-            }
-        }
-        // 🌟 2. 캡처된 이미지를 감시하는 onChange 추가 (iOS 17+ 기준 문법)
-        // (만약 이전 버전이라면 .onChange(of: capturedImage) { newValue in ... } 사용)
-        .onChange(of: capturedImage) { _, newImage in
-            if newImage != nil {
-                // 렌즈가 스냅샷을 찍었을 때, 현재 모드가 '필터'라면 편집창을 열지 않고 바로 저장 처리
-                if currentDestination == .filter {
-                    if let image = newImage {
-                        saveEditedPhoto(image) // 바로 사진첩 저장 또는 메인 전송
-                    }
-                    capturedImage = nil // 상태 초기화
-                    showEditView = false // 확정 차단
-                } else {
-                    // 필터가 아닌 다른 커스텀 미션 모드일 때만 편집 모달을 활성화!
-                    showEditView = true
                 }
             }
         }
@@ -343,12 +295,7 @@ struct GridOverlayView: View {
 }
 
 #Preview {
-     CommonCameraView(viewModel: CameraViewModel(),vm: MissionViewModel(), destination: .basic,
-         cameraOverlay: {
-            EmptyView()
-         },
-         missionOverlay: {
-             EmptyView()
-         }
-     )
+    CommonCameraView(viewModel: CameraViewModel(), missionType: .constant(.crop)) {
+        EmptyView()
+    }
 }
