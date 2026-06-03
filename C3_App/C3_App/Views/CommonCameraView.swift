@@ -67,34 +67,76 @@ struct CommonCameraView<MissionOverlay: View>: View {
                     Color.white.opacity(0.7)
                 }
 
+                // 필터 적용된 프레임 오버레이 (필터 선택 시에만)
+                if let frame = viewModel.currentFrame, viewModel.selectedFilter != .none {
+                    Image(uiImage: frame)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: geo.size.width, height: cameraHeight)
+                        .clipped()
+                }
+              
                 // 그리드 오버레이
                 if showGrid {
                     GridOverlayView()
                 }
 
                 // 줌 버튼 (전면 카메라일 때 0.5x 숨김)
-                HStack(spacing: 6) {
-                    let zoomLevels: [CGFloat] = viewModel.isFrontCamera ? [1.0, 2.0] : [0.5, 1.0, 2.0]
-                    ForEach(zoomLevels, id: \.self) { zoom in
-                        let label = zoom == 0.5 ? "0.5x" : zoom == 1.0 ? "1x" : "2x"
-                        let isSelected = zoomLevel == zoom
+//                 HStack(spacing: 6) {
+//                     let zoomLevels: [CGFloat] = viewModel.isFrontCamera ? [1.0, 2.0] : [0.5, 1.0, 2.0]
+//                     ForEach(zoomLevels, id: \.self) { zoom in
+//                         let label = zoom == 0.5 ? "0.5x" : zoom == 1.0 ? "1x" : "2x"
+//                         let isSelected = zoomLevel == zoom
 
-                        Button {
-                            zoomLevel = zoom
-                            viewModel.setZoom(zoom)
-                        } label: {
-                            Text(label)
-                                .font(.system(size: 13, weight: .semibold))
-                                .foregroundColor(.white)
-                                .padding(.horizontal, 14)
-                                .padding(.vertical, 7)
-                                .background(
-                                    Capsule()
-                                        .fill(isSelected
-                                              ? Color.white.opacity(0.35)
-                                              : Color.black.opacity(0.4))
-                                )
+//                         Button {
+//                             zoomLevel = zoom
+//                             viewModel.setZoom(zoom)
+//                         } label: {
+//                             Text(label)
+//                                 .font(.system(size: 13, weight: .semibold))
+//                                 .foregroundColor(.white)
+//                                 .padding(.horizontal, 14)
+//                                 .padding(.vertical, 7)
+//                                 .background(
+//                                     Capsule()
+//                                         .fill(isSelected
+//                                               ? Color.white.opacity(0.35)
+//                                               : Color.black.opacity(0.4))
+//                                 )
+//                     cameraOverlay()
+
+                    // 줌 버튼 + 슬라이더 (cameraOverlay 위에 렌더링)
+                    VStack(spacing: 8) {
+                        // 줌 버튼 (전면 카메라일 때 0.5x 숨김)
+                        HStack(spacing: 6) {
+                            let zoomLevels: [CGFloat] = viewModel.isFrontCamera ? [1.0, 2.0] : [0.5, 1.0, 2.0]
+                            ForEach(zoomLevels, id: \.self) { zoom in
+                                let label = zoom == 0.5 ? "0.5x" : zoom == 1.0 ? "1x" : "2x"
+                                let isSelected = zoomLevel == zoom
+
+                                Button {
+                                    zoomLevel = zoom
+                                    viewModel.setZoom(zoom)
+                                } label: {
+                                    Text(label)
+                                        .font(.system(size: 13, weight: .semibold))
+                                        .foregroundColor(.white)
+                                        .padding(.horizontal, 14)
+                                        .padding(.vertical, 7)
+                                        .background(
+                                            Capsule()
+                                                .fill(isSelected
+                                                      ? Color.white.opacity(0.35)
+                                                      : Color.black.opacity(0.4))
+                                        )
+                                }
+                            }
                         }
+
+                        // 슬라이더 (필터 선택 시) - 렌더링 확인용
+                        Color.red
+                            .frame(height: 40)
+                            .padding(.horizontal, 20)
                     }
                 }
                 .padding(.bottom, 18)
