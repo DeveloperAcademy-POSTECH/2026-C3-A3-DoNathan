@@ -50,6 +50,9 @@ struct BrightnessView: View {
                 }
                 
                 Spacer()
+                
+                
+                
             }
         },
                          missionOverlay: {
