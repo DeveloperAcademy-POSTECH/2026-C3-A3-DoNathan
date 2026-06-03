@@ -43,15 +43,12 @@ struct MissionRootView: View {
                 vm.showCompletion = true
             }
         }
-//        .fullScreenCover(isPresented: $vm.showMissionCamera) {
-//            if let idx = vm.selectedIndex {
-//                MissionCameraView(
-//                    mission:   vm.missions[idx], // 선택된 미션 데이터
-//                    mainColor: vm.mainColor, // 테마 색상
-//                    onResult:  { vm.handleMissionResult(image: $0) } // 촬영 완료 콜백
-//                )
-//            }
-//        }
+        .fullScreenCover(isPresented: $vm.showMissionSuccess) {
+            MissionSuccessView(
+                mainColor: vm.mainColor,
+                onDismiss: { vm.showMissionSuccess = false }
+            )
+        }
     }
 }
 

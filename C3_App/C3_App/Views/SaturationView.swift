@@ -10,15 +10,11 @@ import UIKit
 
 struct SaturationView: View {
     @StateObject private var viewModel = SaturationViewModel()
+    @StateObject private var judgeVM = JudgeViewModel()
 
     let capturedImage: UIImage
     var onConfirm: (UIImage, Float) -> Void
     var onCancel: () -> Void
-    
-    // ✅ 판정 상태
-    @State private var isJudging: Bool = false
-    @State private var showSuccess: Bool = false
-    @State private var showFail: Bool = false
 
     var body: some View {
         ZStack(alignment: .center) {
@@ -65,11 +61,11 @@ struct SaturationView: View {
                     
                     Button {
                         let imageToSend = viewModel.finalImage ?? viewModel.previewImage
-                        //                    if let image = imageToSend {
-                        //                        onConfirm(image, viewModel.saturation)
-                        //                    }
                         if let image = imageToSend {
-                            startJudging(image: image)
+                            judgeVM.start(
+                                onPassed: { onConfirm(image, viewModel.saturation) },
+                                onFailed: { }
+                            )
                         }
                     } label: {
                         HStack(spacing: 16) {
@@ -82,7 +78,7 @@ struct SaturationView: View {
                         
                     }
                     .buttonStyle(GlassButtonStyle())
-                    .disabled(isJudging || showSuccess || showFail)
+                    .disabled(judgeVM.isDisabled)
                 }
                 .padding(.horizontal, 12)
                 .padding(.bottom, 44)
@@ -107,47 +103,12 @@ struct SaturationView: View {
             }
             .onAppear { viewModel.setImage(capturedImage) }
             
-            // ✅ 판정 중 오버레이
-            if isJudging {
-                Color.black.opacity(0.45).ignoresSafeArea()
-                VStack(spacing: 12) {
-                    ProgressView().tint(.white).scaleEffect(1.3)
-                    Text("판정 중...")
-                        .font(.system(size: 15, weight: .semibold))
-                        .foregroundColor(.white)
-                }
-            }
-            
-            // ✅ 성공 오버레이
-            MissionSuccessOverlay(isShowing: showSuccess)
-            
-            // ✅ 실패 오버레이
-            MissionFailOverlay(isShowing: showFail)
+            // 오버레이
+            MissionJudgeOverlay(isShowing: judgeVM.isJudging)
+            MissionSuccessOverlay(isShowing: judgeVM.showSuccess)
+            MissionFailOverlay(isShowing: judgeVM.showFail)
         }
     }
-    
-    private func startJudging(image: UIImage) {
-            isJudging = true
-            
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                isJudging = false
-                
-                let isPassed = Bool.random() // ✅ 나중에 MissionEvaluator로 교체
-                
-                withAnimation {
-                    if isPassed { showSuccess = true }
-                    else { showFail = true }
-                }
-                
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                    if isPassed {
-                        onConfirm(image, viewModel.saturation)
-                    } else {
-                        withAnimation { showFail = false }  // 실패 시 오버레이 닫고 재도전
-                    }
-                }
-            }
-        }
 }
 
 #Preview {

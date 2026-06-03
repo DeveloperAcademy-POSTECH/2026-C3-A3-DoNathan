@@ -238,6 +238,7 @@ struct CommonCameraView<MissionOverlay: View, CameraOverlay: View>: View {
                         capturedImage: image,
                         onConfirm: { editedImage, _ in
                             saveEditedPhoto(editedImage)
+                            vm.handleMissionResult(image: editedImage)
                             showEditView = false
                         },
                         onCancel: {

@@ -8,58 +8,30 @@
 import SwiftUI
 
 struct MissionJudgeOverlay: View {
-    let isJudging: Bool
-
+    let isShowing: Bool
+    
     var body: some View {
-        if isJudging {
+        if isShowing {
             ZStack {
-                // 딤 처리
                 Color.black.opacity(0.45)
                     .ignoresSafeArea()
-
                 
                 VStack(spacing: 12) {
                     ProgressView()
                         .tint(.white)
                         .scaleEffect(1.3)
-
                     Text("일치율을\n확인하고 있어요")
-                        .font(.system(size: 15, weight: .semibold))
-                        .foregroundColor(.white)
                         .multilineTextAlignment(.center)
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(.white)
                 }
-                .padding(.horizontal, 32)
-                .padding(.vertical, 24)
-//               .background(
-//                    RoundedRectangle(cornerRadius: 12)
-//                        .stroke(Color.white.opacity(0.5), lineWidth: 1.5, style: StrokeStyle(dash: [6, 4]))
-//                        .background(Color.black.opacity(0.3).cornerRadius(12))
-//                )
             }
             .transition(.opacity)
-            .animation(.easeInOut(duration: 0.2), value: isJudging)
+            .animation(.easeInOut(duration: 0.2), value: isShowing)
         }
     }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-// MARK: - Extension
-extension Shape {
-    func stroke(_ content: Color, lineWidth: CGFloat, style: StrokeStyle) -> some View {
-        self.stroke(content, style: style)
-    }
-}
-
 #Preview {
-    MissionJudgeOverlay(isJudging: true)
+    MissionJudgeOverlay(isShowing: true)
 }
