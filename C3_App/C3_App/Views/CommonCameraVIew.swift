@@ -141,18 +141,13 @@ struct CommonCameraView<MissionOverlay: View, CameraOverlay: View>: View {
                         // 슬라이더 (필터 선택 시)
                         if viewModel.selectedFilter != FilterOption.none {
                             HStack(spacing: 12) {
-                                Image(systemName: "circle.fill")
-                                    .font(.system(size: 8))
-                                    .foregroundColor(Color(hex: "888888"))
+                           
 
                                 Slider(value: $viewModel.filterIntensity, in: 0.0...1.0)
                                     .tint(Color(hex: "888888"))
 
-                                Image(systemName: "circle.fill")
-                                    .font(.system(size: 12))
-                                    .foregroundColor(Color(hex: "888888"))
                             }
-                            .padding(.horizontal, 20)
+                            .padding(.horizontal, 120)
                             .transition(.opacity)
                         }
                     }
