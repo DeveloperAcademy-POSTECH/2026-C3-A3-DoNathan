@@ -11,6 +11,7 @@ struct CropView: View {
     @StateObject private var viewModel = CropViewModel()
     
     let capturedImage: UIImage
+    var missionColor: Color = .red
     var onConfirm: (UIImage) -> Void
     var onCancel: () -> Void
     
@@ -22,6 +23,7 @@ struct CropView: View {
     var body: some View {
         GeometryReader { geo in
             VStack(spacing: 0) {
+                
                 // MARK: - 상단 바 (X 버튼)
                 HStack {
                     Button(action: {
@@ -44,8 +46,9 @@ struct CropView: View {
                     .glassEffect(.regular, in: Circle())
                     Spacer()
                 }
-                .padding(.horizontal, 24)
-                .padding(.vertical, 20)
+                .padding(.horizontal, 16)
+                .padding(.top, 28)
+                .padding(.bottom, 20)
                 .background(Color.white)
                 
                 // MARK: - 이미지 + 크롭 오버레이
@@ -61,10 +64,7 @@ struct CropView: View {
                             boxSize: viewModel.cropBoxSize,
                             offset: viewModel.cropOffset
                         )
-                        .frame(
-                            width: viewModel.actualImageSize.width,
-                            height: viewModel.actualImageSize.height
-                        )
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
                         
                         RoundedRectangle(cornerRadius: 4)
                             .stroke(Color.white, lineWidth: 2)
@@ -80,7 +80,7 @@ struct CropView: View {
                                         let newHeight = lastOffset.height + value.translation.height
                                         
                                         let imageAspect = capturedImage.size.width / capturedImage.size.height
-                                        let actualImageWidth = min(geo.size.width, (geo.size.height - 88) * imageAspect)
+                                        let actualImageWidth = min(geo.size.width, (geo.size.height - 216) * imageAspect)
                                         let actualImageHeight = actualImageWidth / imageAspect
                                         
                                         let maxX = (actualImageWidth - viewModel.cropBoxSize.width) / 2
@@ -89,7 +89,7 @@ struct CropView: View {
                                         viewModel.cropOffset = CGSize(
                                             width: min(max(newWidth, -maxX), maxX),
                                             height: min(max(newHeight, -maxY), maxY)
-                                        )
+                                       )
                                     }
                                     .onEnded { _ in
                                         lastOffset = viewModel.cropOffset
@@ -102,13 +102,18 @@ struct CropView: View {
                                 .resizable()
                                 .scaledToFit()
                                 .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                .overlay(alignment: .topTrailing) {
+                                    CenterColorCell(color: missionColor, height: 150)
+                                        .frame(width: 110)
+                                        .padding(24)
+                                }
                         }
                     }
                 }
                 .onAppear {
                     let imageAreaSize = CGSize(
                         width: geo.size.width,
-                        height: geo.size.height - 88
+                        height: geo.size.height - 216
                     )
                     viewModel.cropBoxSize = viewModel.calculateCropBoxSize(
                         image: capturedImage,
@@ -125,33 +130,51 @@ struct CropView: View {
                 // MARK: - 하단 바 (파란 체크 버튼)
                 HStack {
                     Spacer()
-                    Button {
-                        if showPreview {
+                    if showPreview {
+                        // 편집완료 버튼
+                        Button {
                             if let cropped = viewModel.croppedImage {
                                 onConfirm(cropped)
                             }
-                        } else {
+                        } label: {
+                            HStack {
+                                Image(systemName: "checkmark")
+                                    .font(.system(size: 16, weight: .semibold))
+                                Text("편집완료")
+                                    .font(.system(size: 19, weight: .semibold))
+                            }
+                            .foregroundColor(.white)
+                            .padding(.horizontal, 20)
+                            .padding(.vertical, 14)
+                            .background(Color(hex: "0076FF").opacity(0.65), in: Capsule())
+                        }
+                        .glassEffect(.regular, in: Capsule())
+                    } else {
+                        // 체크 누르면 사진을 크롭하고, 크롭 완료되면 미리보기로 넘어가
+                        Button {
                             let displaySize = CGSize(
                                 width: geo.size.width,
-                                height: geo.size.height - 88
+                                height: geo.size.height - 216
                             )
                             viewModel.cropImage(capturedImage, displaySize: displaySize) {
                                 showPreview = true
                             }
+                        } label: {
+                            Circle()
+                                .fill(Color(hex: "0076FF").opacity(0.65))
+                                .frame(width: 47, height: 48)
+                                .overlay(
+                                    Image(systemName: "checkmark")
+                                        .font(.system(size: 16, weight: .semibold))
+                                        .foregroundColor(.white)
+                                )
                         }
-                    } label: {
-                        Circle()
-                            .fill(Color(hex: "4BBCF0"))
-                            .frame(width: 56, height: 56)
-                            .overlay(
-                                Image(systemName: "checkmark")
-                                    .font(.system(size: 22, weight: .bold))
-                                    .foregroundColor(.white)
-                            )
+                        .glassEffect(.regular, in: Circle())
                     }
                 }
-                .padding(.horizontal, 24)
-                .padding(.vertical, 20)
+                .padding(.horizontal, 18)
+                .padding(.top, 124)
+                .padding(.bottom, 8)
                 .background(Color.white)
             }
         }

@@ -251,6 +251,7 @@ struct CommonCameraView<MissionOverlay: View, CameraOverlay: View>: View {
                 case .crop:
                     CropView(
                         capturedImage: image,
+                        missionColor: vm.mainColor,
                         onConfirm: { croppedImage in
                             saveEditedPhoto(croppedImage)
                             showEditView = false
