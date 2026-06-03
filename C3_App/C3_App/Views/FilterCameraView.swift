@@ -24,7 +24,7 @@ struct FilterCameraView: View {
                     Image("grain_texture")
                         .resizable()
                         .scaledToFill()
-                        .opacity(0.3)
+                        .opacity(0.3 * viewModel.filterIntensity)
                         .blendMode(.overlay)
                         .allowsHitTesting(false)
                 }
