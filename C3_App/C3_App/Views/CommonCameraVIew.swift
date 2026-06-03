@@ -276,6 +276,7 @@ struct CommonCameraView<MissionOverlay: View, CameraOverlay: View>: View {
                 case .colorPicker:
                     ColorPickerView(
                         capturedImage: image,
+                        missionColor: vm.mainColor,
                         onConfirm: { _ in
                             showEditView = false
                         },
