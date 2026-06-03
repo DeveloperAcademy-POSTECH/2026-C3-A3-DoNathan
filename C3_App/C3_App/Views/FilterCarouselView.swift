@@ -64,6 +64,7 @@ enum FilterOption: CaseIterable, Identifiable {
 // MARK: - 필터 캐러셀
 struct FilterCarouselView: View {
     @Binding var selectedFilter: FilterOption
+    @Binding var filterIntensity: Double
     // 데모를 위한 탭 언락 상태, 미션 연결 이후 수정 필요
     @State private var isBlueUnlocked: Bool = false
 
@@ -161,7 +162,7 @@ struct FilterCellView: View {
 }
 
 #Preview {
-    FilterCarouselView(selectedFilter: .constant(.none))
+    FilterCarouselView(selectedFilter: .constant(.red), filterIntensity: .constant(1.0))
         .background(Color.white)
         .padding(.vertical)
 }

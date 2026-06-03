@@ -16,6 +16,7 @@ struct FilterCameraView: View {
         CommonCameraView(viewModel: viewModel,
                          vm: vm,
                          destination: .filter,
+                         overlayHeight: 126,
                          onDismiss: { onDismiss?() },
             cameraOverlay: {
                 // 그레인 오버레이 (None이 아닌 필터 선택 시)
@@ -23,13 +24,16 @@ struct FilterCameraView: View {
                     Image("grain_texture")
                         .resizable()
                         .scaledToFill()
-                        .opacity(0.3) // 수치 조정 포인트 (0.0 ~ 1.0)
+                        .opacity(0.3)
                         .blendMode(.overlay)
                         .allowsHitTesting(false)
                 }
             },
             missionOverlay: {
-                FilterCarouselView(selectedFilter: $viewModel.selectedFilter)
+                FilterCarouselView(
+                    selectedFilter: $viewModel.selectedFilter,
+                    filterIntensity: $viewModel.filterIntensity
+                )
             }
         )
     }
