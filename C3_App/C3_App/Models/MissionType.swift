@@ -11,6 +11,7 @@ enum MissionType: Identifiable {
     case saturation // 채도
     case crop // 크롭
     case colorPicker // 컬러피커
+    case filter // 필터 카메라
     
     var id: String {
         switch self {
@@ -24,6 +25,8 @@ enum MissionType: Identifiable {
             return "crop"
         case .colorPicker:
             return "colorPicker"
+        case .filter:
+            return "filter"
         }
     }
 }

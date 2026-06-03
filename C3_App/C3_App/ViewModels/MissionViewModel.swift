@@ -40,6 +40,7 @@ class MissionViewModel: ObservableObject {
         case "채도 조절":   return .saturation
         case "이미지 크롭": return .crop
         case "컬러피커":   return .colorPicker
+        case "필터 카메라": return .filter
         default:            return .basic
         }
     }

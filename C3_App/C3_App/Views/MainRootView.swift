@@ -50,20 +50,6 @@ struct MainRootView: View {
                         .frame(width: 90, height: 92)
                         .padding(.top, 0)
 
-
-//                    HStack(spacing: 12) {
-//                        Button {
-//                            guard selectedColor.isUnlocked else { return }
-//                            showFilterCamera = true
-//                        } label: {
-//                            Image(systemName: "camera")
-//                                .font(.system(size: 20))
-//                                .foregroundColor(.secondary)
-//                                .frame(width: 50, height: 50)
-//                                .background(Color(.systemGray6))
-//                                .clipShape(Circle())
-//                        }
-
                     Text(selectedColor.name)
                         .font(.system(size: 14, weight: .bold))
                         .foregroundColor(selectedColor.color)
@@ -101,16 +87,6 @@ struct MainRootView: View {
 
                 // MARK: - 하단 버튼
                 HStack(spacing: 39) {
-                    // 뒤로가기 버튼
-//                    Button {
-//                    } label: {
-//                        Image(systemName: "chevron.left")
-//                            .font(.system(size: 16, weight: .medium))
-//                            .foregroundColor(Color(hex: "919191"))
-//                            .frame(width: 48, height: 48)
-//                    }
-//                    .glassEffect(.regular.interactive(), in: Circle())
-                    
                     Button {
                         guard selectedColor.isUnlocked else { return }
                         showFilterCamera = true
