@@ -168,21 +168,10 @@ struct CommonCameraView<MissionOverlay: View, CameraOverlay: View>: View {
 
             // MARK: - 하단 컨트롤
             HStack(alignment: .center) {
-                // 좌하단: X (미션 모드 전용)
-                if cameraMode == .mission {
-                    Button(action: { onDismiss?() }) {
-                        Image(systemName: "xmark")
-                            .font(.system(size: 18, weight: .semibold))
-                            .foregroundColor(Color(hex: "888888"))
-                            .frame(width: 48, height: 48)
-                    }
-                    .glassEffect(.regular.interactive(), in: Circle())
-                } else {
-                    Color.clear.frame(width: 48, height: 48)
-                }
-
+                // 좌하단: X (미션 모드 전용) -> 삭제
+                Color.clear.frame(width: 48, height: 48)
                 Spacer()
-
+                
                 // 하단 중앙: 셔터
                 Button(action: viewModel.takePhoto) {
                     Image("camera_btn")
