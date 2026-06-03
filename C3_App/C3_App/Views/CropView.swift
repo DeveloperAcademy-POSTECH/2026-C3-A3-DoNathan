@@ -22,6 +22,32 @@ struct CropView: View {
     var body: some View {
         GeometryReader { geo in
             VStack(spacing: 0) {
+                // MARK: - 상단 바 (X 버튼)
+                HStack {
+                    Button(action: {
+                        if showPreview {
+                            showPreview = false
+                        } else {
+                            onCancel()
+                        }
+                    }) {
+                        ZStack {
+                            Circle()
+                                .fill(.clear)
+                            Image(systemName: "xmark")
+                                .font(.system(size: 19, weight: .semibold))
+                                .foregroundColor(Color(hex: "888888"))
+                        }
+                        .frame(width: 40, height: 40)
+                        .contentShape(Circle())
+                    }
+                    .glassEffect(.regular, in: Circle())
+                    Spacer()
+                }
+                .padding(.horizontal, 24)
+                .padding(.vertical, 20)
+                .background(Color.white)
+                
                 // MARK: - 이미지 + 크롭 오버레이
                 ZStack {
                     // 미리보기 시 원본 숨김
@@ -96,43 +122,15 @@ struct CropView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .background(Color(.systemGray5))
                 
-                // MARK: - 하단 버튼
+                // MARK: - 하단 바 (파란 체크 버튼)
                 HStack {
-                    Button(action: {
-                        if showPreview {
-                            // 미리보기 → 다시 크롭으로
-                            showPreview = false
-                        } else {
-                            onCancel()
-                        }
-                    }) {
-                        Image(systemName: "xmark.circle")
-                            .font(.system(size: 44))
-                            .foregroundColor(.primary)
-                    }
-                    
                     Spacer()
-                    
-                    if showPreview {
-                        // 편집완료 버튼
-                        Button {
+                    Button {
+                        if showPreview {
                             if let cropped = viewModel.croppedImage {
                                 onConfirm(cropped)
                             }
-                        } label: {
-                            HStack {
-                                Text("편집완료")
-                                Image(systemName: "checkmark")
-                            }
-                            .padding(.horizontal, 24)
-                            .padding(.vertical, 14)
-                            .overlay(Capsule().stroke(Color.primary, lineWidth: 1.5))
-                        }
-                        .foregroundColor(.primary)
-                        
-                    } else {
-                        // 확인(체크) 버튼 → 크롭 실행 후 미리보기로
-                        Button {
+                        } else {
                             let displaySize = CGSize(
                                 width: geo.size.width,
                                 height: geo.size.height - 88
@@ -140,11 +138,16 @@ struct CropView: View {
                             viewModel.cropImage(capturedImage, displaySize: displaySize) {
                                 showPreview = true
                             }
-                        } label: {
-                            Image(systemName: "checkmark.circle")
-                                .font(.system(size: 44))
-                                .foregroundColor(.primary)
                         }
+                    } label: {
+                        Circle()
+                            .fill(Color(hex: "4BBCF0"))
+                            .frame(width: 56, height: 56)
+                            .overlay(
+                                Image(systemName: "checkmark")
+                                    .font(.system(size: 22, weight: .bold))
+                                    .foregroundColor(.white)
+                            )
                     }
                 }
                 .padding(.horizontal, 24)
@@ -187,4 +190,11 @@ struct CropMaskView: View {
         }
         .ignoresSafeArea()
     }
+}
+#Preview {
+    CropView(
+        capturedImage: UIImage(systemName: "photo") ?? UIImage(),
+        onConfirm: { _ in },
+        onCancel: { }
+    )
 }
