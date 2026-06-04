@@ -41,15 +41,6 @@ struct MissionCameraView: View {
                 .padding(.horizontal, 20)
                 .padding(.top, 16)
 
-                Text(mission.missionDescription)
-                    .font(.system(size: 14, weight: .medium))
-                    .foregroundColor(.white)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 24)
-                    .padding(.vertical, 10)
-                    .background(Capsule().fill(Color.black.opacity(0.5)))
-                    .padding(.top, 8)
-
                 Spacer()
 
                 if resultState == .success {

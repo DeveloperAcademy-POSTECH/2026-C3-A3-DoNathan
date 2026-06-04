@@ -138,6 +138,9 @@ struct CropView: View {
                         Button {
                             if let cropped = viewModel.croppedImage {
                                 judgeVM.start(
+                                    image: cropped,
+                                    type: .crop,
+                                    targetColor: missionColor,
                                     onPassed: { onConfirm(cropped) },
                                     onFailed: { }
                                 )

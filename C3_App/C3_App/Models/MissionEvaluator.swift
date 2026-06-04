@@ -7,80 +7,143 @@
 
 import UIKit
 import SwiftUI
+import CoreImage
 
 struct MissionEvaluator {
-    
-    /// 모든 미션의 이미지 색상이 정답과 일치하는지 종합 판정하는 메인 함수
+
+    // MARK: - 판정 파라미터 (실기기 테스트 후 튜닝)
+    private static let hueToleranceDeg: CGFloat = 20.0   // Hue 허용 오차 (°)
+    private static let saturationMin:   CGFloat = 0.3    // 채도 하한 (이하면 무채색 판정)
+    private static let valueMin:        CGFloat = 0.2    // 명도 하한 (이하면 너무 어두움)
+    private static let kmeansK:         Int     = 5      // K-means 클러스터 수
+    private static let ciContext = CIContext(options: [.useSoftwareRenderer: false])
+
+    // MARK: - 메인 판정 함수
     static func evaluate(image: UIImage, type: MissionType, targetColor: Color) -> Bool {
-        // 1. 이미지의 정중앙 좌표 계산
-        let centerX = image.size.width / 2
-        let centerY = image.size.height / 2
-        let centerPoint = CGPoint(x: centerX, y: centerY)
-        
-        // 2. 정원님이 만드신 extension으로 중앙 픽셀 색상 추출
-        guard let pixelColor = image.pixelColor(at: centerPoint) else { return false }
-        
-        // 비교를 위해 SwiftUI Color를 UIColor로 안전하게 변환
-        let uiTargetColor = UIColor(targetColor)
-        
-        // 3. 미션 타입에 맞게 고유 알고리즘 가동
+        let target = UIColor(targetColor)
+
         switch type {
-        case .basic, .crop, .colorPicker:
-            // 🎨 RGB 전체가 유사한지 판정 (기본/크롭/컬러피커)
-            // 미션 깐깐도에 따라 허용 오차(Tolerance) 조절 가능 (0.15 = 약 15% 이내 유사도)
-            let tolerance: CGFloat = (type == .colorPicker) ? 0.10 : 0.18
-            return compareRGB(colorA: pixelColor, colorB: uiTargetColor, maxDifference: tolerance)
-            
-        case .brightness:
-            // ☀️ 명도 미션: 색상은 달라도 정답 색상만큼 '밝은가(명도 단계)' 판정
-            return compareHSB(mode: .brightness, colorA: pixelColor, colorB: uiTargetColor, maxDifference: 0.20)
-            
-        case .saturation:
-            // 🧪 채도 미션: 색상은 달라도 정답 색상만큼 '진하고 선명한가(채도)' 판정
-            return compareHSB(mode: .saturation, colorA: pixelColor, colorB: uiTargetColor, maxDifference: 0.20)
-            
         case .filter:
-            // 필터 카메라는 판정 없이 프리패스 처리
+            // 필터 카메라는 판정 없이 프리패스
             return true
+
+        case .colorPicker:
+            // 지점(중앙 픽셀) 추출 → HSV 판정
+            let center = CGPoint(x: image.size.width / 2, y: image.size.height / 2)
+            guard let pixel = image.pixelColor(at: center) else { return false }
+            return hsvJudge(pixel: pixel, target: target)
+
+        default:
+            // K-means 지배색 추출 → HSV 판정
+            guard let dominant = dominantColor(from: image) else { return false }
+            return hsvJudge(pixel: dominant, target: target)
         }
     }
-    
-    // MARK: - 세부 수학적 판정 알고리즘
-    
-    /// RGB 차이값을 수학적 거리(Euclidean Distance)로 계산하여 유사도 판정
-    private static func compareRGB(colorA: UIColor, colorB: UIColor, maxDifference: CGFloat) -> Bool {
-        var r1: CGFloat = 0, g1: CGFloat = 0, b1: CGFloat = 0, a1: CGFloat = 0
-        var r2: CGFloat = 0, g2: CGFloat = 0, b2: CGFloat = 0, a2: CGFloat = 0
-        
-        colorA.getRed(&r1, green: &g1, blue: &b1, alpha: &a1)
-        colorB.getRed(&r2, green: &g2, blue: &b2, alpha: &a2)
-        
-        let rDiff = r1 - r2
-        let gDiff = g1 - g2
-        let bDiff = b1 - b2
-        
-        // 3차원 RGB 공간에서의 유클리드 거리 공식 계산
-        let distance = sqrt((rDiff * rDiff) + (gDiff * gDiff) + (bDiff * bDiff))
-        
-        // 거리의 평균값이 허용 범위(최대 1.73) 내에 들어오는지 여부 반환
-        return distance < maxDifference
-    }
-    
-    private enum HSBMode { case saturation, brightness }
-    
-    /// HSB(색상, 채도, 명도) 컴포넌트를 추출하여 특정 항목만 저격 비교
-    private static func compareHSB(mode: HSBMode, colorA: UIColor, colorB: UIColor, maxDifference: CGFloat) -> Bool {
-        var h1: CGFloat = 0, s1: CGFloat = 0, b1: CGFloat = 0, a1: CGFloat = 0
-        var h2: CGFloat = 0, s2: CGFloat = 0, b2: CGFloat = 0, a2: CGFloat = 0
-        
-        colorA.getHue(&h1, saturation: &s1, brightness: &b1, alpha: &a1)
-        colorB.getHue(&h2, saturation: &s2, brightness: &b2, alpha: &a2)
-        
-        switch mode {
-        case .saturation:
-            return abs(s1 - s2) < maxDifference
-        case .brightness:
-            return abs(b1 - b2) < maxDifference
+
+    // MARK: - K-means 지배색 추출
+    private static func dominantColor(from image: UIImage) -> UIColor? {
+        guard let ciImage = CIImage(image: image) else { return nil }
+
+        // 1. 다운스케일 (100×100 수준으로 축소 — 성능 최적화)
+        let targetSize: CGFloat = 100
+        let scale = min(targetSize / ciImage.extent.width,
+                        targetSize / ciImage.extent.height)
+        let scaled = ciImage.transformed(by: CGAffineTransform(scaleX: scale, y: scale))
+
+        let scaledExtent = scaled.extent
+        let w = Int(scaledExtent.width)
+        let h = Int(scaledExtent.height)
+        guard w > 0, h > 0 else { return nil }
+
+        // 2. CIKMeans 실행 — K개 클러스터 중심색 산출
+        guard let kmeansFilter = CIFilter(name: "CIKMeans") else { return nil }
+        kmeansFilter.setValue(scaled,    forKey: kCIInputImageKey)
+        kmeansFilter.setValue(kmeansK,   forKey: "inputCount")
+        kmeansFilter.setValue(10,        forKey: "inputPasses")
+        kmeansFilter.setValue(true,      forKey: "inputPerceptual")
+        guard let meansImage = kmeansFilter.outputImage else { return nil }
+
+        // 3. K개 중심색을 비트맵으로 읽기 (meansImage = K×1 픽셀)
+        let k = kmeansK
+        var meansRaw = [UInt8](repeating: 0, count: k * 4)
+        ciContext.render(meansImage,
+                         toBitmap: &meansRaw,
+                         rowBytes: k * 4,
+                         bounds: CGRect(x: meansImage.extent.minX,
+                                        y: meansImage.extent.minY,
+                                        width: CGFloat(k),
+                                        height: 1),
+                         format: .RGBA8,
+                         colorSpace: CGColorSpaceCreateDeviceRGB())
+
+        var clusterColors: [(r: CGFloat, g: CGFloat, b: CGFloat)] = []
+        for i in 0..<k {
+            clusterColors.append((
+                r: CGFloat(meansRaw[i * 4 + 0]) / 255.0,
+                g: CGFloat(meansRaw[i * 4 + 1]) / 255.0,
+                b: CGFloat(meansRaw[i * 4 + 2]) / 255.0
+            ))
         }
+
+        // 4. 다운스케일 이미지 픽셀을 비트맵으로 읽기
+        var pixelRaw = [UInt8](repeating: 0, count: w * h * 4)
+        ciContext.render(scaled,
+                         toBitmap: &pixelRaw,
+                         rowBytes: w * 4,
+                         bounds: scaledExtent,
+                         format: .RGBA8,
+                         colorSpace: CGColorSpaceCreateDeviceRGB())
+
+        // 5. 각 픽셀을 가장 가까운 클러스터에 배정 → 클러스터별 카운트
+        var counts = [Int](repeating: 0, count: k)
+        for px in 0..<(w * h) {
+            let r = CGFloat(pixelRaw[px * 4 + 0]) / 255.0
+            let g = CGFloat(pixelRaw[px * 4 + 1]) / 255.0
+            let b = CGFloat(pixelRaw[px * 4 + 2]) / 255.0
+
+            var minDist: CGFloat = .greatestFiniteMagnitude
+            var minIdx  = 0
+            for i in 0..<k {
+                let dr = r - clusterColors[i].r
+                let dg = g - clusterColors[i].g
+                let db = b - clusterColors[i].b
+                let dist = dr*dr + dg*dg + db*db
+                if dist < minDist {
+                    minDist = dist
+                    minIdx  = i
+                }
+            }
+            counts[minIdx] += 1
+        }
+
+        // 6. 가장 큰 클러스터의 중심색 반환 → 지배색
+        guard let maxIdx = counts.indices.max(by: { counts[$0] < counts[$1] }) else { return nil }
+        let c = clusterColors[maxIdx]
+        return UIColor(red: c.r, green: c.g, blue: c.b, alpha: 1.0)
+    }
+
+    // MARK: - HSV 변환
+    private static func toHSV(from color: UIColor) -> (h: CGFloat, s: CGFloat, v: CGFloat) {
+        var h: CGFloat = 0, s: CGFloat = 0, v: CGFloat = 0, a: CGFloat = 0
+        color.getHue(&h, saturation: &s, brightness: &v, alpha: &a)
+        return (h * 360, s, v)   // Hue를 0~360° 로 변환
+    }
+
+    // MARK: - HSV 판정
+    // 채도 게이트 → 명도 게이트 → Hue 원형 거리 순서로 판정
+    private static func hsvJudge(pixel: UIColor, target: UIColor) -> Bool {
+        let p = toHSV(from: pixel)
+        let t = toHSV(from: target)
+
+        // 채도 하한: 무채색에 가까우면 Hue 자체가 불안정 → 즉시 재도전
+        guard p.s >= saturationMin else { return false }
+
+        // 명도 하한: 너무 어두우면 색 판별 불가 → 즉시 재도전
+        guard p.v >= valueMin else { return false }
+
+        // Hue 원형 거리 (0°와 360°는 같은 색이므로 min 처리)
+        let delta   = abs(p.h - t.h)
+        let hueDiff = min(delta, 360 - delta)
+        return hueDiff <= hueToleranceDeg
     }
 }

@@ -146,6 +146,9 @@ struct ColorPickerView: View {
 
                     Button {
                         judgeVM.start(
+                            image: capturedImage,
+                            type: .colorPicker,
+                            targetColor: missionColor,
                             onPassed: { onConfirm(viewModel.selectedUIColor) },
                             onFailed: { }
                         )

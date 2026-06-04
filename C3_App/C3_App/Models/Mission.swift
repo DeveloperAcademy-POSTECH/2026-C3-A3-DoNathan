@@ -11,7 +11,6 @@ struct Mission: Identifiable, Codable {
     let id: UUID
     let title: String
     let icon: String
-    let missionDescription: String
     var completedImageData: Data? = nil
 
     var isCompleted: Bool { completedImageData != nil }
@@ -22,11 +21,10 @@ struct Mission: Identifiable, Codable {
     }
 
     // 일반 생성용
-    init(title: String, icon: String, missionDescription: String) {
+    init(title: String, icon: String) {
         self.id = UUID()
         self.title = title
         self.icon = icon
-        self.missionDescription = missionDescription
     }
 
     // Codable 디코딩용
@@ -35,11 +33,10 @@ struct Mission: Identifiable, Codable {
         id                 = try container.decode(UUID.self,   forKey: .id)
         title              = try container.decode(String.self, forKey: .title)
         icon               = try container.decode(String.self, forKey: .icon)
-        missionDescription = try container.decode(String.self, forKey: .missionDescription)
         completedImageData = try container.decodeIfPresent(Data.self, forKey: .completedImageData)
     }
 
     enum CodingKeys: String, CodingKey {
-        case id, title, icon, missionDescription, completedImageData
+        case id, title, icon, completedImageData
     }
 }
