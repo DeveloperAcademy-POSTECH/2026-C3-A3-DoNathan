@@ -29,7 +29,9 @@ struct CommonCameraView<MissionOverlay: View, CameraOverlay: View>: View {
     let destination: MissionType?
     var cameraMode: CameraMode = .mission
     var overlayHeight: CGFloat = 107
+    
     var onDismiss: (() -> Void)? = nil
+    var onMissionSuccess: (() -> Void)? = nil
     
     @ViewBuilder var cameraOverlay: () -> CameraOverlay // 카메라 위
     @ViewBuilder var missionOverlay: () -> MissionOverlay // 카메라 아래
@@ -233,7 +235,7 @@ struct CommonCameraView<MissionOverlay: View, CameraOverlay: View>: View {
                 judgeVM.start(
                     onPassed: {
                         vm.handleMissionResult(image: image)
-                        //onDismiss?()
+                        onMissionSuccess?()
                     },
                     onFailed: {
                         viewModel.resetCapturedImage()
@@ -255,6 +257,9 @@ struct CommonCameraView<MissionOverlay: View, CameraOverlay: View>: View {
                             saveEditedPhoto(editedImage)
                             vm.handleMissionResult(image: editedImage)
                             showEditView = false
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                onMissionSuccess?()
+                            }
                         },
                         onCancel: {
                             capturedImage = nil
@@ -268,6 +273,9 @@ struct CommonCameraView<MissionOverlay: View, CameraOverlay: View>: View {
                             saveEditedPhoto(croppedImage)
                             vm.handleMissionResult(image: croppedImage)
                             showEditView = false
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                onMissionSuccess?()
+                            }
                         },
                         onCancel: {
                             capturedImage = nil
@@ -281,6 +289,9 @@ struct CommonCameraView<MissionOverlay: View, CameraOverlay: View>: View {
                         onConfirm: { selectedColor in
                             vm.handleMissionResult(image: image)
                             showEditView = false
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                onMissionSuccess?()
+                            }
                         },
                         onCancel: {
                             capturedImage = nil

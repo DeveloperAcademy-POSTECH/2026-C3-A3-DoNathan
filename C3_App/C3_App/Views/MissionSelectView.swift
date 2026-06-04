@@ -11,7 +11,10 @@ struct MissionSelectView: View {
     @ObservedObject var vm: MissionViewModel
     @StateObject private var viewModel = CameraViewModel()
     @State private var missionType: MissionType? = nil
+    @State private var showMissionSuccess: Bool = false
+    
     var onDismiss: (() -> Void)?
+    var onMissionSuccess: (() -> Void)? = nil
     let columns = Array(repeating: GridItem(.flexible(), spacing: 2), count: 3)
 
     var body: some View {
@@ -135,7 +138,6 @@ struct MissionSelectView: View {
                     .padding(.bottom, 32)
                 }
             }
-            // 🌟 변경 포인트 2: activeDestination의 상태를 감시하여 알맞은 카메라 뷰로 분기 연결!
             .fullScreenCover(item: $vm.activeDestination) { destination in
                 switch destination {
                 case .filter:
@@ -146,10 +148,14 @@ struct MissionSelectView: View {
                                      destination: destination,
                                      overlayHeight: 100,
                                      onDismiss: { vm.activeDestination = nil },
+                                     onMissionSuccess: {
+                                         vm.activeDestination = nil
+                                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                             showMissionSuccess = true
+                                         }
+                                     },
                                      cameraOverlay: { EmptyView() }
-                    ) {
-                        EmptyView()
-                    }
+                    ) { EmptyView() }
                 case .brightness:
                     BrightnessView(vm: vm)
                 case .saturation:
@@ -158,31 +164,52 @@ struct MissionSelectView: View {
                                      destination: destination,
                                      overlayHeight: 100,
                                      onDismiss: { vm.activeDestination = nil },
+                                     onMissionSuccess: {
+                                         vm.activeDestination = nil
+                                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                             onMissionSuccess?()
+                                         }
+                                     },
                                      cameraOverlay: { EmptyView() }
-                    ) {
-                        EmptyView()
-                    }
+                    ) { EmptyView() }
                 case .crop:
                     CommonCameraView(viewModel: viewModel,
                                      vm: vm,
                                      destination: destination,
                                      overlayHeight: 100,
                                      onDismiss: { vm.activeDestination = nil },
+                                     onMissionSuccess: {
+                                         vm.activeDestination = nil
+                                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                             onMissionSuccess?()
+                                         }
+                                     },
                                      cameraOverlay: { EmptyView() }
-                    ) {
-                        EmptyView()
-                    }
+                    ) { EmptyView() }
                 case .colorPicker:
                     CommonCameraView(viewModel: viewModel,
                                      vm: vm,
                                      destination: destination,
                                      overlayHeight: 100,
                                      onDismiss: { vm.activeDestination = nil },
+                                     onMissionSuccess: {
+                                         vm.activeDestination = nil
+                                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                             onMissionSuccess?()
+                                         }
+                                     },
                                      cameraOverlay: { EmptyView() }
-                    ) {
-                        EmptyView()
-                    }
+                    ) { EmptyView() }
                 }
+            }
+            // ✅ 성공화면 fullScreenCover - 카메라와 같은 레벨
+            .fullScreenCover(isPresented: $showMissionSuccess) {
+                MissionSuccessView(
+                    mainColor: vm.mainColor,
+                    onDismiss: {
+                        showMissionSuccess = false  // ✅ 닫으면 바로 빙고판
+                    }
+                )
             }
         }
     }
