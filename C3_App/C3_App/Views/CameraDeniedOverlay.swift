@@ -8,46 +8,70 @@
 import SwiftUI
 
 struct CameraDeniedOverlay: View {
-    var body: some View {
-        ZStack {
-            Color.black.opacity(0.6) //0.45 ?
-                .ignoresSafeArea()
-            
-            // 안내 문구와 버튼
-            VStack(spacing: 20) {
-                Image(systemName: "camera.badge.ellipsis")
-                    .font(.system(size: 50))
-                    .foregroundColor(.white)
-                Text("카메라 권한이 거부되었습니다")
-                    .font(.headline)
-                    .foregroundColor(.white)
-                
-                Text("사진을 촬영하려면 설정에서\n카메라 접근 권한을 허용해주세요.")
-                    .font(.subheadline)
-                    .foregroundColor(.gray)
-                    .multilineTextAlignment(.center)
-                
-                Button(action: openSettings) {
-                    Text("설정으로 이동")
-                        .font(.body)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.black)
-                        .padding(.horizontal, 24)
-                        .padding(.vertical, 12)
-                        .background(Color.white)
-                        .cornerRadius(10)
-                }
-            }
-            .padding(30)
-            .background(Color(uiColor: .darkGray).opacity(0.9))
-            .cornerRadius(16)
-            .padding(40)
-        }
-    }
+    @Binding var isShowing: Bool
     
-    private func openSettings() {
-            if let url = URL(string: UIApplication.openSettingsURLString) {
-                UIApplication.shared.open(url)
+    var body: some View {
+        if isShowing {
+            ZStack {
+                Color.black.opacity(0.4)
+                    .ignoresSafeArea()
+                
+                VStack(spacing: 0) {
+                    VStack(spacing: 8) {
+                        Text("현재 카메라 사용에 대한 접근 권한이\n없습니다.")
+                            .font(.system(size: 18, weight: .semibold))
+                        //                            .multilineTextAlignment(.leading)
+                            .foregroundColor(.primary)
+                        
+                        Text("설정 > (앱 이름) 탭에서 접근 권한을\n활성화할 수 있습니다.")
+                            .font(.system(size: 18))
+                            .foregroundColor(.secondary)
+                        //                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    .padding(.top, 20)
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 16)
+                    
+                    Button {
+                        isShowing = false
+                        if let url = URL(string: UIApplication.openSettingsURLString) {
+                            UIApplication.shared.open(url)
+                        }
+                    } label: {
+                        Text("설정으로 이동")
+                            .font(.system(size: 17, weight: .semibold))
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 14)
+                            .background(Color.blue)
+                            .cornerRadius(10)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 10)
+                    }
+                    
+                    Button {
+                        isShowing = false
+                    } label: {
+                        Text("취소")
+                            .font(.system(size: 17))
+                            .foregroundColor(.primary)
+                            .frame(maxWidth: .infinity)
+                            .padding(.vertical, 14)
+                    }
+                }
+                .background(.ultraThinMaterial)
+                .cornerRadius(14)
+                .padding(.horizontal, 40)
             }
         }
     }
+}
+
+#Preview {
+    ZStack {
+        Color.black(.opacity(0.5)).ignoresSafeArea()
+        Text("실제 카메라 화면 공간")
+            .foregroundColor(.white)
+        CameraDeniedOverlay(isShowing: .constant(true))
+    }
+}
