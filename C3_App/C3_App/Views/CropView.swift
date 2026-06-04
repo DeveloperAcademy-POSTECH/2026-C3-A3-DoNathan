@@ -12,7 +12,7 @@ struct CropView: View {
     @StateObject private var judgeVM = JudgeViewModel()
     
     let capturedImage: UIImage
-    var missionColor: Color = .red
+    var missionColor: Color = .customRed
     var onConfirm: (UIImage) -> Void
     var onCancel: () -> Void
     
@@ -128,6 +128,8 @@ struct CropView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .background(Color(.systemGray5))
                 
+                Spacer().frame(height: 88)
+
                 // MARK: - 하단 바 (파란 체크 버튼)
                 HStack {
                     Spacer()
@@ -136,6 +138,9 @@ struct CropView: View {
                         Button {
                             if let cropped = viewModel.croppedImage {
                                 judgeVM.start(
+                                    image: cropped,
+                                    type: .crop,
+                                    targetColor: missionColor,
                                     onPassed: { onConfirm(cropped) },
                                     onFailed: { }
                                 )
@@ -177,7 +182,6 @@ struct CropView: View {
                     }
                 }
                 .padding(.horizontal, 18)
-                .padding(.top, 124)
                 .padding(.bottom, 8)
                 .background(Color.white)
             }

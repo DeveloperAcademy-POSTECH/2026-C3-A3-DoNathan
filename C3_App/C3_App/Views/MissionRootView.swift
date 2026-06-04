@@ -13,6 +13,7 @@ struct MissionRootView: View {
 
     @StateObject var vm: MissionViewModel
     @Environment(\.dismiss) private var dismiss
+    @State private var showMissionSuccess: Bool = false
 
     init(missionColor: MissionColor, onDismiss: (() -> Void)? = nil) {
         self.missionColor = missionColor
@@ -29,7 +30,7 @@ struct MissionRootView: View {
                         removal:   .move(edge: .leading ).combined(with: .opacity)
                     )) // 화면 전환 시 애니메이션 방향
             } else {
-                MissionSelectView(vm: vm, onDismiss: onDismiss)
+                MissionSelectView(vm: vm, onDismiss: onDismiss, onMissionSuccess: { showMissionSuccess = true })
                     .transition(.asymmetric(
                         insertion: .move(edge: .leading ).combined(with: .opacity),
                         removal:   .move(edge: .trailing).combined(with: .opacity)
@@ -43,10 +44,12 @@ struct MissionRootView: View {
                 vm.showCompletion = true
             }
         }
-        .fullScreenCover(isPresented: $vm.showMissionSuccess) {
+        .fullScreenCover(isPresented: $showMissionSuccess) {
             MissionSuccessView(
                 mainColor: vm.mainColor,
-                onDismiss: { vm.showMissionSuccess = false }
+                onDismiss: {
+                    showMissionSuccess = false
+                }
             )
         }
     }
