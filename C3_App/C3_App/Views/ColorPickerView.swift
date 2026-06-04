@@ -36,52 +36,43 @@ struct ColorPickerView: View {
                         .background(
                             GeometryReader { imageGeo in
                                 Color.clear.onAppear {
-                                    // 이미지 실제 표시 frame 저장
-                                    //                                    imageFrame = imageGeo.frame(in: .local)
-                                    //                                    // 피커 초기 위치를 이미지 중앙으로
                                     imageFrame = imageGeo.frame(in: .named("imageArea"))
                                     pickerPosition = CGPoint(
-                                        x: imageFrame.midX,   // 이미지 실제 중앙으로
+                                        x: imageFrame.midX,
                                         y: imageFrame.midY
                                     )
                                 }
                             }
                         )
-                    
-                    CenterColorCell(color: missionColor, height: 145)
-                        .frame(width: 112)
+
+                    CenterColorCell(color: missionColor, height: 150)
+                        .frame(width: 110)
                         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
-                        .padding(.top, 40)
-                        .padding(.trailing, 36)
+                        .padding(24)
                         .allowsHitTesting(false)
-                    
-                    Button(action: onCancel) {
-                        Image(systemName: "xmark")
-                            .font(.system(size: 20, weight: .medium))
-                            .foregroundColor(Color(hex: "777777"))
-                            .frame(width: 40, height: 40)
-                    }
-                    .buttonStyle(GlassButtonStyle())
-                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-                    .padding(.top, 16)
-                    .padding(.leading, 16)
-                    
+
                     // 피커 아이콘 (비활성 상태일 때만 표시)
                     if !isPickerActive {
                         Button {
                             isPickerActive = true
                             showResult = false
                         } label: {
-                            Image(systemName: "eyedropper")
-                                .font(.system(size: 20, weight: .semibold))
-                                .foregroundColor(Color(hex: "777777"))
-                                .frame(width: 48, height: 48)
+                            ZStack {
+                                Circle()
+                                    .fill(.clear)
+                                Image(systemName: "eyedropper")
+                                    .font(.system(size: 20, weight: .semibold))
+                                    .foregroundColor(Color(hex: "777777"))
+                            }
+                            .frame(width: 48, height: 48)
+                            .contentShape(Circle())
                         }
+                        .glassEffect(.regular, in: Circle())
                         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomTrailing)
-                        .padding(16)
-                        .buttonStyle(GlassButtonStyle())
+                        .padding(.trailing, 22)
+                        .padding(.bottom, 32)
                     }
-                    
+
                     // 피커 활성화 상태일 때 루페 표시 + 드래그
                     if isPickerActive {
                         PickerLoupe(color: viewModel.selectedColor)
@@ -89,11 +80,10 @@ struct ColorPickerView: View {
                             .gesture(
                                 DragGesture(minimumDistance: 0)
                                     .onChanged { value in
-                                        // 이미지 영역 내로 이동 제한
                                         let clampedX = min(max(value.location.x, imageFrame.minX), imageFrame.maxX)
                                         let clampedY = min(max(value.location.y, imageFrame.minY), imageFrame.maxY)
                                         pickerPosition = CGPoint(x: clampedX, y: clampedY)
-                                        
+
                                         viewModel.pickColor(
                                             from: capturedImage.fixedOrientation(),
                                             at: pickerPosition,
@@ -105,76 +95,104 @@ struct ColorPickerView: View {
                                     }
                             )
                     }
-                }
-                //                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .frame(width: geo.size.width, height: geo.size.height * 0.76)
-                .background(Color(.systemGray6))
-                
-                // MARK: - 결과 패널
-                if showResult {
-                    HStack(spacing: 16) {
-                        RoundedRectangle(cornerRadius: 8)
-                            .fill(viewModel.selectedColor)
-                            .frame(width: 56, height: 56)
-                            .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.white, lineWidth: 2))
-                            .shadow(radius: 4)
-                        
-                        VStack(alignment: .leading, spacing: 4) {
-                            Text("현재 선택한 색상")
-                                .font(.caption)
-                                .foregroundColor(.secondary)
-                            Text("컬러가 만족스럽다면 편집완료! 또는\n컬러 피커를 통해 재도전이 가능해요!")
-                                .font(.caption2)
-                                .foregroundColor(.secondary)
-                        }
-                        
-                        Spacer()
-                        
-                        // 재도전 버튼
-                        Image(systemName: "eyedropper")
-                            .font(.system(size: 18))
-                            .foregroundColor(.white)
-                            .padding(10)
-                            .background(Color.black.opacity(0.6))
-                            .clipShape(Circle())
-                            .onTapGesture {
-                                showResult = false
-                                // 피커는 유지, 다시 드래그 가능
+                    // MARK: - 결과 패널 (이미지 위 오버레이)
+                    if showResult {
+                        HStack(spacing: 16) {
+                            RoundedRectangle(cornerRadius: 8)
+                                .fill(viewModel.selectedColor)
+                                .frame(width: 56, height: 56)
+                                .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.white, lineWidth: 2))
+                                .shadow(radius: 4)
+
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text("현재 선택한 색상")
+                                    .font(.system(size: 12, weight: .semibold))
+
+                                Text("컬러가 만족스럽다면 편집완료! \n또는 컬러 피커를 통해 재도전이 가능해요!")
+                                    .font(.system(size: 11, weight: .semibold))
+
                             }
+
+                            Spacer()
+                            
+                            // 재도전 버튼ㅇ
+                            Image(systemName: "eyedropper")
+                                .font(.system(size: 18))
+                                .foregroundColor(.white)
+                                .padding(10)
+                                .background(Color.black.opacity(0.6))
+                                .clipShape(Circle())
+                                .onTapGesture {
+                                    showResult = false
+                                }
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 12)
+                        .frame(width: 385, height: 112)
+                        .glassEffect(.regular.tint(.clear), in: RoundedRectangle(cornerRadius: 16))
+                        .opacity(0.7)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
                     }
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 12)
-                    .background(Color(.systemGray5))
                 }
-                
+                .coordinateSpace(name: "imageArea")
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .background(Color(.systemGray5))
+
+                Spacer().frame(height: 123)
+
                 // MARK: - 하단 버튼
                 HStack {
                     Spacer()
-                    
+
                     Button {
                         judgeVM.start(
                             image: capturedImage,
                             type: .colorPicker,
                             targetColor: missionColor,
-                            onPassed: { onConfirm(viewModel.selectedUIColor) },  // 선택된 색상 전달
+                            onPassed: { onConfirm(viewModel.selectedUIColor) },
                             onFailed: { }
                         )
                     } label: {
-                        HStack(spacing: 10) {
+                        HStack {
                             Image(systemName: "checkmark")
+                                .font(.system(size: 16, weight: .semibold))
                             Text("편집완료")
+                                .font(.system(size: 19, weight: .semibold))
                         }
-                        .font(.system(size: 20, weight: .bold))
+                        .foregroundColor(viewModel.selectedUIColor == .clear ? Color(hex: "777777") : .white)
                         .padding(.horizontal, 20)
-                        .frame(height: 48)
+                        .padding(.vertical, 14)
+                        .background(
+                            (viewModel.selectedUIColor == .clear ? Color(hex: "F7F7F7") : Color(hex: "0076FF").opacity(0.65)),
+                            in: Capsule()
+                        )
                     }
-                    .buttonStyle(GlassButtonStyle())
-                    .foregroundColor(Color(hex: "777777"))
+                    .glassEffect(.regular, in: Capsule())
                     .disabled(viewModel.selectedUIColor == .clear)
-                    .opacity(viewModel.selectedUIColor == .clear ? 0.4 : 1.0)
                 }
-                .padding(.horizontal, 24)
-                .padding(.vertical, 20)
+                .padding(.horizontal, 18)
+                .padding(.bottom, 8)
+                .background(Color.white)
+            }
+            .safeAreaInset(edge: .top) {
+                HStack {
+                    Button(action: onCancel) {
+                        ZStack {
+                            Circle()
+                                .fill(.clear)
+                            Image(systemName: "xmark")
+                                .font(.system(size: 19, weight: .semibold))
+                                .foregroundColor(Color(hex: "888888"))
+                        }
+                        .frame(width: 40, height: 40)
+                        .contentShape(Circle())
+                    }
+                    .glassEffect(.regular, in: Circle())
+                    Spacer()
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 28)
+                .padding(.bottom, 20)
                 .background(Color.white)
             }
         }
