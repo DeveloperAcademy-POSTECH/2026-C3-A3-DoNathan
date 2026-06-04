@@ -10,22 +10,27 @@ import Combine
 
 class JudgeViewModel: ObservableObject {
     @Published var state: JudgeState = .idle
-    
-    var isJudging: Bool { state == .judging }
+
+    var isJudging: Bool  { state == .judging }
     var showSuccess: Bool { state == .success }
-    var showFail: Bool { state == .failure }
-    var isDisabled: Bool { state != .idle }
-    
-    func start(onPassed: @escaping () -> Void, onFailed: @escaping () -> Void) {
+    var showFail: Bool   { state == .failure }
+    var isDisabled: Bool  { state != .idle }
+
+    func start(image: UIImage,
+               type: MissionType,
+               targetColor: Color,
+               onPassed: @escaping () -> Void,
+               onFailed: @escaping () -> Void) {
         state = .judging
-        
+
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-            let isPassed = Bool.random()  // ✅ 나중에 MissionEvaluator로 교체
-            
+            let isPassed = MissionEvaluator.evaluate(image: image,
+                                                     type: type,
+                                                     targetColor: targetColor)
             withAnimation {
                 self.state = isPassed ? .success : .failure
             }
-            
+
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                 if isPassed {
                     onPassed()
@@ -36,7 +41,7 @@ class JudgeViewModel: ObservableObject {
             }
         }
     }
-    
+
     func reset() {
         state = .idle
     }
