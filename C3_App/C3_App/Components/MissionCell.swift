@@ -86,7 +86,7 @@ struct MissionCell: View {
 
 #Preview {
     MissionCell(
-        mission: Mission(title: "기본 카메라", icon: "camera", missionDescription: "테스트"),
+        mission: Mission(title: "기본 카메라", icon: "camera"),
         isSelected: false,
         mainColor: .pink,
         cellHeight: 150,
