@@ -13,6 +13,7 @@ struct SaturationView: View {
     @StateObject private var judgeVM = JudgeViewModel()
 
     let capturedImage: UIImage
+    var missionColor: Color = .red
     var onConfirm: (UIImage, Float) -> Void
     var onCancel: () -> Void
 
@@ -21,29 +22,34 @@ struct SaturationView: View {
             VStack(spacing: 0) {
                 // 사진 미리보기
                 ZStack {
-                    Color(.systemGray5)
-                    
                     if let image = viewModel.previewImage {
                         Image(uiImage: image)
                             .resizable()
-                            .scaledToFill()
+                            .scaledToFit()
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .overlay(alignment: .topTrailing) {
+                                CenterColorCell(color: missionColor, height: 150)
+                                    .frame(width: 110)
+                                    .padding(24)
+                            }
                     } else {
                         ProgressView()
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                
+                .background(Color(.systemGray5))
+
                 // 채도 슬라이더
                 HStack(spacing: 12) {
                     Image(systemName: "camera.filters")
                         .foregroundStyle(.gray)
-                    
+
                     Slider(value: $viewModel.saturation, in: 0.0...2.0) { isEditing in
                         if isEditing { viewModel.applyPreviewFilter() }
                         else { viewModel.applyHighResFilter() }
                     }
                     .tint(.gray)
-                    
+
                     Image("camera.filters.fill")
                         .resizable()
                         .scaledToFit()
@@ -52,13 +58,13 @@ struct SaturationView: View {
                 .padding(.horizontal, 20)
                 .padding(.vertical, 16)
                 .background(Color.white)
-                
-                //Spacer().frame(height: 88)
-                
-                // 하단 버튼 영역(높이 확보)
+
+                Spacer().frame(height: 88)
+
+                // 하단 버튼 영역
                 HStack {
                     Spacer()
-                    
+
                     Button {
                         let imageToSend = viewModel.finalImage ?? viewModel.previewImage
                         if let image = imageToSend {
@@ -68,37 +74,44 @@ struct SaturationView: View {
                             )
                         }
                     } label: {
-                        HStack(spacing: 16) {
-                            Text("편집완료")
-                                .font(.system(size: 17, weight: .semibold))
+                        HStack {
                             Image(systemName: "checkmark")
-                                .font(.system(size: 17, weight: .semibold))
+                                .font(.system(size: 16, weight: .semibold))
+                            Text("편집완료")
+                                .font(.system(size: 19, weight: .semibold))
                         }
-                        .padding(.vertical, 6)
-                        
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 20)
+                        .padding(.vertical, 14)
+                        .background(Color(hex: "0076FF").opacity(0.65), in: Capsule())
                     }
-                    .buttonStyle(GlassButtonStyle())
+                    .glassEffect(.regular, in: Capsule())
                     .disabled(judgeVM.isDisabled)
                 }
-                .padding(.horizontal, 12)
-                .padding(.bottom, 44)
+                .padding(.horizontal, 18)
+                .padding(.bottom, 8)
                 .background(Color.white)
             }
             .safeAreaInset(edge: .top) {
                 HStack {
                     Button(action: onCancel) {
-                        Image(systemName: "xmark")
-                            .font(.system(size: 18, weight: .semibold))
-                            .foregroundStyle(.gray)
-                            .frame(width: 36, height: 36)
+                        ZStack {
+                            Circle()
+                                .fill(.clear)
+                            Image(systemName: "xmark")
+                                .font(.system(size: 19, weight: .semibold))
+                                .foregroundColor(Color(hex: "888888"))
+                        }
+                        .frame(width: 40, height: 40)
+                        .contentShape(Circle())
                     }
-                    .buttonStyle(GlassButtonStyle())
-                    
+                    .glassEffect(.regular, in: Circle())
+
                     Spacer()
                 }
-                .padding(.horizontal, 20)
-                .padding(.top, 10)
-                .padding(.bottom, 8)
+                .padding(.horizontal, 16)
+                .padding(.top, 28)
+                .padding(.bottom, 20)
                 .background(Color.white)
             }
             .onAppear { viewModel.setImage(capturedImage) }
