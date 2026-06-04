@@ -22,11 +22,13 @@ struct PhotoLibraryDeniedOverlay: View {
                             .font(.system(size: 18, weight: .semibold))
                         //                            .multilineTextAlignment(.leading)
                             .foregroundColor(.primary)
+                            .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.top, 5)
                         
-                        Text("설정 > PALETO 탭에서 접근 권한을\n활성화할 수 있습니다.")
+                        Text("설정 > PALETO 탭에서 접근 권한을 활성화할 수 있습니다.")
                             .font(.system(size: 18))
                             .foregroundColor(.secondary)
+                            .frame(maxWidth: .infinity, alignment: .leading)
                         //                            .fixedSize(horizontal: false, vertical: true)
                     }
                     .padding(.top, 20)
@@ -63,6 +65,7 @@ struct PhotoLibraryDeniedOverlay: View {
                             .padding(.horizontal, 16)
                             .padding(.bottom, 21)
                     }
+                    
                 }
                 .background(
                     RoundedRectangle(cornerRadius: 25)
