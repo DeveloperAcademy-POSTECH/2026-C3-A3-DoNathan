@@ -117,7 +117,7 @@ class MissionViewModel: ObservableObject {
             }
         } else {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
-                withAnimation { self.showMissionSuccess = true }  // ✅ 성공 화면으로
+                withAnimation { self.showMissionSuccess = true }  
             }
         }
     }
