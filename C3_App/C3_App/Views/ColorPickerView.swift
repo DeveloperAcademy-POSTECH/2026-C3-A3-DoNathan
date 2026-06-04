@@ -107,10 +107,10 @@ struct ColorPickerView: View {
                             VStack(alignment: .leading, spacing: 4) {
                                 Text("현재 선택한 색상")
                                     .font(.system(size: 12, weight: .semibold))
-                                
+
                                 Text("컬러가 만족스럽다면 편집완료! \n또는 컬러 피커를 통해 재도전이 가능해요!")
                                     .font(.system(size: 11, weight: .semibold))
-                                
+
                             }
 
                             Spacer()
