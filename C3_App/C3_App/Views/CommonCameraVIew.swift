@@ -225,14 +225,31 @@ struct CommonCameraView<MissionOverlay: View, CameraOverlay: View>: View {
         .onDisappear {
             viewModel.stopSession()
         }
-        .onReceive(viewModel.$capturedImage) { image in
-            guard let image else { return }
+        .onReceive(viewModel.$capturedImage) { (incomingImage: UIImage?) in
+            guard let image = incomingImage else { return }
             capturedImage = image
             currentDestination = destination ?? vm.activeDestination
             
             switch currentDestination {
-            case .basic, .brightness:
+            case .basic:
                 judgeVM.start(
+                    image: image,
+                    type: .basic,
+                    targetColor: vm.mainColor,
+                    onPassed: {
+                        vm.handleMissionResult(image: image)
+                        onMissionSuccess?()
+                    },
+                    onFailed: {
+                        viewModel.resetCapturedImage()
+                        capturedImage = nil
+                    }
+                )
+            case .brightness:
+                judgeVM.start(
+                    image: image,
+                    type: .brightness,
+                    targetColor: vm.mainColor,
                     onPassed: {
                         vm.handleMissionResult(image: image)
                         onMissionSuccess?()

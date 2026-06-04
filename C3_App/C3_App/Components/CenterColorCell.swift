@@ -20,18 +20,26 @@ struct CenterColorCell: View {
             VStack(spacing: 0) {
                 Rectangle()
                     .fill(color)
+                    .frame(height: height * 0.65) // 👈 65% 비율로 조정
                     .padding(.horizontal, 10)
                     .padding(.top, 10)
 
-                HStack {
-                    Text("Mission\nColor")
-                        .font(.system(size: height * 0.1, weight: .bold))
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Mission")
+                        .font(.system(size: height * 0.09, weight: .bold))
                         .foregroundColor(color)
-                        .lineLimit(2)
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 8)
-                    Spacer()
+                        .lineLimit(1)
+                    
+                    Text("Color")
+                        .font(.system(size: height * 0.09, weight: .bold))
+                        .foregroundColor(color)
+                        .lineLimit(1)
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                
+                Spacer(minLength: 0)
             }
         }
         .frame(height: height)
@@ -39,5 +47,5 @@ struct CenterColorCell: View {
 }
 
 #Preview {
-    CenterColorCell(color: .customRed, height: 300)
+    CenterColorCell(color: .red, height: 120)
 }

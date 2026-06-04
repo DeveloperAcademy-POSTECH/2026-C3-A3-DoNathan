@@ -202,12 +202,11 @@ struct MissionSelectView: View {
                     ) { EmptyView() }
                 }
             }
-            // ✅ 성공화면 fullScreenCover - 카메라와 같은 레벨
             .fullScreenCover(isPresented: $showMissionSuccess) {
                 MissionSuccessView(
                     mainColor: vm.mainColor,
                     onDismiss: {
-                        showMissionSuccess = false  // ✅ 닫으면 바로 빙고판
+                        showMissionSuccess = false
                     }
                 )
             }

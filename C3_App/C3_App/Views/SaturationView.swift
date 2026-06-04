@@ -69,6 +69,9 @@ struct SaturationView: View {
                         let imageToSend = viewModel.finalImage ?? viewModel.previewImage
                         if let image = imageToSend {
                             judgeVM.start(
+                                image: image,
+                                type: .saturation,
+                                targetColor: missionColor,
                                 onPassed: { onConfirm(image, viewModel.saturation) },
                                 onFailed: { }
                             )
