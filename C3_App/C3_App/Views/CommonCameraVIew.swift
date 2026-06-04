@@ -235,6 +235,7 @@ struct CommonCameraView<MissionOverlay: View, CameraOverlay: View>: View {
                 case .saturation:
                     SaturationView(
                         capturedImage: image,
+                        missionColor: vm.mainColor,
                         onConfirm: { editedImage, _ in
                             saveEditedPhoto(editedImage)
                             vm.handleMissionResult(image: editedImage)

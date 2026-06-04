@@ -13,6 +13,7 @@ struct SaturationView: View {
     @StateObject private var judgeVM = JudgeViewModel()
 
     let capturedImage: UIImage
+    var missionColor: Color = .red
     var onConfirm: (UIImage, Float) -> Void
     var onCancel: () -> Void
 
@@ -26,6 +27,11 @@ struct SaturationView: View {
                             .resizable()
                             .scaledToFit()
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
+                            .overlay(alignment: .topTrailing) {
+                                CenterColorCell(color: missionColor, height: 150)
+                                    .frame(width: 110)
+                                    .padding(24)
+                            }
                     } else {
                         ProgressView()
                     }
