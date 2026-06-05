@@ -231,9 +231,11 @@ struct CommonCameraView<MissionOverlay: View, CameraOverlay: View>: View {
             switch currentDestination {
             case .basic, .brightness:
                 judgeVM.start(
+                    image: image,
+                    type: currentDestination ?? .basic,
+                    targetColor: vm.mainColor,
                     onPassed: {
                         vm.handleMissionResult(image: image)
-                        //onDismiss?()
                     },
                     onFailed: {
                         viewModel.resetCapturedImage()
