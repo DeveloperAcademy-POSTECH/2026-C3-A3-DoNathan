@@ -108,7 +108,7 @@ struct ColorPickerView: View {
                                 Text("현재 선택한 색상")
                                     .font(.system(size: 12, weight: .semibold))
 
-                                Text("컬러가 만족스럽다면 편집완료!\n다른 색을 원하면 화면을 다시 탭해세요")
+                                Text("컬러가 만족스럽다면 편집완료!\n다른 색을 원하면 화면을 다시 탭해보세요")
                                     .font(.system(size: 11, weight: .semibold))
 
                             }
