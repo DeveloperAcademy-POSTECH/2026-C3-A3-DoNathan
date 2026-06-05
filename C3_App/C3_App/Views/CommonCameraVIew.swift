@@ -270,6 +270,7 @@ struct CommonCameraView<MissionOverlay: View, CameraOverlay: View>: View {
                     )
                 case .crop:
                     CropView(
+                        vm: vm,
                         capturedImage: image,
                         onConfirm: { croppedImage in
                             saveEditedPhoto(croppedImage)

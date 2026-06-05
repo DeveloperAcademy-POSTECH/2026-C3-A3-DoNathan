@@ -8,11 +8,11 @@
 import SwiftUI
 
 struct CropView: View {
+    @ObservedObject var vm: MissionViewModel
     @StateObject private var viewModel = CropViewModel()
     @StateObject private var judgeVM = JudgeViewModel()
     
     let capturedImage: UIImage
-    var missionColor: Color = .customRed
     var onConfirm: (UIImage) -> Void
     var onCancel: () -> Void
     
@@ -104,7 +104,7 @@ struct CropView: View {
                                 .scaledToFit()
                                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                                 .overlay(alignment: .topTrailing) {
-                                    CenterColorCell(color: missionColor, height: 150)
+                                    CenterColorCell(color: vm.mainColor, height: 150)
                                         .frame(width: 110)
                                         .padding(24)
                                 }
@@ -140,7 +140,7 @@ struct CropView: View {
                                 judgeVM.start(
                                     image: cropped,
                                     type: .crop,
-                                    targetColor: missionColor,
+                                    targetColor: vm.mainColor,
                                     onPassed: { onConfirm(cropped) },
                                     onFailed: { }
                                 )
@@ -221,6 +221,7 @@ struct CropMaskView: View {
 
 #Preview {
     CropView(
+        vm: MissionViewModel(),
         capturedImage: UIImage(systemName: "photo") ?? UIImage(),
         onConfirm: { _ in },
         onCancel: { }
