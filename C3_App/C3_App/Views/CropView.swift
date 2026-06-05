@@ -8,11 +8,11 @@
 import SwiftUI
 
 struct CropView: View {
+    @ObservedObject var vm: MissionViewModel
     @StateObject private var viewModel = CropViewModel()
     @StateObject private var judgeVM = JudgeViewModel()
     
     let capturedImage: UIImage
-    var missionColor: Color = .customRed
     var onConfirm: (UIImage) -> Void
     var onCancel: () -> Void
     
@@ -104,7 +104,7 @@ struct CropView: View {
                                 .scaledToFit()
                                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                                 .overlay(alignment: .topTrailing) {
-                                    CenterColorCell(color: missionColor, height: 150)
+                                    CenterColorCell(color: vm.mainColor, height: 150)
                                         .frame(width: 110)
                                         .padding(24)
                                 }
@@ -140,7 +140,7 @@ struct CropView: View {
                                 judgeVM.start(
                                     image: cropped,
                                     type: .crop,
-                                    targetColor: missionColor,
+                                    targetColor: vm.mainColor,
                                     onPassed: { onConfirm(cropped) },
                                     onFailed: { }
                                 )
@@ -201,15 +201,6 @@ struct CropMaskView: View {
     
     var body: some View {
         GeometryReader { geo in
-            let centerX = geo.size.width / 2 + offset.width
-            let centerY = geo.size.height / 2 + offset.height
-            let boxRect = CGRect(
-                x: centerX - boxSize.width / 2,
-                y: centerY - boxSize.height / 2,
-                width: boxSize.width,
-                height: boxSize.height
-            )
-            
             // 전체를 어둡게 → 크롭 박스 영역만 투명하게 뚫기
             Rectangle()
                 .fill(Color.black.opacity(0.5))
@@ -227,8 +218,10 @@ struct CropMaskView: View {
         .ignoresSafeArea()
     }
 }
+
 #Preview {
     CropView(
+        vm: MissionViewModel(),
         capturedImage: UIImage(systemName: "photo") ?? UIImage(),
         onConfirm: { _ in },
         onCancel: { }

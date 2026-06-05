@@ -71,11 +71,32 @@ class CameraViewModel: ObservableObject {
     // 카메라 권한 체크
     func configureCamera() {
         cameraService.checkPermissionAndSetup()
+        loadLatestPhoto()
     }
     
     func startSession() { cameraService.startSession() }
     func stopSession() { cameraService.stopSession() }
     func setZoom(_ factor: CGFloat) { cameraService.setZoom(factor) }
+    func loadLatestPhoto() {
+        let fetchOptions = PHFetchOptions()
+            fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
+            fetchOptions.fetchLimit = 1
+            
+            let result = PHAsset.fetchAssets(with: .image, options: fetchOptions)
+            guard let asset = result.firstObject else { return }
+            
+            PHImageManager.default().requestImage(
+                for: asset,
+                targetSize: CGSize(width: 96, height: 96),
+                contentMode: .aspectFill,
+                options: nil
+            ) { [weak self] image, _ in
+                DispatchQueue.main.async {
+                    self?.thumbnailImage = image
+                }
+            }
+        }
+    
     
     // 카메라 재진입 시 데이터 리셋
     func resetCapturedImage() {

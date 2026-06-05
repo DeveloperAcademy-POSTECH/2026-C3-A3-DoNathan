@@ -234,25 +234,10 @@ struct CommonCameraView<MissionOverlay: View, CameraOverlay: View>: View {
             case .basic:
                 judgeVM.start(
                     image: image,
-                    type: .basic,
+                    type: currentDestination ?? .basic,
                     targetColor: vm.mainColor,
                     onPassed: {
                         vm.handleMissionResult(image: image)
-                        onMissionSuccess?()
-                    },
-                    onFailed: {
-                        viewModel.resetCapturedImage()
-                        capturedImage = nil
-                    }
-                )
-            case .brightness:
-                judgeVM.start(
-                    image: image,
-                    type: .brightness,
-                    targetColor: vm.mainColor,
-                    onPassed: {
-                        vm.handleMissionResult(image: image)
-                        onMissionSuccess?()
                     },
                     onFailed: {
                         viewModel.resetCapturedImage()
@@ -285,6 +270,7 @@ struct CommonCameraView<MissionOverlay: View, CameraOverlay: View>: View {
                     )
                 case .crop:
                     CropView(
+                        vm: vm,
                         capturedImage: image,
                         onConfirm: { croppedImage in
                             saveEditedPhoto(croppedImage)

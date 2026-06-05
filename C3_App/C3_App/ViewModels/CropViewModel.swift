@@ -16,7 +16,7 @@ class CropViewModel: ObservableObject {
     @Published var actualImageSize: CGSize = .zero // 실제 이미지 표시 크기 저장
     
     private let context = CIContext()
-    var cropBoxSize: CGSize = CGSize(width: 260, height: 260)  // onAppear에서 덮어씀
+    var cropBoxSize: CGSize = CGSize(width: 275, height: 379)  // onAppear에서 덮어씀
     
     // MARK: - 실제 크롭 실행
     func cropImage(_ image: UIImage, displaySize: CGSize, completion: @escaping () -> Void) {
@@ -87,9 +87,11 @@ class CropViewModel: ObservableObject {
             actualImageSize = CGSize(width: width, height: height)
         }
         
-        // 실제 이미지 표시 크기의 60% 를 박스로 사용
-        let boxSize = min(actualImageSize.width, actualImageSize.height) * 0.6
-        return CGSize(width: boxSize, height: boxSize)
+        // 크롭 박스 사이즈 : 4:3
+        let boxWidth = actualImageSize.width * 0.6
+        let boxHeight = boxWidth * 4 / 3
+        
+        return CGSize(width: boxWidth, height: boxHeight)
     }
     
     // 실제 이미지 표시 크기 계산 함수
