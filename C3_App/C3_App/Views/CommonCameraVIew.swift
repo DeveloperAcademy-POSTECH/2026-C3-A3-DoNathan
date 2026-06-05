@@ -229,9 +229,10 @@ struct CommonCameraView<MissionOverlay: View, CameraOverlay: View>: View {
             guard let image = incomingImage else { return }
             capturedImage = image
             currentDestination = destination ?? vm.activeDestination
-            
+            print("[Camera] 사진 찍힘 → destination:\(String(describing: destination)) activeDestination:\(String(describing: vm.activeDestination)) currentDestination:\(String(describing: currentDestination))")
+
             switch currentDestination {
-            case .basic:
+            case .basic, .brightness:
                 judgeVM.start(
                     image: image,
                     type: currentDestination ?? .basic,
