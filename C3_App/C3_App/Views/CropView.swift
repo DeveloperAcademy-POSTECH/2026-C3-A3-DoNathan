@@ -201,15 +201,6 @@ struct CropMaskView: View {
     
     var body: some View {
         GeometryReader { geo in
-            let centerX = geo.size.width / 2 + offset.width
-            let centerY = geo.size.height / 2 + offset.height
-            let boxRect = CGRect(
-                x: centerX - boxSize.width / 2,
-                y: centerY - boxSize.height / 2,
-                width: boxSize.width,
-                height: boxSize.height
-            )
-            
             // 전체를 어둡게 → 크롭 박스 영역만 투명하게 뚫기
             Rectangle()
                 .fill(Color.black.opacity(0.5))
@@ -227,6 +218,7 @@ struct CropMaskView: View {
         .ignoresSafeArea()
     }
 }
+
 #Preview {
     CropView(
         capturedImage: UIImage(systemName: "photo") ?? UIImage(),
