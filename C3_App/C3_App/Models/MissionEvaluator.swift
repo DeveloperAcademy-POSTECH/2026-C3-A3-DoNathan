@@ -12,9 +12,9 @@ import CoreImage
 struct MissionEvaluator {
 
     // MARK: - 판정 파라미터 (실기기 테스트 후 튜닝)
-    private static let hueToleranceDeg: CGFloat = 20.0   // Hue 허용 오차 (°)
-    private static let saturationMin:   CGFloat = 0.3    // 채도 하한 (이하면 무채색 판정)
-    private static let valueMin:        CGFloat = 0.2    // 명도 하한 (이하면 너무 어두움)
+    private static let hueToleranceDeg: CGFloat = 72.0   // Hue 허용 오차 (°) — 약 60% 유사도
+    private static let saturationMin:   CGFloat = 0.1    // 채도 하한 (이하면 무채색 판정)
+    private static let valueMin:        CGFloat = 0.08   // 명도 하한 (이하면 너무 어두움)
     private static let kmeansK:         Int     = 5      // K-means 클러스터 수
     private static let ciContext = CIContext(options: [.useSoftwareRenderer: false])
 

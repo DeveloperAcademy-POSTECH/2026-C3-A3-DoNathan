@@ -234,6 +234,10 @@ struct CommonCameraView<MissionOverlay: View, CameraOverlay: View>: View {
             case .basic:
                 judgeVM.start(
                     image: image,
+                    type: currentDestination ?? .basic,
+                    targetColor: vm.mainColor,
+                    onPassed: {
+                        vm.handleMissionResult(image: image)
                     type: .basic,
                     targetColor: vm.mainColor,
                     onPassed: {
