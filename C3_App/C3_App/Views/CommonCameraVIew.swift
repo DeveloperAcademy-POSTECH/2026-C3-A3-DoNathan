@@ -29,7 +29,9 @@ struct CommonCameraView<MissionOverlay: View, CameraOverlay: View>: View {
     let destination: MissionType?
     var cameraMode: CameraMode = .mission
     var overlayHeight: CGFloat = 107
+    
     var onDismiss: (() -> Void)? = nil
+    var onMissionSuccess: (() -> Void)? = nil
     
     @ViewBuilder var cameraOverlay: () -> CameraOverlay // 카메라 위
     @ViewBuilder var missionOverlay: () -> MissionOverlay // 카메라 아래
@@ -223,19 +225,38 @@ struct CommonCameraView<MissionOverlay: View, CameraOverlay: View>: View {
         .onDisappear {
             viewModel.stopSession()
         }
-        .onReceive(viewModel.$capturedImage) { image in
-            guard let image else { return }
+        .onReceive(viewModel.$capturedImage) { (incomingImage: UIImage?) in
+            guard let image = incomingImage else { return }
             capturedImage = image
             currentDestination = destination ?? vm.activeDestination
             
             switch currentDestination {
-            case .basic, .brightness:
+            case .basic:
                 judgeVM.start(
                     image: image,
                     type: currentDestination ?? .basic,
                     targetColor: vm.mainColor,
                     onPassed: {
                         vm.handleMissionResult(image: image)
+                    type: .basic,
+                    targetColor: vm.mainColor,
+                    onPassed: {
+                        vm.handleMissionResult(image: image)
+                        onMissionSuccess?()
+                    },
+                    onFailed: {
+                        viewModel.resetCapturedImage()
+                        capturedImage = nil
+                    }
+                )
+            case .brightness:
+                judgeVM.start(
+                    image: image,
+                    type: .brightness,
+                    targetColor: vm.mainColor,
+                    onPassed: {
+                        vm.handleMissionResult(image: image)
+                        onMissionSuccess?()
                     },
                     onFailed: {
                         viewModel.resetCapturedImage()
@@ -257,6 +278,9 @@ struct CommonCameraView<MissionOverlay: View, CameraOverlay: View>: View {
                             saveEditedPhoto(editedImage)
                             vm.handleMissionResult(image: editedImage)
                             showEditView = false
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                onMissionSuccess?()
+                            }
                         },
                         onCancel: {
                             capturedImage = nil
@@ -270,6 +294,9 @@ struct CommonCameraView<MissionOverlay: View, CameraOverlay: View>: View {
                             saveEditedPhoto(croppedImage)
                             vm.handleMissionResult(image: croppedImage)
                             showEditView = false
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                onMissionSuccess?()
+                            }
                         },
                         onCancel: {
                             capturedImage = nil
@@ -283,6 +310,9 @@ struct CommonCameraView<MissionOverlay: View, CameraOverlay: View>: View {
                         onConfirm: { selectedColor in
                             vm.handleMissionResult(image: image)
                             showEditView = false
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                onMissionSuccess?()
+                            }
                         },
                         onCancel: {
                             capturedImage = nil

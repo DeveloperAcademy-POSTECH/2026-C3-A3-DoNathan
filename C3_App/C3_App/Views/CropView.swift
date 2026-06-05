@@ -12,7 +12,7 @@ struct CropView: View {
     @StateObject private var judgeVM = JudgeViewModel()
     
     let capturedImage: UIImage
-    var missionColor: Color = .red
+    var missionColor: Color = .customRed
     var onConfirm: (UIImage) -> Void
     var onCancel: () -> Void
     
@@ -128,6 +128,8 @@ struct CropView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .background(Color(.systemGray5))
                 
+                Spacer().frame(height: 88)
+
                 // MARK: - 하단 바 (파란 체크 버튼)
                 HStack {
                     Spacer()
@@ -136,6 +138,9 @@ struct CropView: View {
                         Button {
                             if let cropped = viewModel.croppedImage {
                                 judgeVM.start(
+                                    image: cropped,
+                                    type: .crop,
+                                    targetColor: missionColor,
                                     onPassed: { onConfirm(cropped) },
                                     onFailed: { }
                                 )
@@ -177,7 +182,6 @@ struct CropView: View {
                     }
                 }
                 .padding(.horizontal, 18)
-                .padding(.top, 124)
                 .padding(.bottom, 8)
                 .background(Color.white)
             }
@@ -197,15 +201,6 @@ struct CropMaskView: View {
     
     var body: some View {
         GeometryReader { geo in
-            let centerX = geo.size.width / 2 + offset.width
-            let centerY = geo.size.height / 2 + offset.height
-            let boxRect = CGRect(
-                x: centerX - boxSize.width / 2,
-                y: centerY - boxSize.height / 2,
-                width: boxSize.width,
-                height: boxSize.height
-            )
-            
             // 전체를 어둡게 → 크롭 박스 영역만 투명하게 뚫기
             Rectangle()
                 .fill(Color.black.opacity(0.5))
@@ -223,6 +218,7 @@ struct CropMaskView: View {
         .ignoresSafeArea()
     }
 }
+
 #Preview {
     CropView(
         capturedImage: UIImage(systemName: "photo") ?? UIImage(),

@@ -16,9 +16,7 @@ class JudgeViewModel: ObservableObject {
     var showFail: Bool   { state == .failure }
     var isDisabled: Bool  { state != .idle }
 
-    func start(image: UIImage,
-               type: MissionType,
-               targetColor: Color,
+    func start(image: UIImage, type: MissionType, targetColor: Color,
                onPassed: @escaping () -> Void,
                onFailed: @escaping () -> Void) {
         state = .judging

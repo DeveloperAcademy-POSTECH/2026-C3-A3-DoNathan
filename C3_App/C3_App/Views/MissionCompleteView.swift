@@ -36,7 +36,7 @@ struct MissionCompleteView: View {
                 LazyVGrid(columns: columns, spacing: 3) {
                     ForEach(0..<9) { gi in
                         if gi == 4 {
-                            vm.mainColor.frame(height: cellHeight)
+                            CenterColorCell(color: vm.mainColor, height: cellHeight)
                         } else {
                             let mi = gi < 4 ? gi : gi - 1
                             if let img = vm.missions[mi].completedImage {
@@ -57,7 +57,7 @@ struct MissionCompleteView: View {
 
                 HStack(spacing: 8) {
                     Image(systemName: "sparkles")
-                    Text("새로운 필터가 해금되었습니다!")
+                    Text("새로운 필터가 잠금 해제되었습니다!")
                         .font(.system(size: 14, weight: .semibold))
                 }
                 .foregroundColor(vm.mainColor)
@@ -85,7 +85,7 @@ struct MissionCompleteView: View {
             }
             .overlay(alignment: .bottom) {
                 if showSaveToast {
-                    Text("갤러리에 저장되었어요!")
+                    Text("앨범에 저장되었어요!")
                         .font(.system(size: 13, weight: .semibold)).foregroundColor(.white)
                         .padding(.horizontal, 20).padding(.vertical, 10)
                         .background(Color.black.opacity(0.75)).cornerRadius(20)
@@ -130,12 +130,30 @@ struct MissionCompleteView: View {
     }
 
     func shareCollage() {
-        guard let img = makeCollageImage() else { return }
-        let av = UIActivityViewController(activityItems: [img], applicationActivities: nil)
-        if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-           let vc    = scene.windows.first?.rootViewController {
-            vc.present(av, animated: true)
+            guard let img = makeCollageImage() else { return }
+            let av = UIActivityViewController(activityItems: [img], applicationActivities: nil)
+            
+            if let topVC = getTopViewController() {
+                if let popoverController = av.popoverPresentationController {
+                    popoverController.sourceView = topVC.view
+                    popoverController.sourceRect = CGRect(x: topVC.view.bounds.midX, y: topVC.view.bounds.midY, width: 0, height: 0)
+                    popoverController.permittedArrowDirections = []
+                }
+                
+                topVC.present(av, animated: true, completion: nil)
+            }
         }
+    
+    // MARK: - 현재 화면에 띄워진 가장 최상위의 뷰 컨트롤러를 찾아주는 함수
+    private func getTopViewController() -> UIViewController? {
+        let scenes = UIApplication.shared.connectedScenes
+        let windowScene = scenes.first { $0.activationState == .foregroundActive } as? UIWindowScene
+        var topVC = windowScene?.windows.first { $0.isKeyWindow }?.rootViewController
+        
+        while let presentedVC = topVC?.presentedViewController {
+            topVC = presentedVC
+        }
+        return topVC
     }
 
     func makeCollageImage() -> UIImage? {
@@ -143,8 +161,10 @@ struct MissionCompleteView: View {
         let cw = size / 3
         let ch = cw * 4 / 3
         let totalH = ch * 3 + 6
+        
         UIGraphicsBeginImageContextWithOptions(CGSize(width: size, height: totalH), false, 1)
         guard let ctx = UIGraphicsGetCurrentContext() else { return nil }
+        
         for row in 0..<3 {
             for col in 0..<3 {
                 let gi   = row * 3 + col
@@ -152,7 +172,16 @@ struct MissionCompleteView: View {
                                   y: CGFloat(row) * ch + (row > 0 ? 3 : 0),
                                   width: cw, height: ch)
                 if gi == 4 {
-                    UIColor(vm.mainColor).setFill(); ctx.fill(rect)
+                    //UIColor(vm.mainColor).setFill(); ctx.fill(rect)
+                    let centerView = CenterColorCell(color: vm.mainColor, height: ch)
+                            .frame(width: cw, height: ch) // 캔버스 칸 크기에 딱 맞추기
+                        
+                    if let centerImage = centerView.toImage(size: rect.size) {
+                        centerImage.draw(in: rect)
+                    } else {
+                        UIColor(vm.mainColor).setFill()
+                        ctx.fill(rect)
+                    }
                 } else {
                     let mi = gi < 4 ? gi : gi - 1
                     if let img = vm.missions[mi].completedImage { img.draw(in: rect) }
@@ -164,4 +193,24 @@ struct MissionCompleteView: View {
         UIGraphicsEndImageContext()
         return result
     }
+}
+
+// MARK: - SwiftUI View를 UIImage로 구워내는 핵심 익스텐션
+extension View {
+    func toImage(size: CGSize) -> UIImage? {
+        let controller = UIHostingController(rootView: self)
+        let view = controller.view
+        
+        view?.bounds = CGRect(origin: .zero, size: size)
+        view?.backgroundColor = .clear
+        
+        let renderer = UIGraphicsImageRenderer(size: size)
+        return renderer.image { _ in
+            view?.drawHierarchy(in: controller.view.bounds, afterScreenUpdates: true)
+        }
+    }
+}
+
+#Preview {
+    MissionCompleteView(vm: MissionViewModel())
 }
