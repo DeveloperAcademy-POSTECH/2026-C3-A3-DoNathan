@@ -157,7 +157,16 @@ struct MissionSelectView: View {
                                      cameraOverlay: { EmptyView() }
                     ) { EmptyView() }
                 case .brightness:
-                    BrightnessView(vm: vm)
+                    BrightnessView(
+                        vm: vm,
+                        onDismiss: { vm.activeDestination = nil },
+                        onMissionSuccess: {
+                            vm.activeDestination = nil
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                showMissionSuccess = true
+                            }
+                        }
+                    )
                 case .saturation:
                     CommonCameraView(viewModel: viewModel,
                                      vm: vm,
