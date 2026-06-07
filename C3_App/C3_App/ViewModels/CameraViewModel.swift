@@ -53,7 +53,13 @@ class CameraViewModel: ObservableObject {
             DispatchQueue.main.async {
                 self?.thumbnailImage = image // 썸네일 이미지용 빼놓고
                 self?.capturedImage = image
-                self?.saveToPhotoLibrary(image) // 앨범에 사진 저장
+                self?.saveToPhotoLibrary(image) // 앨범에 사진 저장 (원본)
+            }
+        }
+        
+        cameraService.onFilteredPhotoCaptured = { [weak self] filtered in
+            DispatchQueue.main.async {
+                self?.saveToPhotoLibrary(filtered) // 필터 사진 저장
             }
         }
         
@@ -137,9 +143,3 @@ class CameraViewModel: ObservableObject {
         }
     } 
 }
-
-//// Alert을 위한 간단한 구조체
-//struct AlertMessage: Identifiable {
-//    let id = UUID()
-//    let message: String
-//}
