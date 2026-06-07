@@ -103,7 +103,6 @@ struct CommonCameraView<MissionOverlay: View, CameraOverlay: View>: View {
                                 .clipped()
                         }
                         
-                        
                         // 셔터 플래시 오버레이
                         if viewModel.showFlashOverlay {
                             Color.white.opacity(0.7)
@@ -147,11 +146,8 @@ struct CommonCameraView<MissionOverlay: View, CameraOverlay: View>: View {
                             // 슬라이더 (필터 선택 시)
                             if viewModel.selectedFilter != FilterOption.none {
                                 HStack(spacing: 12) {
-                                    
-                                    
                                     Slider(value: $viewModel.filterIntensity, in: 0.0...1.0)
                                         .tint(Color(hex: "888888"))
-                                    
                                 }
                                 .padding(.horizontal, 120)
                                 .transition(.opacity)
@@ -260,26 +256,13 @@ struct CommonCameraView<MissionOverlay: View, CameraOverlay: View>: View {
             guard let image = incomingImage else { return }
             capturedImage = image
             currentDestination = destination ?? vm.activeDestination
-            
+            print("[Camera] 사진 찍힘 → destination:\(String(describing: destination)) activeDestination:\(String(describing: vm.activeDestination)) currentDestination:\(String(describing: currentDestination))")
+
             switch currentDestination {
-            case .basic:
+            case .basic, .brightness:
                 judgeVM.start(
                     image: image,
-                    type: .basic,
-                    targetColor: vm.mainColor,
-                    onPassed: {
-                        vm.handleMissionResult(image: image)
-                        onMissionSuccess?()
-                    },
-                    onFailed: {
-                        viewModel.resetCapturedImage()
-                        capturedImage = nil
-                    }
-                )
-            case .brightness:
-                judgeVM.start(
-                    image: image,
-                    type: .brightness,
+                    type: currentDestination ?? .basic,
                     targetColor: vm.mainColor,
                     onPassed: {
                         vm.handleMissionResult(image: image)
@@ -316,6 +299,7 @@ struct CommonCameraView<MissionOverlay: View, CameraOverlay: View>: View {
                     )
                 case .crop:
                     CropView(
+                        vm: vm,
                         capturedImage: image,
                         onConfirm: { croppedImage in
                             saveEditedPhoto(croppedImage)
@@ -400,6 +384,7 @@ struct GridOverlayView: View {
                 path.addLine(to: CGPoint(x: w / 3, y: h))
                 path.move(to: CGPoint(x: w * 2 / 3, y: 0))
                 path.addLine(to: CGPoint(x: w * 2 / 3, y: h))
+                
                 // 가로선 2개
                 path.move(to: CGPoint(x: 0, y: h / 3))
                 path.addLine(to: CGPoint(x: w, y: h / 3))

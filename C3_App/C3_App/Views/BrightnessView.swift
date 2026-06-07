@@ -22,14 +22,19 @@ struct BrightnessView: View {
     @State private var tipTimerTask: Task<Void, Never>? = nil // 기존 타이머를 취소하기 위한 변수
     
     var onDismiss: (() -> Void)? = nil
+    var onMissionSuccess: (() -> Void)? = nil
     
     var body: some View {
-        //        CommonCameraView(viewModel: viewModel, vm: vm, destination: nil, overlayHeight: 100, onDismiss: { vm.activeDestination = nil }) {
-        //            BrightnessSlider(brightness: $viewModel.brightness)
-        //                .padding(.horizontal, 24)
-        //                .padding(.top, 24)
-        //        }
-        CommonCameraView(viewModel: viewModel, vm: vm, destination: nil,  onDismiss: { vm.activeDestination = nil },
+        CommonCameraView(viewModel: viewModel,
+                         vm: vm,
+                         destination: .brightness,
+                         onDismiss: { vm.activeDestination = nil },
+                         onMissionSuccess: {
+                             vm.activeDestination = nil
+                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                 onMissionSuccess?()
+                             }
+                         },
                          cameraOverlay: {
             // 실시간 명도 값 관한 정보를 띄워주는 부분 .... 조건 걸어서 처리 필요 + 일정 시간만 보이고 사라지도록
             VStack {
@@ -50,20 +55,16 @@ struct BrightnessView: View {
                 }
                 
                 Spacer()
-                
-                
-                
             }
         },
-                         missionOverlay: {
-            // 카메라 아래 슬롯
-            BrightnessSlider(brightness: $viewModel.brightness)
-                .padding(.horizontal, 24)
-                .padding(.top, 24)
-                .onChange(of: viewModel.brightness) {
-                    checkBrightnessAndShowTip(currentValue: viewModel.brightness)
-                }
-        }
+            missionOverlay: {
+                BrightnessSlider(brightness: $viewModel.brightness)
+                    .padding(.horizontal, 24)
+                    .padding(.top, 24)
+                    .onChange(of: viewModel.brightness) {
+                        checkBrightnessAndShowTip(currentValue: viewModel.brightness)
+                    }
+            }
         )
     }
     
@@ -88,7 +89,7 @@ struct BrightnessView: View {
         
         // 상태가 변경되었을 때만 타이머를 새로 구동합니다.
         if tipStatus != newStatus {
-            // 🌟 [중요] 기존에 돌고 있던 3초 타이머가 있다면 즉시 취소해서 꼬임 방지
+            // [중요] 기존에 돌고 있던 3초 타이머가 있다면 즉시 취소해서 꼬임 방지
             tipTimerTask?.cancel()
             
             withAnimation(.easeInOut(duration: 0.2)) {
@@ -111,7 +112,6 @@ struct BrightnessView: View {
         }
     }
 }
-
 
 // MARK: - 명도 슬라이더 컴포넌트
 struct BrightnessSlider: View {

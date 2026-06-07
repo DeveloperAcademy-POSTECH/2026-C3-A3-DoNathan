@@ -256,7 +256,9 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSCameraUsageDescription = "사진 촬영을 위해 카메라 권한 허용이 필요합니다.";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "촬영한 사진을 앨범에 저장합니다.";
+
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "촬영한 사진을 앨범에 저장합니다.";
+
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -292,7 +294,10 @@
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_NSCameraUsageDescription = "사진 촬영을 위해 카메라 권한 허용이 필요합니다.";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "촬영한 사진을 앨범에 저장합니다.";
+
 				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "촬영한 사진을 앨범에 저장합니다.";
+
+
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

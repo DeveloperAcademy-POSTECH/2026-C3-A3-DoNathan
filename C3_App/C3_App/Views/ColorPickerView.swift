@@ -98,17 +98,17 @@ struct ColorPickerView: View {
                     // MARK: - 결과 패널 (이미지 위 오버레이)
                     if showResult {
                         HStack(spacing: 16) {
-                            RoundedRectangle(cornerRadius: 8)
+                            Circle()
                                 .fill(viewModel.selectedColor)
-                                .frame(width: 56, height: 56)
-                                .overlay(RoundedRectangle(cornerRadius: 8).stroke(Color.white, lineWidth: 2))
+                                .frame(width: 76, height: 76)
+                                .overlay(Circle().stroke(Color.white, lineWidth: 2))
                                 .shadow(radius: 4)
 
                             VStack(alignment: .leading, spacing: 4) {
                                 Text("현재 선택한 색상")
                                     .font(.system(size: 12, weight: .semibold))
 
-                                Text("컬러가 만족스럽다면 편집완료! \n또는 컬러 피커를 통해 재도전이 가능해요!")
+                                Text("컬러가 만족스럽다면 편집완료!\n다른 색을 원하면 화면을 다시 탭해보세요")
                                     .font(.system(size: 11, weight: .semibold))
 
                             }
@@ -145,8 +145,13 @@ struct ColorPickerView: View {
                     Spacer()
 
                     Button {
+                        // 사용자가 선택한 색으로 1×1 이미지 생성 → 중앙 픽셀 = 선택색
+                        let colorImage = UIGraphicsImageRenderer(size: CGSize(width: 1, height: 1)).image { ctx in
+                            viewModel.selectedUIColor.setFill()
+                            ctx.fill(CGRect(x: 0, y: 0, width: 1, height: 1))
+                        }
                         judgeVM.start(
-                            image: capturedImage,
+                            image: colorImage,
                             type: .colorPicker,
                             targetColor: missionColor,
                             onPassed: { onConfirm(viewModel.selectedUIColor) },
