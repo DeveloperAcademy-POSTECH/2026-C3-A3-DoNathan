@@ -16,6 +16,7 @@ struct FilterCameraView: View {
         CommonCameraView(viewModel: viewModel,
                          vm: vm,
                          destination: .filter,
+                         cameraMode: .filter,
                          overlayHeight: 126,
                          onDismiss: { onDismiss?() },
             cameraOverlay: {

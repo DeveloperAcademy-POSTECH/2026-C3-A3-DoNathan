@@ -25,6 +25,7 @@ struct CommonCameraView<MissionOverlay: View, CameraOverlay: View>: View {
     @State private var showGrid: Bool = false
     @State private var showEditView: Bool = false
     @State private var currentDestination: MissionType? = nil
+    @State private var showPicker = false
     
     let destination: MissionType?
     var cameraMode: CameraMode = .mission
@@ -169,8 +170,38 @@ struct CommonCameraView<MissionOverlay: View, CameraOverlay: View>: View {
                 
                 // MARK: - 하단 컨트롤
                 HStack(alignment: .center) {
-                    // 좌하단: X (미션 모드 전용) -> 삭제
-                    Color.clear.frame(width: 48, height: 48)
+                    // 좌하단: X (미션 모드 전용) -> 삭제 -> 썸네일 추가
+                    // 미션 카메라 내 썸네일은 삭제(cameraMode로 분기 완료)
+//                    Color.clear.frame(width: 48, height: 48)
+//                    Spacer()
+                    if cameraMode == .filter {
+                        Button(action: {
+                            showPicker = true
+                        }) {
+                            if let thumbnail = viewModel.thumbnailImage {
+                                Image(uiImage: thumbnail)
+                                    .resizable()
+                                    .scaledToFill()
+                                    .frame(width: 48, height: 48)
+                                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .stroke(Color.white.opacity(0.5), lineWidth: 1)
+                                    )
+                            } else {
+                                RoundedRectangle(cornerRadius: 8)
+                                    .fill(Color.gray.opacity(0.3))
+                                    .frame(width: 48, height: 48)
+                                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                            }
+                        }
+                        .sheet(isPresented: $showPicker) {
+                            PhotoPickerView()
+                        }
+                    } else {
+                        Color.clear.frame(width: 48, height: 48)
+                    }
+                    
                     Spacer()
                     
                     // 하단 중앙: 셔터
@@ -364,6 +395,8 @@ struct GridOverlayView: View {
         }
     }
 }
+
+
 
 #Preview {
      CommonCameraView(viewModel: CameraViewModel(),vm: MissionViewModel(), destination: .basic,
