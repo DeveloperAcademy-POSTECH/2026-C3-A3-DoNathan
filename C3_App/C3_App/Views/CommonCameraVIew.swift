@@ -25,6 +25,7 @@ struct CommonCameraView<MissionOverlay: View, CameraOverlay: View>: View {
     @State private var showGrid: Bool = false
     @State private var showEditView: Bool = false
     @State private var currentDestination: MissionType? = nil
+    @State private var showPicker = false
     
     let destination: MissionType?
     var cameraMode: CameraMode = .mission
@@ -179,9 +180,7 @@ struct CommonCameraView<MissionOverlay: View, CameraOverlay: View>: View {
 //                    Spacer()
                     if cameraMode == .filter {
                         Button(action: {
-                            if let url = URL(string: "photos-redirect://") {
-                                UIApplication.shared.open(url)
-                            }
+                            showPicker = true
                         }) {
                             if let thumbnail = viewModel.thumbnailImage {
                                 Image(uiImage: thumbnail)
@@ -199,6 +198,9 @@ struct CommonCameraView<MissionOverlay: View, CameraOverlay: View>: View {
                                     .frame(width: 48, height: 48)
                                     .clipShape(RoundedRectangle(cornerRadius: 8))
                             }
+                        }
+                        .sheet(isPresented: $showPicker) {
+                            PhotoPickerView()
                         }
                     } else {
                         Color.clear.frame(width: 48, height: 48)
@@ -408,6 +410,8 @@ struct GridOverlayView: View {
         }
     }
 }
+
+
 
 #Preview {
      CommonCameraView(viewModel: CameraViewModel(),vm: MissionViewModel(), destination: .basic,
