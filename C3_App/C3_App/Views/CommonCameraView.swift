@@ -179,7 +179,7 @@ struct CommonCameraView<MissionOverlay: View, CameraOverlay: View>: View {
                     if let thumbnail = viewModel.thumbnailImage {
                         Image(uiImage: thumbnail)
                             .resizable()
-                            .scaledToFit()
+                            .scaledToFill()
                             .frame(width: 48, height: 48)
                             .clipShape(RoundedRectangle(cornerRadius: 8))
                             .overlay(
