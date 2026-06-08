@@ -9,7 +9,7 @@ import SwiftUI
 
 struct MissionSelectView: View {
     @ObservedObject var vm: MissionViewModel
-    @StateObject private var viewModel = CameraViewModel()
+    //@StateObject private var viewModel = CameraViewModel()
     @State private var missionType: MissionType? = nil
     @State private var showMissionSuccess: Bool = false
     
@@ -158,6 +158,7 @@ struct MissionSelectView: View {
                     ) { EmptyView() }
                 case .brightness:
                     BrightnessView(
+                        viewModel: CameraViewModel(),
                         vm: vm,
                         onDismiss: { vm.activeDestination = nil },
                         onMissionSuccess: {
@@ -167,6 +168,7 @@ struct MissionSelectView: View {
                             }
                         }
                     )
+                    .id(UUID())
                 case .saturation:
                     CommonCameraView(viewModel: CameraViewModel(),
                                      vm: vm,

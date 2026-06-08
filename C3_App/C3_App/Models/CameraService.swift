@@ -96,12 +96,17 @@ class CameraService: NSObject, AVCapturePhotoCaptureDelegate, AVCaptureVideoData
 
     func startSession() {
         guard let session = captureSession, !session.isRunning else { return }
+        resetExposureBias()
         DispatchQueue.global(qos: .userInitiated).async { session.startRunning() }
     }
 
     func stopSession() {
         guard let session = captureSession, session.isRunning else { return }
         session.stopRunning()
+    }
+    
+    func reset() {
+        brightness = 0.0
     }
 
     func capturePhoto(flashMode: AVCaptureDevice.FlashMode) {
@@ -156,6 +161,15 @@ class CameraService: NSObject, AVCapturePhotoCaptureDelegate, AVCaptureVideoData
         DispatchQueue.global(qos: .userInteractive).async {
             try? device.lockForConfiguration()
             device.setExposureTargetBias(clamped, completionHandler: nil)
+            device.unlockForConfiguration()
+        }
+    }
+    
+    private func resetExposureBias() {
+        guard let device = currentDevice else { return }
+        DispatchQueue.global(qos: .userInteractive).async {
+            try? device.lockForConfiguration()
+            device.setExposureTargetBias(0.0, completionHandler: nil) 
             device.unlockForConfiguration()
         }
     }

@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct BrightnessView: View {
-    @StateObject private var viewModel = CameraViewModel()
+    //@StateObject private var viewModel = CameraViewModel()
+    @ObservedObject var viewModel: CameraViewModel
     @ObservedObject var vm: MissionViewModel
     @State private var missionType: MissionType? = nil
     
@@ -134,5 +135,5 @@ struct BrightnessSlider: View {
 }
 
 #Preview {
-    BrightnessView(vm: MissionViewModel())
+    BrightnessView(viewModel: CameraViewModel(), vm: MissionViewModel())
 }
