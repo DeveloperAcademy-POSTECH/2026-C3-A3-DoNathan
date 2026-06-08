@@ -245,7 +245,8 @@ struct CommonCameraView<MissionOverlay: View, CameraOverlay: View>: View {
             capturedImage = nil
             showEditView = false
             currentDestination = nil
-            viewModel.resetCapturedImage()
+            viewModel.brightness = 0.0
+            viewModel.resetAll()
             viewModel.configureCamera()
             viewModel.startSession()
         }
@@ -256,7 +257,6 @@ struct CommonCameraView<MissionOverlay: View, CameraOverlay: View>: View {
             guard let image = incomingImage else { return }
             capturedImage = image
             currentDestination = destination ?? vm.activeDestination
-            print("[Camera] 사진 찍힘 → destination:\(String(describing: destination)) activeDestination:\(String(describing: vm.activeDestination)) currentDestination:\(String(describing: currentDestination))")
 
             switch currentDestination {
             case .basic, .brightness:
@@ -269,7 +269,7 @@ struct CommonCameraView<MissionOverlay: View, CameraOverlay: View>: View {
                         onMissionSuccess?()
                     },
                     onFailed: {
-                        viewModel.resetCapturedImage()
+                        viewModel.resetAll()
                         capturedImage = nil
                     }
                 )
