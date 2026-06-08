@@ -1,5 +1,6 @@
-# 🚀 프로젝트 이름
-반갑다 21세기 친구들아!
+# 📸 Paleto 팔레토
+AVFoundation, Core Image 기술을 중점적으로 활용하여 사진을 찍고, 편집하여 색을 추출하는 미션을 통해 지루한 무채색 일상에서 색을 찾는 미션을 통해 일상 속 새로움을 찾도록 해주는 앱!
+
 ![배너 이미지 또는 로고](링크)
 
 > 간단한 한 줄 소개 – 프로젝트의 핵심 가치 또는 기능
@@ -33,15 +34,15 @@
 
 
 ## 📆 프로젝트 기간
-- 전체 기간: `YYYY.MM.DD - YYYY.MM.DD`
-- 개발 기간: `YYYY.MM.DD - YYYY.MM.DD`
+- 전체 기간: `2026.05.06 - 2026.06.12`
+- 개발 기간: `2026.05.28 - YYYY.MM.DD`
 
 
 ## 🛠 기술 스택
 
-- Swift / SwiftUI / UIKit / Firebase 등
-- 아키텍처: MVVM / MVC / Clean Architecture 등
-- 기타 도구: Figma, Notion, GitHub Projects 등
+- Swift / SwiftUI / UIKit
+- 아키텍처: MVVM 
+- 기타 도구: Figma
 
 
 ## 🌟 주요 기능
@@ -64,14 +65,12 @@
 ## 🧱 폴더 구조
 
 ```
-📦ProjectName
-┣ 📂Feature
-┃ ┣ 📂SceneA
-┃ ┗ 📂SceneB
-┣ 📂Core
-┣ 📂UI
-┣ 📂Test
-┗ 📂Resources
+📦 C3_App
+┣ 📂 Components
+┣ 📂 Extensions
+┣ 📂 Models
+┣ 📂 ViewModels
+┗ 📂 Views
 ```
 
 
@@ -79,8 +78,12 @@
 
 | 이름 | 역할 | GitHub |
 |------|------|--------|
-| 홍길동 | iOS Developer | [@hong](https://github.com/hong) |
-| 김개발 | PM | [@devkim](https://github.com/devkim) |
+| 노아 | iOS Developer | [@hong](https://github.com/hong) |
+|  이피  | iOS Developer | [@devkim](https://github.com/devkim) |
+| 하르딘 | iOS Developer | [@devkim](https://github.com/devkim) |
+| 젠 | UX/UI Designer | [@devkim](https://github.com/devkim) |
+| 크리스탈 | UX/UI Designer | [@devkim](https://github.com/devkim) |
+| 그레이스 | UX/UI Designer | [@devkim](https://github.com/devkim) |
 
 [🔗 팀 블로그 / 미디엄 링크](https://medium.com/example)
 
