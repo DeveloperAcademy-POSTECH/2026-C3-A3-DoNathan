@@ -270,23 +270,12 @@ extension CameraService {
             return
         }
         
-//        // 촬영된 바이너리 데이터를 UIImage 객체로 변환
-//        guard let data = photo.fileDataRepresentation(), let image = UIImage(data: data) else {
-//            onError?("이미지 변환 실패")
-//            return
-//        }
-//        
-//        // 성공적으로 찍힌 이미지를 ViewModel로 전달
-//        onPhotoCaptured?(image)
-        
         guard let data = photo.fileDataRepresentation(),
               let image = UIImage(data: data) else {
             onError?("이미지 변환 실패")
             return
         }
         
-        
-            
         if selectedFilter != .none {
             let filtered = applyFilterToPhoto(image)
             onFilteredPhotoCaptured?(filtered) // 필터 카메라면 필터 사진 저장
@@ -295,7 +284,7 @@ extension CameraService {
         }
     }
     
-    // ✅ 촬영된 사진에 필터 적용
+    // 촬영된 사진에 필터 적용
     private func applyFilterToPhoto(_ image: UIImage) -> UIImage {
         guard selectedFilter != .none,
               var ciImage = CIImage(image: image) else { return image }
