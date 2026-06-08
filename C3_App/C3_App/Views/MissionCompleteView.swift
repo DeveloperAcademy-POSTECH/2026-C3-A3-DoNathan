@@ -157,10 +157,11 @@ struct MissionCompleteView: View {
     }
 
     func makeCollageImage() -> UIImage? {
+        let gap: CGFloat = 3
         let size: CGFloat = 1200
         let cw = size / 3
         let ch = cw * 4 / 3
-        let totalH = ch * 3 + 6
+        let totalH = ch * 3 + gap * 2
         
         UIGraphicsBeginImageContextWithOptions(CGSize(width: size, height: totalH), false, 1)
         guard let ctx = UIGraphicsGetCurrentContext() else { return nil }
@@ -168,8 +169,8 @@ struct MissionCompleteView: View {
         for row in 0..<3 {
             for col in 0..<3 {
                 let gi   = row * 3 + col
-                let rect = CGRect(x: CGFloat(col) * cw + (col > 0 ? 3 : 0),
-                                  y: CGFloat(row) * ch + (row > 0 ? 3 : 0),
+                let rect = CGRect(x: CGFloat(col) * (cw + gap),
+                                  y: CGFloat(row) * (ch + gap),
                                   width: cw, height: ch)
                 if gi == 4 {
                     //UIColor(vm.mainColor).setFill(); ctx.fill(rect)
