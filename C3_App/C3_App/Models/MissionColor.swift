@@ -27,9 +27,9 @@ struct MissionColor: Identifiable, Hashable {
 extension MissionColor {
     static let all: [MissionColor] = [
         MissionColor(name: "Red",    assetName: "CustomRed",    hexCode: "#940017", imageName: "mission_red",    isUnlocked: true),
-        MissionColor(name: "Orange", assetName: "CustomOrange", hexCode: "#FF8401", imageName: "mission_orange", isUnlocked: true),
-        MissionColor(name: "Green",  assetName: "CustomGreen",  hexCode: "#4B911C", imageName: "mission_green",  isUnlocked: true),
+        MissionColor(name: "Orange", assetName: "CustomOrange", hexCode: "#FF8401", imageName: "mission_orange", isUnlocked: false),
+        MissionColor(name: "Green",  assetName: "CustomGreen",  hexCode: "#4B911C", imageName: "mission_green",  isUnlocked: false),
         MissionColor(name: "Blue",   assetName: "CustomBlue",   hexCode: "#0CA2CF", imageName: "mission_blue",   isUnlocked: true),
-        MissionColor(name: "Purple", assetName: "CustomPurple", hexCode: "#6A0AD8", imageName: "mission_purple", isUnlocked: true),
+        MissionColor(name: "Purple", assetName: "CustomPurple", hexCode: "#6A0AD8", imageName: "mission_purple", isUnlocked: false),
     ]
 }
