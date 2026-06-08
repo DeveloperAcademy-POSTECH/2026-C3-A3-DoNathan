@@ -5,6 +5,9 @@ AVFoundation, Core Image 기술을 중점적으로 활용하여 사진을 찍고
 
 > 간단한 한 줄 소개 – 프로젝트의 핵심 가치 또는 기능
 
+![Swift](https://img.shields.io/badge/swift-F54A2A?style=for-the-badge&logo=swift&logoColor=white)
+![Figma](https://img.shields.io/badge/figma-%23F24E1E.svg?style=for-the-badge&logo=figma&logoColor=white)
+
 [![Swift](https://img.shields.io/badge/Swift-5.9-orange.svg)]()
 [![Xcode](https://img.shields.io/badge/Xcode-15.0-blue.svg)]()
 [![License](https://img.shields.io/badge/license-MIT-green.svg)]()
