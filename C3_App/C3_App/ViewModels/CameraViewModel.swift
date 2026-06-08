@@ -59,6 +59,7 @@ class CameraViewModel: ObservableObject {
         
         cameraService.onFilteredPhotoCaptured = { [weak self] filtered in
             DispatchQueue.main.async {
+                self?.thumbnailImage = filtered // 필터 적용된 카메라로 사진 찍을 시 썸네일에 반영되게 하는 코드 추가
                 self?.saveToPhotoLibrary(filtered) // 필터 사진 저장
             }
         }
