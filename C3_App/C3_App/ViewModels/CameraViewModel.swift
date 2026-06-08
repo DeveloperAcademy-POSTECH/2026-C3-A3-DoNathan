@@ -107,6 +107,7 @@ class CameraViewModel: ObservableObject {
     // 카메라 재진입 시 데이터 리셋
     func resetCapturedImage() {
         capturedImage = nil
+        cameraService.onPhotoCaptured = nil
     }
     
     // 사진 촬영

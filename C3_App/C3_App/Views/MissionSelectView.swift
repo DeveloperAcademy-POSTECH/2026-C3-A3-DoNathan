@@ -143,7 +143,7 @@ struct MissionSelectView: View {
                 case .filter:
                     EmptyView()
                 case .basic:
-                    CommonCameraView(viewModel: viewModel,
+                    CommonCameraView(viewModel: CameraViewModel(),
                                      vm: vm,
                                      destination: destination,
                                      overlayHeight: 100,
@@ -168,7 +168,7 @@ struct MissionSelectView: View {
                         }
                     )
                 case .saturation:
-                    CommonCameraView(viewModel: viewModel,
+                    CommonCameraView(viewModel: CameraViewModel(),
                                      vm: vm,
                                      destination: destination,
                                      overlayHeight: 100,
@@ -182,7 +182,7 @@ struct MissionSelectView: View {
                                      cameraOverlay: { EmptyView() }
                     ) { EmptyView() }
                 case .crop:
-                    CommonCameraView(viewModel: viewModel,
+                    CommonCameraView(viewModel: CameraViewModel(),
                                      vm: vm,
                                      destination: destination,
                                      overlayHeight: 100,
@@ -196,7 +196,7 @@ struct MissionSelectView: View {
                                      cameraOverlay: { EmptyView() }
                     ) { EmptyView() }
                 case .colorPicker:
-                    CommonCameraView(viewModel: viewModel,
+                    CommonCameraView(viewModel: CameraViewModel(),
                                      vm: vm,
                                      destination: destination,
                                      overlayHeight: 100,
