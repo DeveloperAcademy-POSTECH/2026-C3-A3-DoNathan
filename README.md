@@ -91,8 +91,7 @@
 
 ## 🔖 브랜치 전략
 - `main`: 배포 가능한 안정 버전
-- `develop`: 통합 개발 브랜치<img width="1024" height="1024" alt="LOGO_PALETO" src="https://github.com/user-attachments/assets/58f8826c-4330-431e-8c6f-71d591758f73" />
-
+- `develop`: 통합 개발 브랜치
 
 ## ✅ 테스트 방법
 
