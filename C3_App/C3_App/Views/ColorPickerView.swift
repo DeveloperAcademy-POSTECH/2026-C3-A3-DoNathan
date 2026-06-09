@@ -115,7 +115,7 @@ struct ColorPickerView: View {
 
                             Spacer()
                             
-                            // 재도전 버튼ㅇ
+                            // 재도전 버튼
                             Image(systemName: "eyedropper")
                                 .font(.system(size: 18))
                                 .foregroundColor(.white)

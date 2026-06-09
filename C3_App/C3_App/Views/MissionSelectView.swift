@@ -198,13 +198,13 @@ struct MissionSelectView: View {
                                          cameraOverlay: { EmptyView() }
                         ) { EmptyView() }
                     }
-                    // ✅ 성공화면을 카메라 위에 직접 덮기
+                    // 성공화면을 카메라 위에 직접 덮기
                             if showMissionSuccess {
                                 MissionSuccessView(
                                     mainColor: vm.mainColor,
                                     onDismiss: {
                                         showMissionSuccess = false
-                                        vm.activeDestination = nil  // ✅ 여기서 카메라 닫기
+                                        vm.activeDestination = nil  // 카메라 닫기
                                     }
                                 )
                                 .transition(.move(edge: .bottom).combined(with: .opacity))
@@ -213,16 +213,6 @@ struct MissionSelectView: View {
                         .animation(.easeInOut(duration: 0.3), value: showMissionSuccess)
                 }
             }
-            
-//            .fullScreenCover(isPresented: $showMissionSuccess) {
-//                MissionSuccessView(
-//                    mainColor: vm.mainColor,
-//                    onDismiss: {
-//                        showMissionSuccess = false
-//                    }
-//                )
-//            }
-//        }
     }
 
     func gridHeight() -> CGFloat {
