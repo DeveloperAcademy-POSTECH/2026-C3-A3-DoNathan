@@ -24,7 +24,7 @@ struct MissionRootView: View {
     var body: some View {
         ZStack {
             if vm.showCompletion {
-                MissionCompleteView(vm: vm)
+                MissionCompleteView(vm: vm, onDismiss: { onDismiss?() })
                     .transition(.asymmetric(
                         insertion: .move(edge: .trailing).combined(with: .opacity),
                         removal:   .move(edge: .leading ).combined(with: .opacity)
