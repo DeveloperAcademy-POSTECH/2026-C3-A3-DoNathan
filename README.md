@@ -1,7 +1,19 @@
 # 📸 Paleto 팔레토
 AVFoundation, Core Image 기술을 중점적으로 활용하여 사진을 찍고, 편집하여 색을 추출하는 미션을 통해 지루한 무채색 일상에서 색을 찾는 미션을 통해 일상 속 새로움을 찾도록 해주는 앱!
 
-![배너 이미지 또는 로고](링크)
+![<svg width="1024" height="1024" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="1024" height="1024" rx="256" fill="#0CA2CF"/>
+<path d="M340.141 849.918H195.92C145.021 849.918 103.76 808.657 103.76 757.758V377.346C103.76 326.447 145.021 285.186 195.92 285.186H256.292C289.802 285.186 316.966 258.021 316.966 224.512C316.966 191.003 344.131 163.838 377.64 163.838H645.626C679.135 163.838 706.299 191.003 706.299 224.512C706.299 258.021 733.464 285.186 766.973 285.186H820.154C871.21 285.186 912.537 326.695 912.313 377.751L910.639 758.164C910.416 808.904 869.221 849.918 818.48 849.918H611.689C591.864 849.918 572.638 843.613 557.103 831.297C500.801 786.662 364.089 671.795 349.411 597.889C330.871 504.545 367.95 387.865 505.18 387.865C676.672 387.865 743.379 624.925 581.157 719.236" stroke="url(#paint0_linear_1240_9416)" stroke-width="51.2" stroke-linecap="round"/>
+<circle cx="491.48" cy="471.038" r="40.96" fill="#1BF0FF"/>
+<circle cx="583.642" cy="512.007" r="30.72" fill="#1BF0FF"/>
+<defs>
+<linearGradient id="paint0_linear_1240_9416" x1="246.691" y1="354.205" x2="836.024" y2="820.063" gradientUnits="userSpaceOnUse">
+<stop stop-color="#1BF0FF"/>
+<stop offset="1" stop-color="white"/>
+</linearGradient>
+</defs>
+</svg>](링크)
+
 
 > 간단한 한 줄 소개 – 프로젝트의 핵심 가치 또는 기능
 
@@ -77,31 +89,18 @@ AVFoundation, Core Image 기술을 중점적으로 활용하여 사진을 찍고
 
 | 이름 | 역할 | GitHub |
 |------|------|--------|
-| 노아 | iOS Developer | [@hong](https://github.com/hong) |
+| 노아 | iOS Developer | [@noah-jhlee](https://github.com/noah-jhlee) |
 |  이피  | iOS Developer | [@yoonjin9150-blip](https://github.com/yoonjin9150-blip) |
-| 하르딘 | iOS Developer | [@devkim](https://github.com/devkim) |
-| 젠 | UX/UI Designer | [@devkim](https://github.com/devkim) |
-| 크리스탈 | UX/UI Designer | [@devkim](https://github.com/devkim) |
-| 그레이스 | UX/UI Designer | [@devkim](https://github.com/devkim) |
+| 하르딘 | iOS Developer | [@frutacruda](https://github.com/frutacruda) |
+| 젠 | UX/UI Designer | [@kiim672](https://github.com/kiim672) |
+| 크리스탈 | UX/UI Designer | [@crystaltheclear](https://github.com/crystaltheclear) |
+| 그레이스 | UX/UI Designer | [@glace0x](https://github.com/glace0x) |
 
 [🔗 팀 블로그 / 미디엄 링크](https://medium.com/example)
 
 ## 🔖 브랜치 전략
-`(예시)`
 - `main`: 배포 가능한 안정 버전
-- `develop`: 통합 개발 브랜치
-- `feature/*`: 기능 개발 브랜치
-- `bugfix/*`: 버그 수정 브랜치
-- `hotfix/*`: 긴급 수정 브랜치
-
-## 🌀 커밋 메시지 컨벤션
-`(예시)`  
-[Gitmoji](https://gitmoji.dev) + [Conventional Commits](https://www.conventionalcommits.org)
-
-### 예시
-- ✨ feat: 로그인 화면 추가
-- 🐛 fix: 홈 진입 시 크래시 수정
-- ♻️ refactor: 데이터 모델 구조 정리
+- `develop`: 통합 개발 브랜치<img width="1024" height="1024" alt="LOGO_PALETO" src="https://github.com/user-attachments/assets/58f8826c-4330-431e-8c6f-71d591758f73" />
 
 
 ## ✅ 테스트 방법
