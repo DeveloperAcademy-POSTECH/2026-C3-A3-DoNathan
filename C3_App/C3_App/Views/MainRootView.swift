@@ -72,8 +72,6 @@ struct MainRootView: View {
                     .padding(.leading, 15)
                     .padding(.top, 557)
 
-
-
                 // MARK: - 컬러 버튼 캐러셀
                 FilterCarousel(
                     colors: MissionColor.all,

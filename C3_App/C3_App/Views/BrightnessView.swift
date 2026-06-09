@@ -31,10 +31,7 @@ struct BrightnessView: View {
                          destination: .brightness,
                          onDismiss: { vm.activeDestination = nil },
                          onMissionSuccess: {
-                             vm.activeDestination = nil
-                             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                                 onMissionSuccess?()
-                             }
+                            onMissionSuccess?()  
                          },
                          cameraOverlay: {
             // 실시간 명도 값 관한 정보를 띄워주는 부분 .... 조건 걸어서 처리 필요 + 일정 시간만 보이고 사라지도록

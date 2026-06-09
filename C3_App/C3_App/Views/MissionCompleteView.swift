@@ -10,6 +10,7 @@ import Photos
 
 struct MissionCompleteView: View {
     @ObservedObject var vm: MissionViewModel
+    var onDismiss: (() -> Void)? = nil
     let columns = Array(repeating: GridItem(.flexible(), spacing: 3), count: 3)
 
     @State private var appeared = false
@@ -78,7 +79,10 @@ struct MissionCompleteView: View {
             .navigationTitle("").navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button { withAnimation { vm.showCompletion = false } } label: {
+                    Button { withAnimation {
+                        //vm.showCompletion = false
+                        onDismiss?()
+                    } } label: {
                         Image(systemName: "chevron.left").foregroundColor(.primary)
                     }
                 }

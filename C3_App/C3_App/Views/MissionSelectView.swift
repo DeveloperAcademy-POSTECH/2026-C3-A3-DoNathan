@@ -36,13 +36,13 @@ struct MissionSelectView: View {
                         }
                         .padding(.horizontal, 20)
 
-                        Text("도전할 미션을 선택하세요!")
+                        Text("빙고를 완성해 필터를 획득하세요!")
                             .font(.system(size: 23, weight: .bold))
                             .foregroundStyle(.black)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.horizontal, 23)
 
-                        Text("Media & Camera 기능을 활용해\n미션 컬러를 찾아 빙고를 완성하세요.")
+                        Text("미션 컬러를 모두 찾으면 컬러 필터를\n얻을 수 있어요. 카메라로 주변을 탐색해보세요.")
                             .font(.system(size: 15))
                             .foregroundStyle(.gray)
                             .frame(maxWidth: .infinity, alignment: .leading)
@@ -139,89 +139,80 @@ struct MissionSelectView: View {
                 }
             }
             .fullScreenCover(item: $vm.activeDestination) { destination in
-                switch destination {
-                case .filter:
-                    EmptyView()
-                case .basic:
-                    CommonCameraView(viewModel: CameraViewModel(),
-                                     vm: vm,
-                                     destination: destination,
-                                     overlayHeight: 100,
-                                     onDismiss: { vm.activeDestination = nil },
-                                     onMissionSuccess: {
-                                         vm.activeDestination = nil
-                                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                                             showMissionSuccess = true
-                                         }
-                                     },
+                ZStack {
+                    switch destination {
+                    case .filter:
+                        EmptyView()
+                    case .basic:
+                        CommonCameraView(viewModel: CameraViewModel(),
+                                         vm: vm,
+                                         destination: destination,
+                                         overlayHeight: 100,
+                                         onDismiss: { vm.activeDestination = nil },
+                                         onMissionSuccess: {
+                                            showMissionSuccess = true
+                        },
                                      cameraOverlay: { EmptyView() }
-                    ) { EmptyView() }
-                case .brightness:
-                    BrightnessView(
-                        viewModel: CameraViewModel(),
-                        vm: vm,
-                        onDismiss: { vm.activeDestination = nil },
-                        onMissionSuccess: {
-                            vm.activeDestination = nil
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        ) { EmptyView() }
+                    case .brightness:
+                        BrightnessView(
+                            viewModel: CameraViewModel(),
+                            vm: vm,
+                            onDismiss: { vm.activeDestination = nil },
+                            onMissionSuccess: {
                                 showMissionSuccess = true
                             }
+                        )
+                        .id(UUID())
+                    case .saturation:
+                        CommonCameraView(viewModel: CameraViewModel(),
+                                         vm: vm,
+                                         destination: destination,
+                                         overlayHeight: 100,
+                                         onDismiss: { vm.activeDestination = nil },
+                                         onMissionSuccess: {
+                            showMissionSuccess = true
+                        },
+                                         cameraOverlay: { EmptyView() }
+                        ) { EmptyView() }
+                    case .crop:
+                        CommonCameraView(viewModel: CameraViewModel(),
+                                         vm: vm,
+                                         destination: destination,
+                                         overlayHeight: 100,
+                                         onDismiss: { vm.activeDestination = nil },
+                                         onMissionSuccess: {
+                            showMissionSuccess = true
+                        },
+                                         cameraOverlay: { EmptyView() }
+                        ) { EmptyView() }
+                    case .colorPicker:
+                        CommonCameraView(viewModel: CameraViewModel(),
+                                         vm: vm,
+                                         destination: destination,
+                                         overlayHeight: 100,
+                                         onDismiss: { vm.activeDestination = nil },
+                                         onMissionSuccess: {
+                            showMissionSuccess = true
+                        },
+                                         cameraOverlay: { EmptyView() }
+                        ) { EmptyView() }
+                    }
+                    // 성공화면을 카메라 위에 직접 덮기
+                            if showMissionSuccess {
+                                MissionSuccessView(
+                                    mainColor: vm.mainColor,
+                                    onDismiss: {
+                                        showMissionSuccess = false
+                                        vm.activeDestination = nil  // 카메라 닫기
+                                    }
+                                )
+                                .transition(.move(edge: .bottom).combined(with: .opacity))
+                            }
                         }
-                    )
-                    .id(UUID())
-                case .saturation:
-                    CommonCameraView(viewModel: CameraViewModel(),
-                                     vm: vm,
-                                     destination: destination,
-                                     overlayHeight: 100,
-                                     onDismiss: { vm.activeDestination = nil },
-                                     onMissionSuccess: {
-                                         vm.activeDestination = nil
-                                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                                             onMissionSuccess?()
-                                         }
-                                     },
-                                     cameraOverlay: { EmptyView() }
-                    ) { EmptyView() }
-                case .crop:
-                    CommonCameraView(viewModel: CameraViewModel(),
-                                     vm: vm,
-                                     destination: destination,
-                                     overlayHeight: 100,
-                                     onDismiss: { vm.activeDestination = nil },
-                                     onMissionSuccess: {
-                                         vm.activeDestination = nil
-                                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                                             onMissionSuccess?()
-                                         }
-                                     },
-                                     cameraOverlay: { EmptyView() }
-                    ) { EmptyView() }
-                case .colorPicker:
-                    CommonCameraView(viewModel: CameraViewModel(),
-                                     vm: vm,
-                                     destination: destination,
-                                     overlayHeight: 100,
-                                     onDismiss: { vm.activeDestination = nil },
-                                     onMissionSuccess: {
-                                         vm.activeDestination = nil
-                                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                                             onMissionSuccess?()
-                                         }
-                                     },
-                                     cameraOverlay: { EmptyView() }
-                    ) { EmptyView() }
+                        .animation(.easeInOut(duration: 0.3), value: showMissionSuccess)
                 }
             }
-            .fullScreenCover(isPresented: $showMissionSuccess) {
-                MissionSuccessView(
-                    mainColor: vm.mainColor,
-                    onDismiss: {
-                        showMissionSuccess = false
-                    }
-                )
-            }
-        }
     }
 
     func gridHeight() -> CGFloat {

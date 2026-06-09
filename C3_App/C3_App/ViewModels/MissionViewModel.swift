@@ -105,6 +105,10 @@ class MissionViewModel: ObservableObject {
         
         missions[idx].completedImage = image
         selectedIndex = nil
+        
+        if allCompleted {
+            MissionProgress.shared.setResult(colorName: missionColor.name, passed: true)
+        }
 
         // 마지막 미션 완료 시 자동으로 MissionCompleteView로 넘기지 않음.
         // MissionCompleteOverlay가 단독으로 뜨고, 오버레이의 X 버튼 또는
