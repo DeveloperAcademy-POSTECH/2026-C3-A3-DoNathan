@@ -2,7 +2,7 @@
 AVFoundation, Core Image 기술을 중점적으로 활용하여 사진을 찍고, 편집하여 색을 추출하는 미션을 통해 지루한 무채색 일상에서 색을 찾는 미션을 통해 일상 속 새로움을 찾도록 해주는 앱!
 
 
-![<img width="1024" height="1024" alt="LOGO_PALETO" src="https://github.com/user-attachments/assets/204b440c-df09-4b0e-9c6f-2de55fa81e68" />](링크)
+<img width="1024" height="1024" alt="LOGO_PALETO" src="https://github.com/user-attachments/assets/204b440c-df09-4b0e-9c6f-2de55fa81e68" />
 
 
 > 간단한 한 줄 소개 – 프로젝트의 핵심 가치 또는 기능
