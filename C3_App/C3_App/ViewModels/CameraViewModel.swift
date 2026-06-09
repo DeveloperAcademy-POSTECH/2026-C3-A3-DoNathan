@@ -21,17 +21,22 @@ class CameraViewModel: ObservableObject {
     @Published var alertMessage: String? = nil
     @Published var showFlashOverlay: Bool = false
     
+    //
+    @Published var isCameraDenied: Bool = false
+    @Published var isPhotoDenied: Bool = false
+    //
+    
     @Published var capturedImage: UIImage? = nil
     @Published var currentFrame: UIImage? = nil
-
+    
     @Published var brightness: Double = 0.0 {
         didSet { cameraService.brightness = brightness }
     }
-
+    
     @Published var selectedFilter: FilterOption = .none {
         didSet { cameraService.selectedFilter = selectedFilter }
     }
-
+    
     @Published var filterIntensity: Double = 1.0 {
         didSet { cameraService.filterIntensity = filterIntensity }
     }
@@ -69,7 +74,7 @@ class CameraViewModel: ObservableObject {
                 self?.alertMessage = message
             }
         }
-
+        
         cameraService.onFrameProcessed = { [weak self] image in
             self?.currentFrame = image
         }
@@ -77,7 +82,16 @@ class CameraViewModel: ObservableObject {
     
     // 카메라 권한 체크
     func configureCamera() {
-        cameraService.checkPermissionAndSetup()
+        switch AVCaptureDevice.authorizationStatus(for: .video) {
+        case .denied, .restricted:
+            isCameraDenied = true
+        default:
+            cameraService.checkPermissionAndSetup()
+        }
+        
+        let photoStatus = PHPhotoLibrary.authorizationStatus(for: .readWrite)
+        isPhotoDenied = (photoStatus == .denied || photoStatus == .restricted)
+        
         loadLatestPhoto()
     }
     
@@ -85,30 +99,33 @@ class CameraViewModel: ObservableObject {
     func stopSession() { cameraService.stopSession() }
     func setZoom(_ factor: CGFloat) { cameraService.setZoom(factor) }
     func loadLatestPhoto() {
+        let status = PHPhotoLibrary.authorizationStatus(for: .readWrite)
+        guard status == .authorized || status == .limited else { return }
+        
         let fetchOptions = PHFetchOptions()
-            fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
-            fetchOptions.fetchLimit = 1
-            
-            let result = PHAsset.fetchAssets(with: .image, options: fetchOptions)
-            guard let asset = result.firstObject else { return }
-            
-            PHImageManager.default().requestImage(
-                for: asset,
-                targetSize: CGSize(width: 96, height: 96),
-                contentMode: .aspectFill,
-                options: nil
-            ) { [weak self] image, _ in
-                DispatchQueue.main.async {
-                    self?.thumbnailImage = image
-                }
+        fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
+        fetchOptions.fetchLimit = 1
+        
+        let result = PHAsset.fetchAssets(with: .image, options: fetchOptions)
+        guard let asset = result.firstObject else { return }
+        
+        PHImageManager.default().requestImage(
+            for: asset,
+            targetSize: CGSize(width: 96, height: 96),
+            contentMode: .aspectFill,
+            options: nil
+        ) { [weak self] image, _ in
+            DispatchQueue.main.async {
+                self?.thumbnailImage = image
             }
         }
+    }
     
     
     // 카메라 재진입 시 데이터 리셋
     func resetAll() {
         capturedImage = nil
-//        cameraService.onPhotoCaptured = nil
+        //        cameraService.onPhotoCaptured = nil
         brightness = 0.0
         cameraService.reset()
     }
@@ -140,10 +157,18 @@ class CameraViewModel: ObservableObject {
     // 촬영 이미지 저장
     private func saveToPhotoLibrary(_ image: UIImage) {
         PHPhotoLibrary.requestAuthorization(for: .addOnly) { status in
-            guard status == .authorized || status == .limited else { return }
-            PHPhotoLibrary.shared().performChanges({
-                PHAssetChangeRequest.creationRequestForAsset(from: image)
-            })
+            DispatchQueue.main.async {
+                switch status {
+                case .authorized, .limited:
+                    PHPhotoLibrary.shared().performChanges({
+                        PHAssetChangeRequest.creationRequestForAsset(from: image)
+                    })
+                case .denied, .restricted:
+                    self.isPhotoDenied = true
+                default:
+                    break
+                }
+            }
         }
-    } 
+    }
 }

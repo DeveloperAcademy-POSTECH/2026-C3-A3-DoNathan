@@ -242,6 +242,10 @@ struct CommonCameraView<MissionOverlay: View, CameraOverlay: View>: View {
             MissionJudgeOverlay(isShowing: judgeVM.isJudging)
             MissionSuccessOverlay(isShowing: judgeVM.showSuccess)
             MissionFailOverlay(isShowing: judgeVM.showFail)
+//
+            CameraDeniedOverlay(isShowing: $viewModel.isCameraDenied)
+            PhotoLibraryDeniedOverlay(isShowing: $viewModel.isPhotoDenied)
+//
             MissionCompleteOverlay(
                 isShowing: judgeVM.showCompleteSuccess || showCompleteOverlay,
                 missionColor: vm.mainColor,
