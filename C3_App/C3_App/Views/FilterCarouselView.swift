@@ -31,7 +31,7 @@ enum FilterOption: CaseIterable, Identifiable {
 
     var isUnlocked: Bool {
         switch self {
-        case .none, .red: return true
+        case .none:       return true
         default:          return false
         }
     }
@@ -65,8 +65,9 @@ enum FilterOption: CaseIterable, Identifiable {
 struct FilterCarouselView: View {
     @Binding var selectedFilter: FilterOption
     @Binding var filterIntensity: Double
+    @ObservedObject private var progress = MissionProgress.shared
     // 데모를 위한 탭 언락 상태, 미션 연결 이후 수정 필요
-    @State private var isBlueUnlocked: Bool = false
+    //@State private var isBlueUnlocked: Bool = false
 
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
@@ -75,16 +76,19 @@ struct FilterCarouselView: View {
                     FilterCellView(
                         filter: filter,
                         isSelected: selectedFilter == filter,
-                        isBlueUnlocked: isBlueUnlocked
+                        isUnlocked: isUnlocked(filter)
                     )
                     
                     //여기부터
                     .onTapGesture {
-                        if filter == .blue && !isBlueUnlocked {
-                            // 데모를 위한 탭 언락 - 첫 탭은 언락만, 미션 연결 이후 수정 필요
-                            isBlueUnlocked = true
-                        } else if filter.isUnlocked || (filter == .blue && isBlueUnlocked) {
-                            // 언락된 필터 선택
+//                        if filter == .blue && !isBlueUnlocked {
+//                            // 데모를 위한 탭 언락 - 첫 탭은 언락만, 미션 연결 이후 수정 필요
+//                            isBlueUnlocked = true
+//                        } else if filter.isUnlocked || (filter == .blue && isBlueUnlocked) {
+//                            // 언락된 필터 선택
+//                            selectedFilter = filter
+//                        }
+                        if isUnlocked(filter) {
                             selectedFilter = filter
                         }
                     }
@@ -96,13 +100,19 @@ struct FilterCarouselView: View {
         }
         .padding(.vertical, 10)
     }
+    
+    private func isUnlocked(_ filter: FilterOption) -> Bool {
+        if filter == .none { return true }
+        return MissionProgress.shared.isPassed(colorName: filter.title)
+        // filter.title "Red" == missionColor.name "Red" 일치 확인
+    }
 }
 
 // MARK: - 필터 셀 (Figma 스펙 기반)
 struct FilterCellView: View {
     let filter: FilterOption
     let isSelected: Bool
-    var isBlueUnlocked: Bool = false
+    var isUnlocked: Bool = false
 
     private let cellWidth: CGFloat  = 64
     private let cellHeight: CGFloat = 86
@@ -145,8 +155,8 @@ struct FilterCellView: View {
                 .offset(x: innerX, y: 63.24)
 
             // 잠금 오버레이
-            let showLock = !filter.isUnlocked && !(filter == .blue && isBlueUnlocked)
-            if showLock {
+//            let showLock = !filter.isUnlocked && !(filter == .blue && isBlueUnlocked)
+            if !isUnlocked {
                 Rectangle()
                     .fill(Color.black.opacity(0.4))
                     .frame(width: cellWidth, height: cellHeight)

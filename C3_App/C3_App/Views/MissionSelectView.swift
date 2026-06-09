@@ -36,13 +36,13 @@ struct MissionSelectView: View {
                         }
                         .padding(.horizontal, 20)
 
-                        Text("도전할 미션을 선택하세요!")
+                        Text("빙고를 완성해 필터를 획득하세요!")
                             .font(.system(size: 23, weight: .bold))
                             .foregroundStyle(.black)
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.horizontal, 23)
 
-                        Text("Media & Camera 기능을 활용해\n미션 컬러를 찾아 빙고를 완성하세요.")
+                        Text("미션 컬러를 모두 찾으면 컬러 필터를\n얻을 수 있어요. 카메라로 주변을 탐색해보세요.")
                             .font(.system(size: 15))
                             .foregroundStyle(.gray)
                             .frame(maxWidth: .infinity, alignment: .leading)
