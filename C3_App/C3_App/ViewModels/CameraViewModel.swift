@@ -20,7 +20,7 @@ class CameraViewModel: ObservableObject {
     @Published var isFrontCamera: Bool = false
     @Published var alertMessage: String? = nil
     @Published var showFlashOverlay: Bool = false
-    
+  
     @Published var capturedImage: UIImage? = nil
     @Published var currentFrame: UIImage? = nil
 
