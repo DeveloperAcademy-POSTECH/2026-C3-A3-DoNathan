@@ -11,6 +11,7 @@ struct FilterCameraView: View {
     @StateObject private var viewModel = CameraViewModel()
     @ObservedObject var vm: MissionViewModel
     var onDismiss: (() -> Void)?
+    var initialFilter: FilterOption = .none   // 진입 시 선택할 필터 (기본값: 없음)
 
     var body: some View {
         CommonCameraView(viewModel: viewModel,
@@ -37,6 +38,11 @@ struct FilterCameraView: View {
                 )
             }
         )
+        .onAppear {
+            if initialFilter != .none {
+                viewModel.selectedFilter = initialFilter
+            }
+        }
     }
 }
 

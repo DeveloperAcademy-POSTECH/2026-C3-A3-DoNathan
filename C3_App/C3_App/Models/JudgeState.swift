@@ -13,4 +13,5 @@ enum JudgeState: Equatable {
     case judging
     case success
     case failure
+    case completeSuccess   // 마지막(8번째) 미션 성공 전용
 }

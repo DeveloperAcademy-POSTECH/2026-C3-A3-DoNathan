@@ -11,12 +11,16 @@ import Combine
 class JudgeViewModel: ObservableObject {
     @Published var state: JudgeState = .idle
 
-    var isJudging: Bool  { state == .judging }
-    var showSuccess: Bool { state == .success }
-    var showFail: Bool   { state == .failure }
-    var isDisabled: Bool  { state != .idle }
+    var isJudging:         Bool { state == .judging }
+    var showSuccess:       Bool { state == .success }
+    var showFail:          Bool { state == .failure }
+    var showCompleteSuccess: Bool { state == .completeSuccess }
+    var isDisabled:        Bool { state != .idle }
 
-    func start(image: UIImage, type: MissionType, targetColor: Color,
+    func start(image: UIImage,
+               type: MissionType,
+               targetColor: Color,
+               isLastMission: Bool = false,
                onPassed: @escaping () -> Void,
                onFailed: @escaping () -> Void) {
         state = .judging
@@ -26,7 +30,12 @@ class JudgeViewModel: ObservableObject {
                                                      type: type,
                                                      targetColor: targetColor)
             withAnimation {
-                self.state = isPassed ? .success : .failure
+                if isPassed {
+                    // 마지막 미션이면 completeSuccess, 아니면 success
+                    self.state = isLastMission ? .completeSuccess : .success
+                } else {
+                    self.state = .failure
+                }
             }
 
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
