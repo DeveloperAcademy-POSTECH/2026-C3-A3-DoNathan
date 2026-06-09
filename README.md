@@ -8,10 +8,6 @@ AVFoundation, Core Image 기술을 중점적으로 활용하여 사진을 찍고
 ![Swift](https://img.shields.io/badge/swift-F54A2A?style=for-the-badge&logo=swift&logoColor=white)
 ![Figma](https://img.shields.io/badge/figma-%23F24E1E.svg?style=for-the-badge&logo=figma&logoColor=white)
 
-[![Swift](https://img.shields.io/badge/Swift-5.9-orange.svg)]()
-[![Xcode](https://img.shields.io/badge/Xcode-15.0-blue.svg)]()
-[![License](https://img.shields.io/badge/license-MIT-green.svg)]()
-
 ---
 
 ## 🗂 목차
@@ -82,7 +78,7 @@ AVFoundation, Core Image 기술을 중점적으로 활용하여 사진을 찍고
 | 이름 | 역할 | GitHub |
 |------|------|--------|
 | 노아 | iOS Developer | [@hong](https://github.com/hong) |
-|  이피  | iOS Developer | [@devkim](https://github.com/devkim) |
+|  이피  | iOS Developer | [@yoonjin9150-blip](https://github.com/yoonjin9150-blip) |
 | 하르딘 | iOS Developer | [@devkim](https://github.com/devkim) |
 | 젠 | UX/UI Designer | [@devkim](https://github.com/devkim) |
 | 크리스탈 | UX/UI Designer | [@devkim](https://github.com/devkim) |
