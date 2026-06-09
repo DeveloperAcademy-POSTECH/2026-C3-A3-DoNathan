@@ -105,11 +105,9 @@ class MissionViewModel: ObservableObject {
         
         missions[idx].completedImage = image
         selectedIndex = nil
-        
-        if allCompleted {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
-                withAnimation { self.showCompletion = true }
-            }
-        }
+
+        // 마지막 미션 완료 시 자동으로 MissionCompleteView로 넘기지 않음.
+        // MissionCompleteOverlay가 단독으로 뜨고, 오버레이의 X 버튼 또는
+        // 필터 카메라 종료 시점에 showCompletion = true 로 전환한다. (CommonCameraView 참고)
     }
 }

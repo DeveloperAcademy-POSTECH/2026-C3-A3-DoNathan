@@ -26,6 +26,8 @@ struct CommonCameraView<MissionOverlay: View, CameraOverlay: View>: View {
     @State private var showEditView: Bool = false
     @State private var currentDestination: MissionType? = nil
     @State private var showPicker = false
+    @State private var showFilterCamera = false      // 미션 완료 후 필터 카메라로 이동
+    @State private var showCompleteOverlay = false   // 편집 미션(채도/크롭/컬러피커)의 마지막 미션 완료 오버레이
     
     let destination: MissionType?
     var cameraMode: CameraMode = .mission
@@ -240,6 +242,16 @@ struct CommonCameraView<MissionOverlay: View, CameraOverlay: View>: View {
             MissionJudgeOverlay(isShowing: judgeVM.isJudging)
             MissionSuccessOverlay(isShowing: judgeVM.showSuccess)
             MissionFailOverlay(isShowing: judgeVM.showFail)
+            MissionCompleteOverlay(
+                isShowing: judgeVM.showCompleteSuccess || showCompleteOverlay,
+                missionColor: vm.mainColor,
+                onTapFilter: { showFilterCamera = true },
+                onClose: {
+                    // X 버튼: 미션 카메라를 닫고 MissionCompleteView로 전환
+                    vm.showCompletion = true
+                    onDismiss?()
+                }
+            )
         }
         .onAppear {
             capturedImage = nil
@@ -258,15 +270,19 @@ struct CommonCameraView<MissionOverlay: View, CameraOverlay: View>: View {
             capturedImage = image
             currentDestination = destination ?? vm.activeDestination
 
+            print("[Complete] completedCount:\(vm.completedCount) / missions.count:\(vm.missions.count) / destination:\(String(describing: currentDestination))")
             switch currentDestination {
             case .basic, .brightness:
+                let isLastMission = vm.completedCount == vm.missions.count - 1
+                print("[Complete] isLastMission: \(isLastMission)")
                 judgeVM.start(
                     image: image,
                     type: currentDestination ?? .basic,
                     targetColor: vm.mainColor,
+                    isLastMission: isLastMission,
                     onPassed: {
                         vm.handleMissionResult(image: image)
-                        onMissionSuccess?()
+                        if !isLastMission { onMissionSuccess?() }
                     },
                     onFailed: {
                         viewModel.resetAll()
@@ -288,8 +304,12 @@ struct CommonCameraView<MissionOverlay: View, CameraOverlay: View>: View {
                             saveEditedPhoto(editedImage)
                             vm.handleMissionResult(image: editedImage)
                             showEditView = false
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                                onMissionSuccess?()
+                            if vm.allCompleted {
+                                showCompleteOverlay = true
+                            } else {
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                    onMissionSuccess?()
+                                }
                             }
                         },
                         onCancel: {
@@ -305,8 +325,12 @@ struct CommonCameraView<MissionOverlay: View, CameraOverlay: View>: View {
                             saveEditedPhoto(croppedImage)
                             vm.handleMissionResult(image: croppedImage)
                             showEditView = false
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                                onMissionSuccess?()
+                            if vm.allCompleted {
+                                showCompleteOverlay = true
+                            } else {
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                    onMissionSuccess?()
+                                }
                             }
                         },
                         onCancel: {
@@ -321,8 +345,12 @@ struct CommonCameraView<MissionOverlay: View, CameraOverlay: View>: View {
                         onConfirm: { selectedColor in
                             vm.handleMissionResult(image: image)
                             showEditView = false
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                                onMissionSuccess?()
+                            if vm.allCompleted {
+                                showCompleteOverlay = true
+                            } else {
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                                    onMissionSuccess?()
+                                }
                             }
                         },
                         onCancel: {
@@ -345,6 +373,29 @@ struct CommonCameraView<MissionOverlay: View, CameraOverlay: View>: View {
                     showEditView = false
                 }
             }
+        }
+        .fullScreenCover(isPresented: $showFilterCamera) {
+            // MissionColor → FilterOption 매핑
+            let filter: FilterOption = {
+                switch vm.missionColor.name {
+                case "Red":    return .red
+                case "Orange": return .orange
+                case "Green":  return .green
+                case "Blue":   return .blue
+                case "Purple": return .purple
+                default:       return .none
+                }
+            }()
+            FilterCameraView(
+                vm: vm,
+                onDismiss: {
+                    // 필터 카메라를 닫으면 바로 MissionCompleteView로 (B)
+                    showFilterCamera = false
+                    vm.showCompletion = true
+                    onDismiss?()
+                },
+                initialFilter: filter
+            )
         }
     }
 

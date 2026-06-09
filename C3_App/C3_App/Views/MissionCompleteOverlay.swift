@@ -11,6 +11,7 @@ struct MissionCompleteOverlay: View {
     let isShowing: Bool
     let missionColor: Color
     var onTapFilter: (() -> Void)? = nil
+    var onClose: (() -> Void)? = nil
 
     var body: some View {
         if isShowing {
@@ -51,6 +52,24 @@ struct MissionCompleteOverlay: View {
                     }
                     .padding(.bottom, 55)
                 }
+
+                // MARK: - 좌측 상단 X 버튼 (카메라 상단 바와 동일한 글래스 스타일)
+                VStack {
+                    HStack {
+                        Button(action: { onClose?() }) {
+                            Image(systemName: "xmark")
+                                .font(.system(size: 19, weight: .semibold))
+                                .foregroundColor(Color(hex: "888888"))
+                                .frame(width: 40, height: 40)
+                        }
+                        .glassEffect(.regular.interactive(), in: Circle())
+
+                        Spacer()
+                    }
+                    Spacer()
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 20)
             }
             .transition(.opacity)
             .animation(.easeInOut(duration: 0.3), value: isShowing)
