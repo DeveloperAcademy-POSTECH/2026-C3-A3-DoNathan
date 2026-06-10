@@ -1,9 +1,7 @@
-# :iphone: 📸 Paleto 팔레토
-[Logo/Cover Image]
+# :iphone: Paleto 팔레토
 <img width="256" height="256" alt="LOGO_PALETO" src="https://github.com/user-attachments/assets/204b440c-df09-4b0e-9c6f-2de55fa81e68" />
 
-[App statement]
-AVFoundation 기반의 커스텀 카메라와 Core Image의 색상 분석 및 이미지 편집 기능을 활용해 일상 속 색을 탐색하여 미션을 클리어하는 미션형 필터 카메라 앱
+> AVFoundation 기반의 커스텀 카메라와 Core Image의 색상 분석 및 이미지 편집 기능을 활용해 일상 속 색을 탐색하여 미션을 클리어하는 미션형 필터 카메라 앱
 
 ## :fireworks: Screenshots
 
@@ -24,6 +22,11 @@ Attach videos if you are available
 ## :sparkles: Skills & Tech Stack
 
 ex) <img src="https://img.shields.io/badge/Swift-FA7343?style=flat&logo=Swift&logoColor=white"/>, SwiftUI
+
+`AVFoundation` `Core Image` `PhotoKit`
+
+![Swift](https://img.shields.io/badge/swift-F54A2A?style=for-the-badge&logo=swift&logoColor=white)
+![Figma](https://img.shields.io/badge/figma-%23F24E1E.svg?style=for-the-badge&logo=figma&logoColor=white)
 
 위와 같이 배지를 사용하여 더 풍성한 Readme를 만들 수 있습니다.
 [참조](https://shields.io/)
