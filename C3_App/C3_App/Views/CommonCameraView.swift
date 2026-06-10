@@ -247,11 +247,21 @@ struct CommonCameraView<MissionOverlay: View, CameraOverlay: View>: View {
             PhotoLibraryDeniedOverlay(isShowing: $viewModel.isPhotoDenied)
 //
             MissionCompleteOverlay(
-                isShowing: judgeVM.showCompleteSuccess || showCompleteOverlay,
+                isShowing: showCompleteOverlay, //judgeVM.showCompleteSuccess || showCompleteOverlay,
                 missionColor: vm.mainColor,
-                onTapFilter: { showFilterCamera = true },
+                onTapFilter: {
+                    //showFilterCamera = true
+                    if let image = capturedImage {
+                        vm.handleMissionResult(image: image)
+                    }
+                    showFilterCamera = true
+                },
                 onClose: {
                     // X 버튼: 미션 카메라를 닫고 MissionCompleteView로 전환
+                    if let image = capturedImage {
+                        vm.handleMissionResult(image: image)
+                    }
+                    
                     vm.showCompletion = true
                     onDismiss?()
                 }
@@ -274,19 +284,25 @@ struct CommonCameraView<MissionOverlay: View, CameraOverlay: View>: View {
             capturedImage = image
             currentDestination = destination ?? vm.activeDestination
 
-            print("[Complete] completedCount:\(vm.completedCount) / missions.count:\(vm.missions.count) / destination:\(String(describing: currentDestination))")
+            //print("[Complete] completedCount:\(vm.completedCount) / missions.count:\(vm.missions.count) / destination:\(String(describing: currentDestination))")
             switch currentDestination {
             case .basic, .brightness:
                 let isLastMission = vm.completedCount == vm.missions.count - 1
-                print("[Complete] isLastMission: \(isLastMission)")
+                //print("[Complete] isLastMission: \(isLastMission)")
                 judgeVM.start(
                     image: image,
                     type: currentDestination ?? .basic,
                     targetColor: vm.mainColor,
                     isLastMission: isLastMission,
                     onPassed: {
-                        vm.handleMissionResult(image: image)
-                        if !isLastMission { onMissionSuccess?() }
+//                        vm.handleMissionResult(image: image)
+//                        if !isLastMission { onMissionSuccess?() }
+                        if isLastMission {
+                            showCompleteOverlay = true
+                        } else {
+                            vm.handleMissionResult(image: image)
+                            onMissionSuccess?()
+                        }
                     },
                     onFailed: {
                         viewModel.resetAll()
@@ -396,7 +412,7 @@ struct CommonCameraView<MissionOverlay: View, CameraOverlay: View>: View {
                     // 필터 카메라를 닫으면 바로 MissionCompleteView로 (B)
                     showFilterCamera = false
                     vm.showCompletion = true
-                    onDismiss?()
+                    //onDismiss?()
                 },
                 initialFilter: filter
             )
