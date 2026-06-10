@@ -42,7 +42,7 @@ struct MissionSelectView: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.horizontal, 23)
 
-                        Text("미션 컬러를 모두 찾으면 컬러 필터를\n얻을 수 있어요. 카메라로 주변을 탐색해보세요.")
+                        Text("미션 컬러를 모두 찾으면 컬러 필터를 얻을 수 있어요.\n카메라로 주변을 탐색해보세요.")
                             .font(.system(size: 15))
                             .foregroundStyle(.gray)
                             .frame(maxWidth: .infinity, alignment: .leading)

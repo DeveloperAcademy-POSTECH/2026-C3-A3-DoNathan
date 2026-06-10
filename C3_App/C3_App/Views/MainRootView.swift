@@ -10,6 +10,7 @@ import SwiftUI
 struct MainRootView: View {
     @ObservedObject var vm: MissionViewModel
     @StateObject private var progress = MissionProgress.shared
+    @State private var displayColors: [MissionColor] = MissionColor.all // 가라 버튼용...
     @State private var selectedColor: MissionColor = MissionColor.all[0]
     @State private var showMission: Bool = false
     @State private var showFilterCamera: Bool = false
@@ -64,6 +65,25 @@ struct MainRootView: View {
                 .frame(width: 103, height: 136)
                 .background(Color(hex: "FDFCF9"))
                 .position(x: 278 + 103 / 2, y: 75 + 126 / 2)
+                // 시연용 관리자 모드 : 화면 3번 터치하면 미션 잠금 해제 ㅎㅎ
+                .onTapGesture(count: 3) {
+                    withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
+                        // 모든 리스트의 잠금을 true로 변환
+                        self.displayColors = self.displayColors.map { color in
+                            MissionColor(
+                                name: color.name,
+                                assetName: "Custom\(color.name)",
+                                hexCode: color.hexCode,
+                                imageName: color.imageName,
+                                isUnlocked: true // 무조건 열기
+                            )
+                        }
+                        // 현재 선택된 컬러 객체도 강제로 잠금해제 버전으로 교체해 줍니다.
+                        if let updatedCurrent = displayColors.first(where: { $0.name == selectedColor.name }) {
+                            selectedColor = updatedCurrent
+                        }
+                    }
+                }
 
                 // MARK: - 컬러 이름 (대형 서체)
                 Text(selectedColor.name)
