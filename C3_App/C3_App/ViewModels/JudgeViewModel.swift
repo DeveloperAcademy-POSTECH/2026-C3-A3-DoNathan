@@ -23,19 +23,34 @@ class JudgeViewModel: ObservableObject {
                isLastMission: Bool = false,
                onPassed: @escaping () -> Void,
                onFailed: @escaping () -> Void) {
+        run(isLastMission: isLastMission, onPassed: onPassed, onFailed: onFailed) {
+            MissionEvaluator.evaluate(image: image, type: type, targetColor: targetColor)
+        }
+    }
+
+    // 컬러피커 전용: 선택한 색(UIColor)을 직접 판정 (1×1 이미지 왕복 없이)
+    func start(pickedColor: UIColor,
+               targetColor: Color,
+               isLastMission: Bool = false,
+               onPassed: @escaping () -> Void,
+               onFailed: @escaping () -> Void) {
+        run(isLastMission: isLastMission, onPassed: onPassed, onFailed: onFailed) {
+            MissionEvaluator.evaluate(pickedColor: pickedColor, targetColor: targetColor)
+        }
+    }
+
+    // 판정 연출(1.5초 judging → 결과 → 1.5초 후 콜백) 공통 처리
+    private func run(isLastMission: Bool,
+                     onPassed: @escaping () -> Void,
+                     onFailed: @escaping () -> Void,
+                     evaluate: @escaping () -> Bool) {
         state = .judging
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-            let isPassed = MissionEvaluator.evaluate(image: image,
-                                                     type: type,
-                                                     targetColor: targetColor)
+            let isPassed = evaluate()
             withAnimation {
-                if isPassed {
-                    // 마지막 미션이면 completeSuccess, 아니면 success
-                    self.state = isLastMission ? .completeSuccess : .success
-                } else {
-                    self.state = .failure
-                }
+                // 마지막 미션이면 completeSuccess, 아니면 success
+                self.state = isPassed ? (isLastMission ? .completeSuccess : .success) : .failure
             }
 
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
