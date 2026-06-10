@@ -1,6 +1,55 @@
+# :iphone: 📸 Paleto 팔레토
+[Logo/Cover Image]
+<img width="256" height="256" alt="LOGO_PALETO" src="https://github.com/user-attachments/assets/204b440c-df09-4b0e-9c6f-2de55fa81e68" />
+
+[App statement]
+AVFoundation 기반의 커스텀 카메라와 Core Image의 색상 분석 및 이미지 편집 기능을 활용해 일상 속 색을 탐색하여 미션을 클리어하는 미션형 필터 카메라 앱
+
+## :fireworks: Screenshots
+
+Attach photos if you are available
+
+## :framed_picture: Demo (optional)
+
+Attach videos if you are available
+
+
+## :pushpin: Features
+
+- Feature 1
+- Feature 2
+- Feature 3
+
+
+## :sparkles: Skills & Tech Stack
+
+ex) <img src="https://img.shields.io/badge/Swift-FA7343?style=flat&logo=Swift&logoColor=white"/>, SwiftUI
+
+위와 같이 배지를 사용하여 더 풍성한 Readme를 만들 수 있습니다.
+[참조](https://shields.io/)
+
+
+## :people_hugging: Authors
+
+@username, @username, @username, @username, @username, @username
+
+| 이름 | 역할 | GitHub |
+|------|------|--------|
+| 노아 | iOS Developer | [@noah-jhlee](https://github.com/noah-jhlee) |
+|  이피  | iOS Developer | [@yoonjin9150-blip](https://github.com/yoonjin9150-blip) |
+| 하르딘 | iOS Developer | [@frutacruda](https://github.com/frutacruda) |
+| 젠 | UX/UI Designer | [@kiim672](https://github.com/kiim672) |
+| 크리스탈 | UX/UI Designer | [@crystaltheclear](https://github.com/crystaltheclear) |
+| 그레이스 | UX/UI Designer | [@glace0x](https://github.com/glace0x) |
+
+
+
+
+
+
 # 📸 Paleto 팔레토
 
-<img width="256" height="256" alt="LOGO_PALETO" src="https://github.com/user-attachments/assets/204b440c-df09-4b0e-9c6f-2de55fa81e68" />
+
 
 
 > AVFoundation, Core Image 기술을 중점적으로 활용하여 사진을 찍고, 편집하여 색을 추출하는 미션을 통해 지루한 무채색 일상에서 색을 찾는 미션을 통해 일상 속 새로움을 찾도록 해주는 앱!
@@ -78,14 +127,7 @@
 
 ## 🧑‍💻 팀 소개
 
-| 이름 | 역할 | GitHub |
-|------|------|--------|
-| 노아 | iOS Developer | [@noah-jhlee](https://github.com/noah-jhlee) |
-|  이피  | iOS Developer | [@yoonjin9150-blip](https://github.com/yoonjin9150-blip) |
-| 하르딘 | iOS Developer | [@frutacruda](https://github.com/frutacruda) |
-| 젠 | UX/UI Designer | [@kiim672](https://github.com/kiim672) |
-| 크리스탈 | UX/UI Designer | [@crystaltheclear](https://github.com/crystaltheclear) |
-| 그레이스 | UX/UI Designer | [@glace0x](https://github.com/glace0x) |
+
 
 [🔗 팀 블로그 / 미디엄 링크](https://medium.com/example)
 
