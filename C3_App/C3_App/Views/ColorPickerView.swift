@@ -145,14 +145,10 @@ struct ColorPickerView: View {
                     Spacer()
 
                     Button {
-                        // 사용자가 선택한 색으로 1×1 이미지 생성 → 중앙 픽셀 = 선택색
-                        let colorImage = UIGraphicsImageRenderer(size: CGSize(width: 1, height: 1)).image { ctx in
-                            viewModel.selectedUIColor.setFill()
-                            ctx.fill(CGRect(x: 0, y: 0, width: 1, height: 1))
-                        }
+                        // 선택한 색(UIColor)을 직접 판정 — 1×1 이미지 왕복 시 BGRA/RGBA
+                        // 바이트순서 불일치로 R↔B가 뒤바뀌는 버그가 있어 제거함
                         judgeVM.start(
-                            image: colorImage,
-                            type: .colorPicker,
+                            pickedColor: viewModel.selectedUIColor,
                             targetColor: missionColor,
                             onPassed: { onConfirm(viewModel.selectedUIColor) },
                             onFailed: { }
