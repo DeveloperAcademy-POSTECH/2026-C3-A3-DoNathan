@@ -3,6 +3,11 @@
 
 > AVFoundation 기반의 커스텀 카메라와 Core Image의 색상 분석 및 이미지 편집 기능을 활용해 일상 속 색을 탐색하여 미션을 클리어하는 미션형 필터 카메라 앱
 
+## 📆 프로젝트 기간
+- 전체 기간: `2026.05.06 - 2026.06.12`
+- 개발 기간: `2026.05.28 - YYYY.MM.DD`
+
+
 ## :fireworks: Screenshots
 
 Attach photos if you are available
