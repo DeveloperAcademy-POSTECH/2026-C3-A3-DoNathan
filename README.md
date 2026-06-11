@@ -36,10 +36,17 @@ ex) <img src="https://img.shields.io/badge/Swift-FA7343?style=flat&logo=Swift&lo
 
 `AVFoundation` `Core Image` `PhotoKit`
 
-![AVFoundation](https://img.shields.io/badge/AVFoundation-%23000000?style=flat-square&logo=apple&logoColor=white)
-
+### Tech Stack
 ![Swift](https://img.shields.io/badge/swift-F54A2A?style=for-the-badge&logo=swift&logoColor=white)
+![AVFoundation](https://img.shields.io/badge/AVFoundation-%23000000?style=flat-square&logo=apple&logoColor=white)
+![Core Image](https://img.shields.io/badge/Core_Image-%23000000?style=flat-square&logo=apple&logoColor=white)
+![PhotoKit](https://img.shields.io/badge/PhotoKit-%23000000?style=flat-square&logo=apple&logoColor=white)
+
+
+
+### Tools
 ![Figma](https://img.shields.io/badge/figma-%23F24E1E.svg?style=for-the-badge&logo=figma&logoColor=white)
+![Xcode](https://img.shields.io/badge/Xcode-007ACC?style=for-the-badge&logo=Xcode&logoColor=white)
 
 위와 같이 배지를 사용하여 더 풍성한 Readme를 만들 수 있습니다.
 [참조](https://shields.io/)
