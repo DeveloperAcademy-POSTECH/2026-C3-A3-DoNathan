@@ -26,20 +26,15 @@ Attach videos if you are available
 
 ## :sparkles: Skills & Tech Stack
 
-ex) <img src="https://img.shields.io/badge/Swift-FA7343?style=flat&logo=Swift&logoColor=white"/>, SwiftUI
-
-
-- Swift / SwiftUI / UIKit
-- 아키텍처: MVVM 
-- 기타 도구: Figma
-
-
-`AVFoundation` `Core Image` `PhotoKit`
-
 ### Tech Stack
+Architecture : MVVM 
+
+
 ![Swift](https://img.shields.io/badge/swift-F54A2A?style=for-the-badge&logo=swift&logoColor=white)
-![SwiftUI](https://img.shields.io/badge/SwiftUI-F05138?style=for-the-badge&logo=swift&logoColor=white)
-![UIKit](https://img.shields.io/badge/UIKit-F05138?style=for-the-badge&logo=swift&logoColor=white)
+
+
+![SwiftUI](https://img.shields.io/badge/SwiftUI-F05138?style=flat-square&logo=swift&logoColor=white)
+![UIKit](https://img.shields.io/badge/UIKit-F05138?style=flat-square&logo=swift&logoColor=white)
 
 
 ![AVFoundation](https://img.shields.io/badge/AVFoundation-%23000000?style=flat-square&logo=apple&logoColor=white)
@@ -47,13 +42,9 @@ ex) <img src="https://img.shields.io/badge/Swift-FA7343?style=flat&logo=Swift&lo
 ![PhotoKit](https://img.shields.io/badge/PhotoKit-%23000000?style=flat-square&logo=apple&logoColor=white)
 
 
-
 ### Tools
 ![Figma](https://img.shields.io/badge/figma-%23F24E1E.svg?style=for-the-badge&logo=figma&logoColor=white)
 ![Xcode](https://img.shields.io/badge/Xcode-007ACC?style=for-the-badge&logo=Xcode&logoColor=white)
-
-위와 같이 배지를 사용하여 더 풍성한 Readme를 만들 수 있습니다.
-[참조](https://shields.io/)
 
 
 ## :people_hugging: Authors
