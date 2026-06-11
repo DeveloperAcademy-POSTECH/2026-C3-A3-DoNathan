@@ -10,30 +10,12 @@
 
 ## :fireworks: Screenshots
 
-<table>
-  <tr>
-    <td align="center" width="33%">
-      <img src="https://github.com/user-attachments/assets/af6de765-a068-4874-8ecb-33f0cb82094b" width="100%" alt="기능 1"/><br>
-    </td>
-    <td align="center" width="33%">
-      <img src="https://github.com/user-attachments/assets/ddf291f9-f524-4d91-850a-290bf341ab42" width="100%" alt="기능 2"/><br>
-    </td>
-    <td align="center" width="33%">
-      <img src="https://github.com/user-attachments/assets/1117d25b-7416-4b1f-a209-92d60a757811" width="100%" alt="기능 3"/><br>
-    </td>
-  </tr>
-  <tr>
-    <td align="center" width="33%">
-      <img src="https://github.com/user-attachments/assets/f333d2ab-a5b2-46f5-98a1-e854dc4a26c3" width="100%" alt="기능 4"/><br>
-    </td>
-    <td align="center" width="33%">
-      <img src="https://github.com/user-attachments/assets/eb779539-72d8-486b-8794-cf9f62b74e61" width="100%" alt="기능 5"/><br>
-    </td>
-    <td align="center" width="33%">
-      <img src="https://github.com/user-attachments/assets/fc94cf99-79c1-4d31-8746-b697a5cf6a71" width="100%" alt="기능 6"/><br>
-    </td>
-  </tr>
-</table>
+<div align="center">
+<img width="2431" height="1002" alt="Frame 1" src="https://github.com/user-attachments/assets/4350a4ca-0662-4505-a052-e022de0a865a" />
+<img width="2431" height="1003" alt="Frame 2" src="https://github.com/user-attachments/assets/c7323588-48d1-4867-9c47-e99a6aadab39" />
+<img width="2431" height="1000" alt="Frame 3" src="https://github.com/user-attachments/assets/e8bc5d18-caba-482a-befc-a097fd2ad686" />
+
+</div>
 
 
 
