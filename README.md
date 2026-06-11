@@ -46,15 +46,6 @@ ex) <img src="https://img.shields.io/badge/Swift-FA7343?style=flat&logo=Swift&lo
 ## :people_hugging: Authors
 
 
-| 이름 | 역할 | GitHub |
-|------|------|--------|
-| 노아 | iOS Developer | [@noah-jhlee](https://github.com/noah-jhlee) |
-|  이피  | iOS Developer | [@yoonjin9150-blip](https://github.com/yoonjin9150-blip) |
-| 하르딘 | iOS Developer | [@frutacruda](https://github.com/frutacruda) |
-| 젠 | UX/UI Designer | [@kiim672](https://github.com/kiim672) |
-| 크리스탈 | UX/UI Designer | [@crystaltheclear](https://github.com/crystaltheclear) |
-| 그레이스 | UX/UI Designer | [@glace0x](https://github.com/glace0x) |
-
 
 <table>
   <tr align="center">
@@ -70,7 +61,7 @@ ex) <img src="https://img.shields.io/badge/Swift-FA7343?style=flat&logo=Swift&lo
     <td><img src="https://github.com/user-attachments/assets/ae203c97-2c27-49bc-abcc-73a895316a45" width="150"></td>
     <td><img src="https://github.com/user-attachments/assets/6c7735bb-ad59-45cd-82aa-9d13045d034d" width="150"></td>
     <td><img src="https://github.com/user-attachments/assets/dff40d1b-cdc8-452e-a188-94a01c9087f9" width="150"></td>
-    <td><img src="https://github.com/user-attachments/assets/c84039c5-dcb4-4bac-b185-4bb75afc1881" width="150"></td>
+    <td><img src="https://github.com/user-attachments/assets/ce424c86-162c-4d0d-8fa2-d1a389f3ff3f" width="150"></td>
     <td><img src="https://github.com/user-attachments/assets/b6561c77-3737-4166-aa63-ebee60bde07b" width="150"></td>
   </tr>
   <tr align="center">
@@ -90,8 +81,6 @@ ex) <img src="https://img.shields.io/badge/Swift-FA7343?style=flat&logo=Swift&lo
     <td><a href="https://github.com/glace0x">@glace0x</a></td>
   </tr>
 </table>
-
-
 
 
 
