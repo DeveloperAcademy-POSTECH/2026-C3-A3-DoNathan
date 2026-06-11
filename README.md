@@ -23,7 +23,7 @@ Attach videos if you are available
 - Feature 2
 - Feature 3
 
-### 🎨 색상 미션 & 빙고
+**🎨 색상 미션 & 빙고**
 - **5가지 테마 색상:** Red·Orange·Green·Blue·Purple 색상별 잠금 해제 시스템
 - **랜덤 빙고 미션:** 색상마다 8칸의 무작위 미션 빙고판 생성
 - **데이터 영구 저장:** 유저의 미션 진행도 및 성공 여부 로컬 저장
