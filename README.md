@@ -45,8 +45,6 @@ ex) <img src="https://img.shields.io/badge/Swift-FA7343?style=flat&logo=Swift&lo
 
 ## :people_hugging: Authors
 
-
-
 <table>
   <tr align="center">
     <td width="200"><b>노아</b></td>
@@ -83,34 +81,7 @@ ex) <img src="https://img.shields.io/badge/Swift-FA7343?style=flat&logo=Swift&lo
 </table>
 
 
-
-
-
-## 🛠 기술 스택
-
-- Swift / SwiftUI / UIKit
-- 아키텍처: MVVM 
-- 기타 도구: Figma
-
-
-## 🌟 주요 기능
-
-- ✅ 기능 1
-- ✅ 기능 2
-- ✅ 기능 3
-
-> 필요시 이미지, GIF, 혹은 링크 삽입
-
-
-## 🖼 화면 구성 및 시연
-
-| 기능 | 설명 | 이미지 |
-|------|------|--------|
-| 예시1 | 기능 요약 | ![gif](링크) |
-| 예시2 | 기능 요약 | ![gif](링크) |
-
-
-## 🧱 폴더 구조
+## 🧱 Directory
 
 ```
 📦 C3_App
@@ -121,18 +92,7 @@ ex) <img src="https://img.shields.io/badge/Swift-FA7343?style=flat&logo=Swift&lo
 ┗ 📂 Views
 ```
 
-
-## 🧑‍💻 팀 소개
-
-
-
-[🔗 팀 블로그 / 미디엄 링크](https://medium.com/example)
-
-## 🔖 브랜치 전략
-- `main`: 배포 가능한 안정 버전
-- `develop`: 통합 개발 브랜치
-
-## ✅ 테스트 방법
+## ✅ How to Test
 
 1. 이 저장소를 클론합니다.
 ```bash
@@ -142,14 +102,3 @@ git clone https://github.com/yourteam/project.git
 3. 시뮬레이터 환경 설정: iPhone 15 / iOS 17
 4. `Cmd + R`로 실행 / `Cmd + U`로 테스트 실행
 
-
-## 📎 프로젝트 문서
-
-- [기획 히스토리](링크)
-- [디자인 히스토리](링크)
-- [기술 문서 (아키텍처 등)](링크)
-
-
-## 📝 License
-
-This project is licensed under the ~~[CHOOSE A LICENSE](https://choosealicense.com). and update this line~~
