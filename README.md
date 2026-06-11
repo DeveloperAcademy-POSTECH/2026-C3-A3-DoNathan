@@ -1,3 +1,4 @@
+
 # :iphone: Paleto 팔레토
 <img width="256" height="256" alt="LOGO_PALETO" src="https://github.com/user-attachments/assets/204b440c-df09-4b0e-9c6f-2de55fa81e68" />
 
@@ -22,7 +23,7 @@
 
 ## :framed_picture: Demo (optional)
 
-
+<img width="190" height="413" alt="ScreenRecording_06-10-2026 21-12-05_1-2" src="https://github.com/user-attachments/assets/f5008b8d-9173-4321-a8e6-c1465456e894" />
 <img width="200" height="435" alt="ScreenRecording_06-10-2026 20-41-00_1-2" src="https://github.com/user-attachments/assets/5e94569d-15cb-43e3-adcf-14792eb94c85" />
 
 
