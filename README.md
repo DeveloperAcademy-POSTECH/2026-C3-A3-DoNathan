@@ -58,12 +58,13 @@ ex) <img src="https://img.shields.io/badge/Swift-FA7343?style=flat&logo=Swift&lo
 
 <table>
   <tr align="center">
-    <td width="200"><b>노아/b></td>
+    <td width="200"><b>노아</b></td>
     <td width="200"><b>이피</b></td>
     <td width="200"><b>하르딘</b></td>
     <td width="200"><b>젠</b></td>
     <td width="200"><b>크리스탈</b></td>
-    <td width="200"><b>그레이스</b></td>
+    <td width="200"><b>그레이스</b></td><img width="480" height="480" alt="grace" src="https://github.com/user-attachments/assets/bc0a9bbf-0819-4893-b833-eb4c6bccb32a" />
+
   </tr>
   <tr align="center">
     <td><img src="https://github.com/user-attachments/assets/96159d86-2b31-4d76-8d4a-037c25b57c72" width="150"></td>
@@ -71,6 +72,8 @@ ex) <img src="https://img.shields.io/badge/Swift-FA7343?style=flat&logo=Swift&lo
     <td><img src="https://github.com/user-attachments/assets/0dda108a-62fc-4a8e-9d98-b1c068af4dd6" width="150"></td>
     <td><img src="https://github.com/user-attachments/assets/da945933-2772-483d-9854-c47f718d4bd1" width="150"></td>
     <td><img src="https://github.com/user-attachments/assets/c84039c5-dcb4-4bac-b185-4bb75afc1881" width="150"></td>
+    <td><img src="https://github.com/user-attachments/assets/b6561c77-3737-4166-aa63-ebee60bde07b" width="150"></td>
+
   </tr>
   <tr align="center">
     <td>iOS Developer</td>
