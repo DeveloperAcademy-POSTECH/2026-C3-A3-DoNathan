@@ -48,12 +48,12 @@ Attach videos if you are available
 
 <table>
   <tr align="center">
-    <td width="200"><b>노아</b></td>
-    <td width="200"><b>이피</b></td>
-    <td width="200"><b>하르딘</b></td>
-    <td width="200"><b>젠</b></td>
-    <td width="200"><b>크리스탈</b></td>
-    <td width="200"><b>그레이스</b></td>
+    <td width="200"><b>노아 Noah</b></td>
+    <td width="200"><b>이피 Eepy</b></td>
+    <td width="200"><b>하르딘 Jardín</b></td>
+    <td width="200"><b>젠 Zen</b></td>
+    <td width="200"><b>크리스탈 Crystal</b></td>
+    <td width="200"><b>그레이스 Grace</b></td>
   </tr>
   <tr align="center">
     <td><img src="https://github.com/user-attachments/assets/ec790596-9b59-4ce1-aaf5-ae655e8947ea" width="150"></td>
