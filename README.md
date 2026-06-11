@@ -3,9 +3,9 @@
 
 > AVFoundation 기반의 커스텀 카메라와 Core Image의 색상 분석 및 이미지 편집 기능을 활용해 일상 속 색을 탐색하여 미션을 클리어하는 미션형 필터 카메라 앱
 
-## 📆 프로젝트 기간
+## 📆 Duration
 - 전체 기간: `2026.05.06 - 2026.06.12`
-- 개발 기간: `2026.05.28 - YYYY.MM.DD`
+- 개발 기간: `2026.05.28 - 2026.06.10`
 
 
 ## :fireworks: Screenshots
@@ -28,6 +28,12 @@ Attach videos if you are available
 
 ex) <img src="https://img.shields.io/badge/Swift-FA7343?style=flat&logo=Swift&logoColor=white"/>, SwiftUI
 
+
+- Swift / SwiftUI / UIKit
+- 아키텍처: MVVM 
+- 기타 도구: Figma
+
+
 `AVFoundation` `Core Image` `PhotoKit`
 
 ![Swift](https://img.shields.io/badge/swift-F54A2A?style=for-the-badge&logo=swift&logoColor=white)
@@ -39,7 +45,6 @@ ex) <img src="https://img.shields.io/badge/Swift-FA7343?style=flat&logo=Swift&lo
 
 ## :people_hugging: Authors
 
-@username, @username, @username, @username, @username, @username
 
 | 이름 | 역할 | GitHub |
 |------|------|--------|
@@ -51,50 +56,43 @@ ex) <img src="https://img.shields.io/badge/Swift-FA7343?style=flat&logo=Swift&lo
 | 그레이스 | UX/UI Designer | [@glace0x](https://github.com/glace0x) |
 
 
+<table>
+  <tr align="center">
+    <td width="200"><b>노아/b></td>
+    <td width="200"><b>이피</b></td>
+    <td width="200"><b>하르딘</b></td>
+    <td width="200"><b>젠</b></td>
+    <td width="200"><b>크리스탈</b></td>
+    <td width="200"><b>그레이스</b></td>
+  </tr>
+  <tr align="center">
+    <td><img src="https://github.com/user-attachments/assets/96159d86-2b31-4d76-8d4a-037c25b57c72" width="150"></td>
+    <td><img src="https://github.com/user-attachments/assets/fc17e160-ab33-482b-84a0-70eb4baf7043" width="150"></td>
+    <td><img src="https://github.com/user-attachments/assets/0dda108a-62fc-4a8e-9d98-b1c068af4dd6" width="150"></td>
+    <td><img src="https://github.com/user-attachments/assets/da945933-2772-483d-9854-c47f718d4bd1" width="150"></td>
+    <td><img src="https://github.com/user-attachments/assets/c84039c5-dcb4-4bac-b185-4bb75afc1881" width="150"></td>
+  </tr>
+  <tr align="center">
+    <td>iOS Developer</td>
+    <td>iOS Developer</td>
+    <td>iOS Developer</td>
+    <td>UX/UI Designer</td>
+    <td>UX/UI Designer</td>
+    <td>UX/UI Designer</td>
+  </tr>
+  <tr align="center">
+    <td><a href="https://github.com/noah-jhlee">@noah-jhlee</a></td>
+    <td><a href="https://github.com/yoonjin9150-blip">@yoonjin9150-blip</a></td>
+    <td><a href="https://github.com/frutacruda">@frutacruda</a></td>
+    <td><a href="https://github.com/kiim672">@kiim672</a></td>
+    <td><a href="https://github.com/crystaltheclear">@crystaltheclear</a></td>
+    <td><a href="https://github.com/glace0x">@glace0x</a></td>
+  </tr>
+</table>
 
 
 
 
-# 📸 Paleto 팔레토
-
-
-
-
-> AVFoundation, Core Image 기술을 중점적으로 활용하여 사진을 찍고, 편집하여 색을 추출하는 미션을 통해 지루한 무채색 일상에서 색을 찾는 미션을 통해 일상 속 새로움을 찾도록 해주는 앱!
-
-`AVFoundation` `Core Image` `PhotoKit`
-
-![Swift](https://img.shields.io/badge/swift-F54A2A?style=for-the-badge&logo=swift&logoColor=white)
-![Figma](https://img.shields.io/badge/figma-%23F24E1E.svg?style=for-the-badge&logo=figma&logoColor=white)
-
-
----
-
-## 🗂 목차
-- [소개](#소개)
-- [프로젝트 기간](#프로젝트-기간)
-- [기술 스택](#기술-스택)
-- [기능](#기능)
-- [시연](#시연)
-- [폴더 구조](#폴더-구조)
-- [팀 소개](#팀-소개)
-- [Git 컨벤션](#git-컨벤션)
-- [테스트 방법](#테스트-방법)
-- [프로젝트 문서](#프로젝트-문서)
-- [라이선스](#lock_with_ink_pen-license)
-
----
-
-## 📱 소개
-
-> 프로젝트의 주요 목적과 사용자가 얻게 될 경험을 설명해주세요.
-
-[🔗 앱스토어/웹 링크](https://example.com)
-
-
-## 📆 프로젝트 기간
-- 전체 기간: `2026.05.06 - 2026.06.12`
-- 개발 기간: `2026.05.28 - YYYY.MM.DD`
 
 
 ## 🛠 기술 스택
