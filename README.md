@@ -14,7 +14,10 @@ Attach photos if you are available
 
 ## :framed_picture: Demo (optional)
 
-Attach videos if you are available
+
+<img width="200" height="435" alt="ScreenRecording_06-10-2026 20-41-00_1-2" src="https://github.com/user-attachments/assets/5e94569d-15cb-43e3-adcf-14792eb94c85" />
+
+
 
 
 ## :pushpin: Features
